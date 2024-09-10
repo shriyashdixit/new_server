@@ -1,0 +1,4 @@
+.env*
+static
+staticfiles
+django_app/algo_trading/stratergies.py
