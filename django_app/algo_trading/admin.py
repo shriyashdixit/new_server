@@ -6,4 +6,5 @@ from .models import HistoricalData
 
 @admin.register(HistoricalData)
 class HistoricalDataAdmin(admin.ModelAdmin):
-    list_display = ['date', 'open', 'high', 'low', 'close']
+    search_fields = ['ticker']
+    list_display = ['ticker', 'date', 'open', 'high', 'low', 'close']

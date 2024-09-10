@@ -15,7 +15,8 @@ def import_csv(request):
             csv_reader = csv.DictReader(csv_file)
 
             for row in csv_reader:
-                HistoricalData.objects.create(
+                HistoricalData.objects.get_or_create(
+                    ticker=row['ticker'],
                     date=row['date'],
                     open=row['open'],
                     high=row['high'],

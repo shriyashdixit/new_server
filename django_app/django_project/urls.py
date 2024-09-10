@@ -26,7 +26,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path("", homepage, name='homepage'),
     # path("", RedirectView.as_view(url=reverse_lazy('admin:index'))),
-    path('import-csv/', import_csv, name='import_csv'),
+    path('import_csv/', import_csv, name='import_csv'),
     path('success/', success_page, name='success_page'),
     path('accounts/login/', RedirectView.as_view(url=reverse_lazy('admin:index'))),
     path('prediction_model/', prediction_model, name='prediction_model'),
