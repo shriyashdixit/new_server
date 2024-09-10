@@ -6,8 +6,7 @@ services:
       context: ./django_app
       dockerfile: Dockerfile.prod
     restart: always  
-    command: sh -c "python manage.py flush --no-input &&
-        python manage.py makemigrations &&
+    command: sh -c "python manage.py makemigrations &&
         python manage.py migrate &&
         python manage.py collectstatic --noinput &&
         gunicorn django_project.wsgi:application --bind 0.0.0.0:8000"
