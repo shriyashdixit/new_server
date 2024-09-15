@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.core.files.storage import FileSystemStorage
+from django.http import HttpResponseRedirect
 
 # Create your views here.
 
@@ -27,3 +28,7 @@ def env(request):
 
 def homepage(request):
     return render(request, 'tutorials_webpage.html')
+
+
+def ai(request):
+    return HttpResponseRedirect("http://192.168.0.104:8080")

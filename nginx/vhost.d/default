@@ -1,9 +1,35 @@
-location /static/ {
-  alias /home/app/web/staticfiles/;
-  add_header Access-Control-Allow-Origin *;
-}
+server {
+    listen 80;
+    server_name nazukware.com;
 
-location /media/ {
-  alias /home/app/web/mediafiles/;
-  add_header Access-Control-Allow-Origin *;
+    # Serve static files
+    location /static/ {
+        alias /home/app/web/staticfiles/;
+        add_header Access-Control-Allow-Origin *;
+    }
+
+    # Serve media files
+    location /media/ {
+        alias /home/app/web/mediafiles/;
+        add_header Access-Control-Allow-Origin *;
+    }
+
+    # Proxy to Open WebUI server for /al/ path
+    location /ai/ {
+        proxy_pass http://192.168.0.104:8080;
+        
+        # Set up authentication (if Open WebUI supports API tokens)
+        proxy_set_header Authorization "Bearer sk-beab63c9d87d4687a77299bf05515fda";
+
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        proxy_redirect off;
+        add_header Access-Control-Allow-Origin *;
+    }
+
+
+    # Other location blocks or configurations as needed
 }
