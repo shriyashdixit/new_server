@@ -25,5 +25,13 @@ def env(request):
     return render(request, 'temporary_webpage.html')
 
 
-def homepage(request):
+def e_commerce(request):
+    return render(request, 'e_commerce.html')
+
+
+def tutorials_webpage(request):
     return render(request, 'tutorials_webpage.html')
+
+
+def homepage_main(request):
+    return render(request, 'homepage_main.html')

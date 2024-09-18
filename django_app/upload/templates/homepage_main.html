@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Django Nginx Docker Showcase</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            background-color: #f4f4f4;
+        }
+
+        header {
+            background: linear-gradient(45deg, #007bff, #00aaff);
+            color: white;
+            padding: 100px 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        header h1 {
+            font-size: 48px;
+            margin: 0;
+            font-weight: bold;
+        }
+
+        header p {
+            font-size: 20px;
+            margin: 10px 0 30px 0;
+        }
+
+        header a {
+            text-decoration: none;
+            background-color: #ff9800;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 30px;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+
+        header a:hover {
+            background-color: #ffb74d;
+        }
+
+        .sections {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            padding: 50px 20px;
+        }
+
+        .section {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: transform 0.3s ease;
+            text-align: center;
+        }
+
+        .section:hover {
+            transform: translateY(-10px);
+        }
+
+        .section img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .section h2 {
+            font-size: 24px;
+            margin: 15px 0;
+        }
+
+        .section p {
+            font-size: 16px;
+            padding: 0 15px;
+            color: #555;
+        }
+
+        .section a {
+            display: inline-block;
+            margin: 15px 0;
+            text-decoration: none;
+            color: #007bff;
+            font-weight: bold;
+        }
+
+        footer {
+           
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        footer a {
+            color: #ff9800;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Hero Section -->
+    <header>
+        <h1>Nazukware</h1>
+        <br></br>
+        <h1>Showcasing the Power of Modern Web Technologies</h1>
+        <p>Explore dynamic webpages hosted on Django, Nginx, and Docker.</p>
+        <a href="#sections">Discover More</a>
+    </header>
+
+    <!-- Webpage Sections -->
+    <section id="sections" class="sections">
+
+        <!-- Tutorials Section -->
+        <div class="section">
+            
+            <img src="{% static 'tutorials_icon.png' %}" alt="Tutorials Image">
+            <h2>Tutorials</h2>
+            <p>Explore in-depth tutorials on setting up web servers and hosting different web pages.</p>
+            <a href="/tutorials_webpage">Learn More</a>
+        </div>
+
+        <!-- E-commerce Section -->
+        <div class="section">
+            <img src="{% static 'e_commerce.png' %}" alt="E-commerce Image">
+            <h2>E-commerce</h2>
+            <p>A fully functional e-commerce webpage with cart, product listings, and checkout features.</p>
+            <a href="/e_commerce">Learn More</a>
+        </div>
+
+        <!-- Blog Section -->
+        <div class="section">
+            <img src="{% static 'blog.png' %}" alt="Blog Image">
+            <h2>Blog</h2>
+            <p>Showcasing a clean and simple blog with posts, categories, and comments.</p>
+            <a href="/env">Learn More</a>
+        </div>
+
+        <!-- Portfolio Section -->
+        <div class="section">
+            <img src="{% static 'portfolio.png' %}" alt="Portfolio Image">
+            <h2>Portfolio</h2>
+            <p>A portfolio showcasing creative or professional work, such as design, photography, or personal projects.</p>
+            <a href="/Portfolio">Learn More</a>
+        </div>
+
+
+        <!-- Landing Page Section -->
+        <div class="section">
+            <img src="{% static 'landing_page.png' %}" alt="Landing Page Image">
+            <h2>Landing Page</h2>
+            <p>A showcase of a modern landing page used for marketing campaigns or product launches.</p>
+            <a href="/landing_page">Learn More</a>
+        </div>
+
+        <!-- Real Estate Page -->
+        <div class="section">
+            <img src="{% static 'real_estate.png' %}" alt="Real Estate Page Image">
+            <h2>Real Estate Page</h2>
+            <p>A sample real estate listing webpage, showcasing properties with filters, maps, and contact forms.</p>
+            <a href="/real_estate">Learn More</a>
+        </div>
+
+        <!-- Restaurant Page -->
+        <div class="section">
+            <img src="{% static 'restraunt.png' %}" alt="Restaurant Page Image">
+            <h2>Restaurant Page</h2>
+            <p>A restaurant or food delivery website with menu listings, online reservations, and delivery options.</p>
+            <a href="/restraunt">Learn More</a>
+        </div>
+<!--    
+5. Forum/Community Page
+Description: A fully-functional forum or community page for discussions and user interactions.
+Example: "A sample forum designed for community interaction, featuring posts, comments, and user profiles."
+Button: "Visit Forum"
+6. Admin Dashboard
+Description: A web-based admin dashboard for managing websites or services, showcasing charts, tables, and forms.
+Example: "Explore a feature-rich admin dashboard with charts, analytics, and user management tools."
+Button: "View Admin Dashboard"
+7. Media Gallery Page
+Description: A media gallery showcasing images, videos, or other media content, perfect for photography, art, or video portfolios.
+Example: "A sleek media gallery designed to showcase images, videos, and multimedia projects."
+Button: "View Media Gallery"
+8. Contact Page
+Description: A contact form with location map and details, showcasing a clean and responsive contact page.
+Example: "An interactive contact page with a location map, contact form, and company details."
+Button: "See Contact Page"
+9. About Us Page
+Description: A detailed "About Us" section, highlighting company history, mission, or team.
+Example: "Learn more about the mission, team, and story behind this project."
+Button: "Read About Us"
+10. Web Application Page
+Description: A showcase of a dynamic web application with interactive forms, databases, and API integrations.
+Example: "Experience a fully-featured web application, integrating real-time data and user inputs."
+Button: "Try Web Application"
+11. Gallery/Portfolio for Specific Skill
+Description: A gallery of specific skills, such as photography, videography, graphic design, or programming.
+Example: "Showcase specific skills or works in an interactive portfolio, highlighting creativity and functionality."
+Button: "View Skill Showcase"
+12. Events Page
+Description: A page showcasing upcoming events, event details, and registration options.
+Example: "Explore upcoming events with registration and event management features."
+Button: "View Events"
+
+
+
+
+
+
+-->
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2024 Nazukware.com. All rights reserved.</p>
+        <p>
+            <a href="https://github.com/" target="_blank">Project Repository</a> | 
+            <a href="mailto:developmentcdci@gmail.com">Contact Us</a>
+        </p>
+    </footer>
+
+</body>
+</html>
