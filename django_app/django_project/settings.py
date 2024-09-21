@@ -28,6 +28,7 @@ DEBUG = bool(int(os.environ.get("DEBUG", default=0)))
 
 ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS").split(" ")
 
+OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
 
 # Application definition
 
@@ -41,6 +42,7 @@ INSTALLED_APPS = [
     "upload",
     "algo_trading",
     'onedrive_clone',
+    "image_generator"
 ]
 
 MIDDLEWARE = [

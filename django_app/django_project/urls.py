@@ -22,6 +22,7 @@ from django.conf.urls.static import static
 from upload.views import chatbot, env, tutorials_webpage, homepage_main, e_commerce
 from algo_trading.views import import_csv, success_page, prediction_model
 from onedrive_clone.views import upload_file, file_list, download_file
+from image_generator.views import generate_image
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -39,6 +40,7 @@ urlpatterns = [
     path('upload/', upload_file, name='upload_file'),
     path('files/', file_list, name='file_list'),
     path('download/<int:file_id>/', download_file, name='download_file'),
+    path('generate-image/', generate_image, name='generate_image'),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 if bool(settings.DEBUG):

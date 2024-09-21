@@ -1,0 +1,17 @@
+<!-- saas_service/templates/saas_service/generate_image.html -->
+
+{% extends 'admin/base_site.html' %}
+
+{% block content %}
+    <h2>Generate an Image</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Generate</button>
+    </form>
+
+    {% if generated_image_url %}
+    <h3>Generated Image:</h3>
+    <img src="{{ generated_image_url }}" alt="Generated Image">
+    {% endif %}
+{% endblock %}
