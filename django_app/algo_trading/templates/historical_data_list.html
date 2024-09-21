@@ -1,0 +1,102 @@
+{% extends 'admin/base_site.html' %}
+
+{% block content %}
+    <h2>Historical Data List</h2>
+
+    <!-- Inline CSS for styling -->
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        table, th, td {
+            border: 1px solid black;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .pagination {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .pagination a, .pagination span {
+            margin: 0 5px;
+            padding: 8px 16px;
+            text-decoration: none;
+            background-color: #f1f1f1;
+            border: 1px solid #ddd;
+            color: black;
+        }
+
+        .pagination .current {
+            background-color: #4CAF50;
+            color: white;
+            border: 1px solid #4CAF50;
+        }
+
+        .pagination a:hover {
+            background-color: #ddd;
+        }
+    </style>
+
+    <!-- Table and pagination as before -->
+    <table>
+        <thead>
+            <tr>
+                <th>Ticker</th>
+                <th>Date</th>
+                <th>Open</th>
+                <th>High</th>
+                <th>Low</th>
+                <th>Close</th>
+                <th>Total Traded Quantity</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in page_obj %}
+            <tr>
+                <td>{{ item.ticker }}</td>
+                <td>{{ item.date }}</td>
+                <td>{{ item.open }}</td>
+                <td>{{ item.high }}</td>
+                <td>{{ item.low }}</td>
+                <td>{{ item.close }}</td>
+                <td>{{ item.total_traded_quantity }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7">No historical data available.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Pagination controls -->
+    <div class="pagination">
+        <span class="step-links">
+            {% if page_obj.has_previous %}
+                <a href="?page=1">&laquo; first</a>
+                <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+            {% endif %}
+
+            <span class="current">
+                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+            </span>
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}">next</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
+{% endblock %}

@@ -4,6 +4,7 @@ from .models import HistoricalData
 import csv
 from django.contrib.auth.decorators import login_required
 from .stratergies import Stratergy
+from django.core.paginator import Paginator
 
 
 @login_required
@@ -62,3 +63,11 @@ def prediction_model(request):
     context = []
     context = Stratergy(historical_data=data_1).stratergy_1()
     return render(request, 'output.html', {'context': context})
+
+def historical_data_list(request):
+    data = HistoricalData.objects.all().order_by('date')  # Fetch data ordered by date
+    paginator = Paginator(data, 100)  # Show 100 records per page
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
+    return render(request, 'historical_data_list.html', {'page_obj': page_obj})
