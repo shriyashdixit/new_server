@@ -14,13 +14,14 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include, reverse_lazy
+from django.urls import path, reverse_lazy
 from django.views.generic.base import RedirectView
 from django.conf import settings
 from django.conf.urls.static import static
 
-from upload.views import image_upload, chatbot, env, tutorials_webpage, homepage_main, e_commerce
+from upload.views import chatbot, env, tutorials_webpage, homepage_main, e_commerce
 from algo_trading.views import import_csv, success_page, prediction_model
+from onedrive_clone.views import upload_file, file_list, download_file
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -34,7 +35,11 @@ urlpatterns = [
     path('prediction_model/', prediction_model, name='prediction_model'),
     path('chatbot', chatbot, name='chatbot'),
     path('env', env, name='env'),
-]
+
+    path('upload/', upload_file, name='upload_file'),
+    path('files/', file_list, name='file_list'),
+    path('download/<int:file_id>/', download_file, name='download_file'),
+]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 if bool(settings.DEBUG):
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
