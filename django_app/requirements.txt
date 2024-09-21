@@ -1,4 +1,5 @@
 Django==4.2.3
+fyers_apiv3
 gunicorn==21.2.0
 numpy
 psycopg2-binary==2.9.6
