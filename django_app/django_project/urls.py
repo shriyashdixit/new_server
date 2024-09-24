@@ -19,7 +19,7 @@ from django.views.generic.base import RedirectView
 from django.conf import settings
 from django.conf.urls.static import static
 
-from upload.views import chatbot, env, tutorials_webpage, homepage_main, e_commerce
+from upload.views import chatbot, env, tutorials_webpage, homepage_main, e_commerce, test
 from algo_trading.views import import_csv, success_page, prediction_model
 from onedrive_clone.views import upload_file, file_list, download_file
 from image_generator.views import generate_image
@@ -29,6 +29,7 @@ urlpatterns = [
     path("", homepage_main, name='homepage_main'),
     path("tutorials_webpage", tutorials_webpage, name='tutorials_webpage'),
     path("e_commerce", e_commerce, name='e_commerce'),
+    path("test", test, name='test'),
     # path("", RedirectView.as_view(url=reverse_lazy('admin:index'))),
     path('import_csv/', import_csv, name='import_csv'),
     path('success/', success_page, name='success_page'),

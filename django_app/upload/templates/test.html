@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Design Platform</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Navigation Bar */
+        .navbar {
+            background-color: #333;
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+
+        .navbar ul li {
+            position: relative;
+        }
+
+        .navbar ul li a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 15px;
+            display: block;
+        }
+
+        /* Submenu */
+        .navbar ul li ul {
+            display: none;
+            position: absolute;
+            background-color: #222;
+            padding: 10px 0;
+            top: 100%; /* Aligns submenu below the parent */
+            left: 0;
+            z-index: 1000;
+            min-width: 200px;
+        }
+
+        .navbar ul li ul li a {
+            color: white;
+            padding: 10px;
+        }
+
+        .navbar ul li ul li a:hover {
+            background-color: #444;
+        }
+
+        /* Show submenu on hover */
+        .navbar ul li:hover ul {
+            display: block;
+        }
+
+        /* Hero Section */
+        .hero {
+            background-image: url('{% static "background_image.webp" %}');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 120px 20px;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 3.5em;
+            margin-bottom: 15px;
+        }
+
+        .hero p {
+            font-size: 1.3em;
+            margin-bottom: 40px;
+        }
+
+        .search-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .search-bar {
+            padding: 12px;
+            border-radius: 5px;
+            border: none;
+            width: 300px;
+            margin-right: 10px;
+        }
+
+        .search-btn {
+            padding: 12px 24px;
+            background-color: #0078D7;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        /* Tools Section */
+        .tools-section {
+            padding: 40px 20px;
+            background-color: #fff;
+            text-align: center;
+        }
+
+        .tools-section h2 {
+            margin-bottom: 30px;
+        }
+
+        .tools-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* Adjust the number of columns */
+    gap: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+    .tool-card {
+        position: relative;
+        overflow: hidden;
+        border-radius: 10px;
+        height: 200px; /* Adjust height as needed */
+        background-size: cover;
+        background-position: center;
+        transition: transform 0.5s ease; /* Add smooth transition */
+    }
+
+    .tool-card:nth-child(1) {
+        background-image: url('{% static "ai_background_image.webp" %}');
+    }
+
+    .tool-card:nth-child(2) {
+        background-image: url('{% static "icon_generator_background_image.webp" %}');
+    }
+
+    .tool-card:nth-child(3) {
+        background-image: url('{% static "cloud_storage_image.webp" %}');
+    }
+
+    .tool-card:nth-child(4) {
+        background-image: url('{% static "tutorials_image.webp" %}');
+    }
+
+    .tool-card:nth-child(5) {
+        background-image: url('{% static "e_commerce_image.webp" %}');
+    }
+
+    .tool-card:nth-child(6) {
+        background-image: url('{% static "blog_image.webp" %}');
+    }
+
+    .tool-card:nth-child(7) {
+        background-image: url('{% static "portfolio_image.webp" %}');
+    }
+
+    .tool-card:hover {
+        transform: scale(1.1); /* Zoom effect on hover */
+    }
+
+    .card-content {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        color: white;
+        font-size: 1.0em;
+        font-weight: bold;
+        z-index: 2;
+    }
+
+    .tool-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.4); /* Adds an overlay on the image for better text visibility */
+        z-index: 1;
+        transition: background 0.5s ease;
+    }
+
+    .tool-card:hover::before {
+        background: rgba(0, 0, 0, 0.6); /* Darken overlay on hover */
+    }
+
+        /* Footer */
+        .footer {
+            background-color: #222;
+            color: #aaa;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .footer a {
+            color: #ddd;
+            text-decoration: none;
+            margin: 0 10px;
+        }
+
+        .footer .footer-links {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .footer-links div {
+            margin: 0 20px;
+        }
+
+        .social-icons img {
+            width: 40px;
+            margin: 0 10px;
+        }
+        .scrolling-images {
+            overflow: hidden;
+            position: relative;
+            width: 100%;
+            background-color: #f5f5f5; /* Adjust background as needed */
+            padding: 20px 0;
+        }
+
+        .row {
+            display: flex;
+            width: max-content;
+            gap: 20px;
+        }
+
+        .first-row {
+            animation: scroll-right-left 20s linear infinite;
+        }
+
+        .second-row {
+            animation: scroll-left-right 20s linear infinite;
+        }
+
+        .row img {
+            width: 200px; /* Adjust image size */
+            height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        @keyframes scroll-right-left {
+            0% {
+                transform: translateX(100%);
+            }
+            100% {
+                transform: translateX(-100%);
+            }
+        }
+
+        @keyframes scroll-left-right {
+            0% {
+                transform: translateX(-100%);
+            }
+            100% {
+                transform: translateX(100%);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation Bar with UL/LI structure -->
+    <nav class="navbar">
+      
+      <ul>
+        <li><h1>Nazukware</h1></li>
+          <li><a href="#">Tools</a>
+              <ul>
+                  <li><a href="#">AI Image Generator</a></li>
+                  <li><a href="#">Mockup Generator</a></li>
+                  <li><a href="#">Reimagine</a></li>
+                  <li><a href="#">Background Remover</a></li>
+              </ul>
+          </li>
+          <li><a href="#">Images</a>
+              <ul>
+                  <li><a href="#">Vectors</a></li>
+                  <li><a href="#">Photos</a></li>
+                  <li><a href="#">AI Images</a></li>
+              </ul>
+          </li>
+          <li><a href="#">Icons</a>
+              <ul>
+                  <li><a href="#">Flat Icons</a></li>
+                  <li><a href="#">3D Icons</a></li>
+              </ul>
+          </li>
+      </ul>
+  </nav>
+
+  <!-- Hero Section -->
+  <div class="hero">
+    <div>
+        <h1>Create great designs, faster</h1>
+        <p>High-quality photos, videos, vectors, PSD, AI images, icons... to go from ideas to outstanding designs.</p>
+
+        <!-- Search Bar -->
+        <div class="search-container">
+            <input type="text" class="search-bar" placeholder="Search all assets...">
+            <button class="search-btn">Search</button>
+        </div>
+    </div>
+</div>
+
+    <!-- Tools Section -->
+    <section class="tools-section">
+        <h2>Free tools to skyrocket your creative freedom</h2>
+        <div class="tools-container">
+            <div class="tool-card">
+                <a href="/generate-image">
+                    <div class="card-content">
+                        <h3>AI Image Generator</h3>
+                    </div>
+                </a>
+            </div>
+            <div class="tool-card">
+                <a href="/generate-image">
+                    <div class="card-content">
+                        <h3>Icon Generator</h3>
+                    </div>
+                </a>
+            </div>
+            <div class="tool-card">
+                <a href="/upload">
+                    <div class="card-content">
+                        <h3>Cloud Storage</h3>
+                    </div>
+                </a>
+            </div>
+            <div class="tool-card">
+                <a href="/tutorials_webpage">
+                    <div class="card-content">
+                        <h3>Tutorials</h3>
+                    </div>
+                </a>
+            </div>
+            <div class="tool-card">
+                <a href="/e_commerce">
+                    <div class="card-content">
+                        <h3>E-Commerce</h3>
+                    </div>
+                </a>
+            </div>
+            <div class="tool-card">
+                <a href="/env">
+                    <div class="card-content">
+                        <h3>Blog</h3>
+                    </div>
+                </a>
+            </div>
+            <div class="tool-card">
+                <div class="card-content">
+                    <h3>Portfolio</h3>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Scrolling Section -->
+    <section class="scrolling-images">
+        <div class="row first-row">
+            {% for image in images_folder1 %}
+                <img src="{% static image %}" alt="Image">
+            {% endfor %}
+        </div>
+        <div class="row second-row">
+            {% for image in images_folder2 %}
+                <img src="{% static image %}" alt="Image">
+            {% endfor %}
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-links">
+            <div>
+                <h3>Content</h3>
+                <a href="#">Calendar</a>
+                <a href="#">New assets</a>
+                <a href="#">Popular</a>
+            </div>
+            <div>
+                <h3>Information</h3>
+                <a href="#">Pricing</a>
+                <a href="mailto:developmentcdci@gmail.com">Contact Us</a>
+            </div>
+            <div>
+                <h3>Legal</h3>
+                <a href="#">Terms of Use</a>
+                <a href="#">Privacy Policy</a>
+            </div>
+        </div>
+
+    </footer>
+
+</body>
+</html>
