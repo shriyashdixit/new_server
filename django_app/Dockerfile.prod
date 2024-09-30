@@ -49,11 +49,23 @@ RUN mkdir $APP_HOME/mediafiles
 WORKDIR $APP_HOME
 
 # install dependencies
-RUN apt-get update && apt-get install -y --no-install-recommends netcat
+RUN apt-get update && apt-get install -y --no-install-recommends netcat && apt-get install -y cron supervisor dos2unix && rm -rf /var/lib/apt/lists/*
 COPY --from=builder /usr/src/app/wheels /wheels
 COPY --from=builder /usr/src/app/requirements.txt .
 RUN pip install --upgrade pip
 RUN pip install --no-cache /wheels/*
+
+
+# Add the cron job for the production environment
+COPY ./cronjob.prod /etc/cron.d/my-cron-job
+RUN chmod 0644 /etc/cron.d/my-cron-job
+RUN crontab /etc/cron.d/my-cron-job
+
+# Copy the supervisor configuration file
+COPY ./supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
+# Run supervisor to start both the Telegram bot and Django app
+CMD ["/usr/bin/supervisord"]
 
 # copy entrypoint.prod.sh
 COPY ./entrypoint.prod.sh .

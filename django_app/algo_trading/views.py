@@ -71,3 +71,6 @@ def historical_data_list(request):
     page_obj = paginator.get_page(page_number)
     
     return render(request, 'historical_data_list.html', {'page_obj': page_obj})
+
+def get_live_data():
+    print(1111111111)

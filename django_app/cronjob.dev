@@ -1,0 +1,3 @@
+# cronjob
+* 9-15 * * 1-5 /usr/local/bin/python /usr/src/app/manage.py trigger_function >> /var/log/cron.log 2>&1
+0-30 15 * * 1-5 /usr/local/bin/python /usr/src/app/manage.py trigger_function >> /var/log/cron.log 2>&1

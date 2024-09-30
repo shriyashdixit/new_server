@@ -1,0 +1,24 @@
+{% extends 'admin/base_site.html' %}
+
+{% block content %}
+    <h1>Send Message to Telegram Chat</h1>
+
+    <div class="module">
+        <form method="POST" class="form-horizontal">
+            {% csrf_token %}
+            <fieldset>
+                <div class="form-row">
+                    <label for="id_chat_id">Chat ID:</label>
+                    {{ form.chat_id }}
+                </div>
+                <div class="form-row">
+                    <label for="id_message">Message:</label>
+                    {{ form.message }}
+                </div>
+            </fieldset>
+            <div class="submit-row">
+                <button type="submit" class="btn btn-primary">Send Message</button>
+            </div>
+        </form>
+    </div>
+{% endblock %}

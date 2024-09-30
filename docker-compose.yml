@@ -17,6 +17,12 @@ services:
       - ./.env.dev
     depends_on:
       - db
+  telegram_bot:
+    build: ./telegram_bot  # Path to the bot Dockerfile
+    depends_on:
+      - web  # Ensure the Django app is running first
+    env_file:
+      - ./.env.dev
   db:
     image: postgres:15
     volumes:

@@ -30,6 +30,8 @@ ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS").split(" ")
 
 OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
 
+TELEGRAM_BOT_KEY = os.environ.get('TELEGRAM_BOT_KEY')
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -42,7 +44,8 @@ INSTALLED_APPS = [
     "upload",
     "algo_trading",
     'onedrive_clone',
-    "image_generator"
+    "image_generator",
+    "custom_management"
 ]
 
 MIDDLEWARE = [

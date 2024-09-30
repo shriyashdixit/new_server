@@ -19,6 +19,13 @@ services:
       - ./.env.prod
     depends_on:
       - db
+  telegram_bot:
+    build: ./telegram_bot  # Path to the bot Dockerfile
+    restart: always
+    depends_on:
+      - web  # Ensure the Django app is running first
+    env_file:
+      - ./.env.prod
   db:
     image: postgres:13.0-alpine
     restart: always
