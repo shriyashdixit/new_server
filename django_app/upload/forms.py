@@ -1,6 +1,14 @@
 # forms.py
 from django import forms
+from .models import TelegramUser
 
 class SendMessageForm(forms.Form):
-    chat_id = forms.CharField(max_length=255, label="Chat ID")
-    message = forms.CharField(widget=forms.Textarea, label="Message")
+    username = forms.ModelChoiceField(
+        queryset=TelegramUser.objects.all(),
+        label="Username",
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
+    message = forms.CharField(
+        widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 4}),
+        label="Message"
+    )

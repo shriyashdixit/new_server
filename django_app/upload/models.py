@@ -22,3 +22,11 @@ class TelegramMessage(models.Model):
 
     def __str__(self):
         return f"Message from {self.username or self.user_id} in chat {self.chat_id}"
+
+class TelegramUser(models.Model):
+    user_id = models.BigIntegerField(unique=True)
+    username = models.CharField(max_length=255, null=True, blank=True)
+    chat_id = models.BigIntegerField()
+
+    def __str__(self):
+        return self.username

@@ -3,16 +3,24 @@
 {% block content %}
     <h1>Send Message to Telegram Chat</h1>
 
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li class="{{ message.tags }}">{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
     <div class="module">
         <form method="POST" class="form-horizontal">
             {% csrf_token %}
             <fieldset>
                 <div class="form-row">
-                    <label for="id_chat_id">Chat ID:</label>
-                    {{ form.chat_id }}
+                    <label for="{{ form.username.id_for_label }}">Username:</label>
+                    {{ form.username }}
                 </div>
                 <div class="form-row">
-                    <label for="id_message">Message:</label>
+                    <label for="{{ form.message.id_for_label }}">Message:</label>
                     {{ form.message }}
                 </div>
             </fieldset>

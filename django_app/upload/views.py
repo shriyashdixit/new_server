@@ -2,14 +2,15 @@ from django.shortcuts import render
 from django.core.files.storage import FileSystemStorage
 import os
 from django.conf import settings
+from django.contrib import messages
 # views.py
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 # from .models import TelegramMessage  # Your model to save messages
 import json
-from .models import TelegramMessage
+from .models import TelegramMessage, TelegramUser
 from datetime import datetime
-from .utils import send_telegram_message
+from .utils import send_telegram_message_to_chat, send_telegram_message
 from .forms import SendMessageForm
 from django.contrib.auth.decorators import login_required
 # Create your views here.
@@ -65,13 +66,27 @@ def save_message(request):
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
-            message = data
-            print(message)
+            user_id = data.get('user_id')
+            username = data.get('username')
+            chat_id = data.get('chat_id')
+
+            # Step 1 & 3: Check if the user entry exists, if not, create it.
+            user, created = TelegramUser.objects.get_or_create(
+                user_id=user_id,
+                username=username,
+                defaults={'chat_id': chat_id}
+            )
+
+            # Step 2: If the entry exists but the chat_id doesn't match, update it.
+            if not created and user.chat_id != chat_id:
+                user.chat_id = chat_id
+                user.save()
+
             TelegramMessage.objects.create(
-                chat_id=data.get('chat_id'),
+                chat_id=chat_id,
                 message_id=data.get('message_id'),
-                user_id=data.get('user_id'),
-                username=data.get('username'),
+                user_id=user_id,
+                username=username,
                 first_name=data.get('first_name'),
                 last_name=data.get('last_name'),
                 message_text=data.get('message_text'),
@@ -82,7 +97,6 @@ def save_message(request):
             )
             return JsonResponse({'status': 'success', 'message': 'Message saved successfully'})
         except Exception as e:
-            print("error", e)
             return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
 
     return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=405)
@@ -91,28 +105,28 @@ def trigger_view(request):
     # Example: Check if a database entry has been updated or created
     CHAT_ID = ""
     # Send a Telegram message when the condition is met
-    send_telegram_message(f"A database entry has triggered an event: {CHAT_ID}", CHAT_ID)
+    send_telegram_message_to_chat(f"A database entry has triggered an event: {CHAT_ID}", CHAT_ID)
 
     return render(request, 'your_template.html', {'instance': CHAT_ID})
 
 @login_required
-@csrf_exempt  # Exempt this view from CSRF check for external services
+@csrf_exempt
 def send_message_view(request):
     if request.method == 'POST':
         form = SendMessageForm(request.POST)
         if form.is_valid():
-            chat_id = form.cleaned_data['chat_id']
+            telegram_user = form.cleaned_data['username']
             message = form.cleaned_data['message']
+            chat_id = telegram_user.chat_id
 
             # Trigger the function to send the message
-            response = send_telegram_message(message, chat_id)
+            response = send_telegram_message(chat_id, message)
             
-            return JsonResponse({
-                'status': 'success',
-                'message': 'Message sent successfully',
-                'response': response
-            })
+            if response.get('status') == 'success':
+                messages.success(request, 'Message sent successfully.')
+            else:
+                messages.error(request, 'Failed to send the message.')
     else:
         form = SendMessageForm()
-
+    
     return render(request, 'send_message.html', {'form': form})
