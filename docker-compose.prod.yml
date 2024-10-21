@@ -62,18 +62,6 @@ services:
       - acme:/etc/acme.sh
     depends_on:
       - nginx-proxy
-  nas:
-    image: cedricdelpas/openmediavault
-    platform: linux/amd64
-    privileged: true  # Allows access to system-level services
-    network_mode: host  # Allows direct network access like a typical NAS
-    volumes:
-      - nas_config:/config  # NAS configuration storage
-      - nas_data:/data      # Data storage for the NAS
-    environment:
-      - PUID=1000  # Replace with your user ID
-      - PGID=1000  # Replace with your group ID
-    restart: always
 
 volumes:
   postgres_data:
@@ -83,5 +71,4 @@ volumes:
   html:
   vhost:
   acme:
-  nas_config:
-  nas_data:
+  
