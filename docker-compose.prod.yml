@@ -19,13 +19,13 @@ services:
       - ./.env.prod
     depends_on:
       - db
-  telegram_bot:
-    build: ./telegram_bot  # Path to the bot Dockerfile
-    restart: always
-    depends_on:
-      - web  # Ensure the Django app is running first
-    env_file:
-      - ./.env.prod
+#  telegram_bot:
+#    build: ./telegram_bot  # Path to the bot Dockerfile
+#    restart: always
+#    depends_on:
+#      - web  # Ensure the Django app is running first
+#    env_file:
+#      - ./.env.prod
   db:
     image: postgres:13.0-alpine
     restart: always
@@ -62,21 +62,21 @@ services:
       - acme:/etc/acme.sh
     depends_on:
       - nginx-proxy
-  pihole:
-    image: pihole/pihole
-    container_name: pihole
-    ports:
-      - "53:53/tcp"
-      - "53:53/udp"
-      - "100:80/tcp"  # Change port 80 to 8080 for the web interface
-    environment:
-      - TZ=Asia/Kolkata  # Set timezone to IST
-      - WEBPASSWORD=${PIHOLE_WEBPASSWORD}  # Set password from .env file
-      - ServerIP=192.168.0.200
-    volumes:
-      - pihole_etc_pihole:/etc/pihole
-      - pihole_etc_dnsmasq:/etc/dnsmasq.d
-    restart: always
+  # pihole:
+  #   image: pihole/pihole
+  #   container_name: pihole
+  #   ports:
+  #     - "53:53/tcp"
+  #     - "53:53/udp"
+  #     - "100:80/tcp"  # Change port 80 to 8080 for the web interface
+  #   environment:
+  #     - TZ=Asia/Kolkata  # Set timezone to IST
+  #     - WEBPASSWORD=${PIHOLE_WEBPASSWORD}  # Set password from .env file
+  #     - ServerIP=192.168.0.200
+  #   volumes:
+  #     - pihole_etc_pihole:/etc/pihole
+  #     - pihole_etc_dnsmasq:/etc/dnsmasq.d
+  #   restart: always
 
 volumes:
   postgres_data:
@@ -86,5 +86,5 @@ volumes:
   html:
   vhost:
   acme:
-  pihole_etc_pihole:
-  pihole_etc_dnsmasq:
+  # pihole_etc_pihole:
+  # pihole_etc_dnsmasq:
