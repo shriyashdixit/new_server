@@ -1,3 +1,6 @@
 .env*
 staticfiles
 django_app/algo_trading/stratergies.py
+notification_scripts/last_connected_peers.txt
+notification_scripts/last_handshakes.txt
+notification_scripts/peer_mapping.txt
