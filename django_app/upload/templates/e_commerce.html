@@ -1,246 +1,324 @@
-<!DOCTYPE html>
 {% load static %}
-<html>
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
 <head>
-<title>Compay24.com</title>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<style>
-.w3-sidebar a {font-family: "Roboto", sans-serif}
-body,h1,h2,h3,h4,h5,h6,.w3-wide {font-family: "Montserrat", sans-serif;}
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>E‑commerce Demo — Nazukware</title>
+  <meta name="description" content="Demo storefront with filters, sorting, cart drawer, and quick‑view." />
+  <meta property="og:title" content="E‑commerce Demo — Nazukware" />
+  <meta property="og:description" content="Client‑side demo with product grid, cart, and checkout stub." />
+  <meta property="og:image" content="{% static 'images/og-cover.jpg' %}" />
+
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config={theme:{extend:{colors:{brand:{50:'#effdfc',100:'#c6fbf6',200:'#8ff7ee',300:'#5febdf',400:'#2fd1c7',500:'#12b6ad',600:'#0a8f8a',700:'#0a6f6d',800:'#0a5555',900:'#083f40'}}}}};
+  </script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>body{font-family:'Inter',ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial}</style>
+
+  <!-- Persisted dark mode (no modern syntax) -->
+  <script>(function(){var s=localStorage.getItem('theme');if(s==='dark'||(!s&&matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark')}})();</script>
+
+  <style>
+    .line-clamp-2{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+    .cart-open{transform:translateX(0)}
+  </style>
 </head>
-<body class="w3-content" style="max-width:1200px">
-
-<!-- Sidebar/menu -->
-<nav class="w3-sidebar w3-bar-block w3-white w3-collapse w3-top" style="z-index:3;width:250px" id="mySidebar">
-  <div class="w3-container w3-display-container w3-padding-16">
-    <i onclick="w3_close()" class="fa fa-remove w3-hide-large w3-button w3-display-topright"></i>
-    <h3 class="w3-wide"><b>Shopping Site Demo Page</b></h3>
-  </div>
-  <div class="w3-padding-64 w3-large w3-text-grey" style="font-weight:bold">
-    <a href="#" class="w3-bar-item w3-button">Shirts</a>
-    <a href="#" class="w3-bar-item w3-button">Dresses</a>
-    <a onclick="myAccFunc()" href="javascript:void(0)" class="w3-button w3-block w3-white w3-left-align" id="myBtn">
-      Jeans <i class="fa fa-caret-down"></i>
-    </a>
-    <div id="demoAcc" class="w3-bar-block w3-hide w3-padding-large w3-medium">
-      <a href="#" class="w3-bar-item w3-button w3-light-grey"><i class="fa fa-caret-right w3-margin-right"></i>Skinny</a>
-      <a href="#" class="w3-bar-item w3-button">Relaxed</a>
-      <a href="#" class="w3-bar-item w3-button">Bootcut</a>
-      <a href="#" class="w3-bar-item w3-button">Straight</a>
-    </div>
-    <a href="#" class="w3-bar-item w3-button">Jackets</a>
-    <a href="#" class="w3-bar-item w3-button">Gymwear</a>
-    <a href="#" class="w3-bar-item w3-button">Blazers</a>
-    <a href="#" class="w3-bar-item w3-button">Shoes</a>
-  </div>
-  <a href="#footer" class="w3-bar-item w3-button w3-padding">Contact</a> 
-  <a href="javascript:void(0)" class="w3-bar-item w3-button w3-padding" onclick="document.getElementById('newsletter').style.display='block'">Newsletter</a> 
-  <a href="#footer"  class="w3-bar-item w3-button w3-padding">Subscribe</a>
-</nav>
-
-<!-- Top menu on small screens -->
-<header class="w3-bar w3-top w3-hide-large w3-black w3-xlarge">
-  <div class="w3-bar-item w3-padding-24 w3-wide">LOGO</div>
-  <a href="javascript:void(0)" class="w3-bar-item w3-button w3-padding-24 w3-right" onclick="w3_open()"><i class="fa fa-bars"></i></a>
-</header>
-
-<!-- Overlay effect when opening sidebar on small screens -->
-<div class="w3-overlay w3-hide-large" onclick="w3_close()" style="cursor:pointer" title="close side menu" id="myOverlay"></div>
-
-<!-- !PAGE CONTENT! -->
-<div class="w3-main" style="margin-left:250px">
-
-  <!-- Push down content on small screens -->
-  <div class="w3-hide-large" style="margin-top:83px"></div>
-  
-  <!-- Top header -->
-  <header class="w3-container w3-xlarge">
-    <p class="w3-left">Jeans</p>
-    <p class="w3-right">
-      <i class="fa fa-shopping-cart w3-margin-right"></i>
-      <i class="fa fa-search"></i>
-    </p>
+<body class="bg-white text-neutral-800 dark:bg-neutral-950 dark:text-neutral-100">
+  <!-- Header -->
+  <header class="sticky top-0 z-50 backdrop-blur supports-[backdrop-filter]:bg-white/60 dark:supports-[backdrop-filter]:bg-neutral-900/60">
+    <nav class="mx-auto max-w-7xl px-4">
+      <div class="flex h-16 items-center justify-between">
+        <a href="{% url 'homepage_main' %}" class="flex items-center gap-2">
+          <img src="{% static 'images/nazukware-logo.svg' %}" class="h-8 w-auto" alt="Nazukware"/>
+          <span class="hidden text-xl font-extrabold tracking-tight text-brand-600 dark:text-brand-300">Nazukware</span>
+        </a>
+        <div class="hidden items-center gap-8 md:flex">
+          <a class="hover:text-brand-600" href="{% url 'tutorials_webpage' %}">Tutorials</a>
+          <a class="text-brand-600 dark:text-brand-300" href="{% url 'e_commerce' %}">E‑commerce</a>
+          <a href="https://cloud.nazukware.com" target="_blank" rel="noopener noreferrer" class="hover:text-brand-600 dark:hover:text-brand-300">Live Demos</a>
+          <a class="hover:text-brand-600" href="{% url 'homepage_main' %}#contact">Contact</a>
+        </div>
+        <div class="flex items-center gap-2">
+          <button id="cartBtn" class="relative rounded-xl border border-neutral-200 px-3 py-2 text-sm hover:bg-neutral-50 dark:border-neutral-700 dark:hover:bg-neutral-800">
+            🛒 <span class="ml-1">Cart</span>
+            <span id="cartCount" class="absolute -right-1 -top-1 inline-flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-brand-600 px-1 text-xs font-bold text-white">0</span>
+          </button>
+          <button id="themeToggle" class="rounded-full border border-neutral-200 p-2 text-neutral-700 shadow-sm hover:bg-neutral-50 active:scale-95 dark:border-neutral-700 dark:text-neutral-200 dark:hover:bg-neutral-800">🌓</button>
+        </div>
+      </div>
+    </nav>
   </header>
 
-  <!-- Image header -->
-  <div class="w3-display-container w3-container">
-    <img src="{% static 'stock_photo_1.jpg' %}" alt="Jeans" style="width:100%">
-    <div class="w3-display-topleft w3-text-white" style="padding:24px 48px">
-      <h1 class="w3-jumbo w3-hide-small">New arrivals</h1>
-      <h1 class="w3-hide-large w3-hide-medium">New arrivals</h1>
-      <h1 class="w3-hide-small">COLLECTION 2016</h1>
-      <p><a href="#jeans" class="w3-button w3-black w3-padding-large w3-large">SHOP NOW</a></p>
+  <!-- Hero -->
+  <section class="relative">
+    <img src="{% static 'images/hero.jpg' %}" alt="Store hero" class="absolute inset-0 -z-10 h-full w-full object-cover opacity-20" onerror="this.remove()"/>
+    <div class="mx-auto max-w-7xl px-4 py-12 md:py-16">
+      <h1 class="text-4xl font-extrabold sm:text-5xl">Demo Storefront</h1>
+      <p class="mt-3 max-w-2xl text-neutral-600 dark:text-neutral-300">Client‑side demo: filter, search, sort, add to cart, quick view, and a checkout stub.</p>
+      <div class="mt-4 inline-flex items-center gap-2 rounded-full border border-brand-200 bg-white/80 px-3 py-1 text-xs font-semibold text-brand-700 dark:border-brand-900/40 dark:bg-brand-900/20 dark:text-brand-300">Free shipping over $75 • 30‑day returns</div>
     </div>
-  </div>
+  </section>
 
-  <div class="w3-container w3-text-grey" id="jeans">
-    <p>8 items</p>
-  </div>
+  <!-- Filters / toolbar -->
+  <section class="mx-auto max-w-7xl px-4">
+    <div class="flex flex-wrap items-end gap-3 rounded-2xl border border-neutral-200 bg-white p-4 shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
+      <div class="flex-1 min-w-[220px]">
+        <label class="text-xs font-semibold">Search</label>
+        <input id="q" placeholder="Search products…" class="mt-1 w-full rounded-xl border border-neutral-300 bg-white/80 px-3 py-2 text-sm outline-none placeholder:text-neutral-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-200 dark:border-neutral-700 dark:bg-neutral-900/80"/>
+      </div>
+      <div>
+        <label class="text-xs font-semibold">Category</label>
+        <select id="category" class="mt-1 w-40 rounded-xl border border-neutral-300 bg-white/80 px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900/80">
+          <option value="">All</option>
+          <option value="Electronics">Electronics</option>
+          <option value="Apparel">Apparel</option>
+          <option value="Home">Home</option>
+        </select>
+      </div>
+      <div>
+        <label class="text-xs font-semibold">Price min ($)</label>
+        <input id="pmin" type="number" min="0" step="1" class="mt-1 w-28 rounded-xl border border-neutral-300 bg-white/80 px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900/80"/>
+      </div>
+      <div>
+        <label class="text-xs font-semibold">Price max ($)</label>
+        <input id="pmax" type="number" min="0" step="1" class="mt-1 w-28 rounded-xl border border-neutral-300 bg-white/80 px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900/80"/>
+      </div>
+      <div>
+        <label class="text-xs font-semibold">Sort</label>
+        <select id="sort" class="mt-1 w-44 rounded-xl border border-neutral-300 bg-white/80 px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900/80">
+          <option value="pop">Most popular</option>
+          <option value="price-asc">Price: Low → High</option>
+          <option value="price-desc">Price: High → Low</option>
+          <option value="rating">Top rated</option>
+          <option value="new">Newest</option>
+        </select>
+      </div>
+      <button id="reset" class="ml-auto rounded-xl border border-neutral-300 px-3 py-2 text-sm hover:bg-neutral-50 dark:border-neutral-700 dark:hover:bg-neutral-800">Reset</button>
+    </div>
+  </section>
 
   <!-- Product grid -->
-  <div class="w3-row w3-grayscale">
-    <div class="w3-col l3 s6">
-      <div class="w3-container">
-        <img src="{% static 'logo.png' %}" style="width:100%">
-        <p>Ripped Skinny Jeans<br><b>$24.99</b></p>
-      </div>
-      <div class="w3-container">
-        <img src="{% static 'logo.png' %}" style="width:100%">
-        <p>Mega Ripped Jeans<br><b>$19.99</b></p>
-      </div>
+  <section class="mx-auto max-w-7xl px-4 py-8">
+    <div id="resultsMeta" class="mb-3 text-sm text-neutral-500"></div>
+    <div id="grid" class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"></div>
+    <div id="empty" class="mt-12 hidden rounded-2xl border border-neutral-200 bg-white p-6 text-center text-neutral-600 dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-300">No products match your filters.</div>
+    <div class="mt-8 flex items-center justify-center gap-2">
+      <button id="prev" class="rounded-xl border border-neutral-300 px-4 py-2 text-sm hover:bg-neutral-50 disabled:opacity-40 dark:border-neutral-700 dark:hover:bg-neutral-800">Previous</button>
+      <span id="pageInfo" class="text-sm text-neutral-500"></span>
+      <button id="next" class="rounded-xl border border-neutral-300 px-4 py-2 text-sm hover:bg-neutral-50 disabled:opacity-40 dark:border-neutral-700 dark:hover:bg-neutral-800">Next</button>
     </div>
+  </section>
 
-    <div class="w3-col l3 s6">
-      <div class="w3-container">
-        <div class="w3-display-container">
-          <img src="{% static 'logo.png' %}" style="width:100%">
-          <span class="w3-tag w3-display-topleft">New</span>
-          <div class="w3-display-middle w3-display-hover">
-            <button class="w3-button w3-black">Buy now <i class="fa fa-shopping-cart"></i></button>
+  <!-- Cart Drawer -->
+  <aside id="cart" class="fixed right-0 top-0 z-[60] h-full w-[380px] translate-x-full border-l border-neutral-200 bg-white shadow-xl transition-transform dark:border-neutral-800 dark:bg-neutral-900">
+    <div class="flex h-16 items-center justify-between border-b border-neutral-200 px-4 dark:border-neutral-800">
+      <div class="text-lg font-semibold">Your Cart</div>
+      <button id="closeCart" class="rounded-lg border border-neutral-300 px-3 py-1 text-sm hover:bg-neutral-50 dark:border-neutral-700 dark:hover:bg-neutral-800">Close</button>
+    </div>
+    <div id="cartItems" class="max-h-[calc(100vh-220px)] space-y-3 overflow-auto p-4"></div>
+    <div class="absolute bottom-0 left-0 right-0 border-t border-neutral-200 p-4 dark:border-neutral-800">
+      <div class="flex items-center justify-between text-sm"><span>Subtotal</span><span id="subtotal">$0.00</span></div>
+      <div class="flex items-center justify-between text-sm"><span>Tax (10%)</span><span id="tax">$0.00</span></div>
+      <div class="mt-2 flex items-center justify-between text-lg font-bold"><span>Total</span><span id="total">$0.00</span></div>
+      <a href="#" class="mt-3 block rounded-xl bg-brand-600 px-4 py-2 text-center font-semibold text-white hover:bg-brand-700">Checkout (stub)</a>
+      <p class="mt-1 text-xs text-neutral-500">This is a client‑side demo. Wire to your Django checkout when ready.</p>
+    </div>
+  </aside>
+
+  <!-- Quick View Modal -->
+  <div id="quick" class="fixed inset-0 z-[70] hidden items-center justify-center bg-black/50 p-4">
+    <div class="max-h-[90vh] w-full max-w-3xl overflow-auto rounded-2xl border border-neutral-200 bg-white shadow-2xl dark:border-neutral-800 dark:bg-neutral-900">
+      <div class="flex items-center justify-between border-b border-neutral-200 p-4 dark:border-neutral-800">
+        <div id="qTitle" class="text-lg font-semibold"></div>
+        <button id="qClose" class="rounded-lg border border-neutral-300 px-3 py-1 text-sm hover:bg-neutral-50 dark:border-neutral-700 dark:hover:bg-neutral-800">Close</button>
+      </div>
+      <div class="grid gap-4 p-4 md:grid-cols-2">
+        <img id="qImg" class="h-64 w-full rounded-xl object-cover" alt="Product"/>
+        <div>
+          <div id="qPrice" class="text-2xl font-bold"></div>
+          <div id="qRating" class="mt-1 text-sm text-yellow-600"></div>
+          <p id="qDesc" class="mt-3 text-sm text-neutral-600 dark:text-neutral-300"></p>
+          <div class="mt-4 flex items-center gap-2">
+            <input id="qQty" type="number" min="1" value="1" class="w-20 rounded-xl border border-neutral-300 px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900/80"/>
+            <button id="qAdd" class="rounded-xl bg-brand-600 px-4 py-2 font-semibold text-white hover:bg-brand-700">Add to cart</button>
           </div>
         </div>
-        <p>Mega Ripped Jeans<br><b>$19.99</b></p>
-      </div>
-      <div class="w3-container">
-        <img src="{% static 'logo.png' %}" style="width:100%">
-        <p>Washed Skinny Jeans<br><b>$20.50</b></p>
-      </div>
-    </div>
-
-    <div class="w3-col l3 s6">
-      <div class="w3-container">
-        <img src="{% static 'logo.png' %}" style="width:100%">
-        <p>Washed Skinny Jeans<br><b>$20.50</b></p>
-      </div>
-      <div class="w3-container">
-        <div class="w3-display-container">
-          <img src="{% static 'logo.png' %}" style="width:100%">
-          <span class="w3-tag w3-display-topleft">Sale</span>
-          <div class="w3-display-middle w3-display-hover">
-            <button class="w3-button w3-black">Buy now <i class="fa fa-shopping-cart"></i></button>
-          </div>
-        </div>
-        <p>Vintage Skinny Jeans<br><b class="w3-text-red">$14.99</b></p>
-      </div>
-    </div>
-
-    <div class="w3-col l3 s6">
-      <div class="w3-container">
-        <img src="{% static 'logo.png' %}" style="width:100%">
-        <p>Vintage Skinny Jeans<br><b>$14.99</b></p>
-      </div>
-      <div class="w3-container">
-        <img src="{% static 'logo.png' %}" style="width:100%">
-        <p>Ripped Skinny Jeans<br><b>$24.99</b></p>
       </div>
     </div>
   </div>
 
-  <!-- Subscribe section -->
-  <div class="w3-container w3-black w3-padding-32">
-    <h1>Subscribe</h1>
-    <p>To get special offers and VIP treatment:</p>
-    <p><input class="w3-input w3-border" type="text" placeholder="Enter e-mail" style="width:100%"></p>
-    <button type="button" class="w3-button w3-red w3-margin-bottom">Subscribe</button>
-  </div>
-  
   <!-- Footer -->
-  <footer class="w3-padding-64 w3-light-grey w3-small w3-center" id="footer">
-    <div class="w3-row-padding">
-      <div class="w3-col s4">
-        <h4>Contact</h4>
-        <p>Questions? Go ahead.</p>
-        <form action="/action_page.php" target="_blank">
-          <p><input class="w3-input w3-border" type="text" placeholder="Name" name="Name" required></p>
-          <p><input class="w3-input w3-border" type="text" placeholder="Email" name="Email" required></p>
-          <p><input class="w3-input w3-border" type="text" placeholder="Subject" name="Subject" required></p>
-          <p><input class="w3-input w3-border" type="text" placeholder="Message" name="Message" required></p>
-          <button type="submit" class="w3-button w3-block w3-black">Send</button>
-        </form>
-      </div>
+  <footer class="border-t border-neutral-100 py-10 dark:border-neutral-800"><div class="mx-auto max-w-7xl px-4 text-sm text-neutral-500">© <span id="year"></span> Nazukware.</div></footer>
 
-      <div class="w3-col s4">
-        <h4>About</h4>
-        <p><a href="#">About us</a></p>
-        <p><a href="#">We're hiring</a></p>
-        <p><a href="#">Support</a></p>
-        <p><a href="#">Find store</a></p>
-        <p><a href="#">Shipment</a></p>
-        <p><a href="#">Payment</a></p>
-        <p><a href="#">Gift card</a></p>
-        <p><a href="#">Return</a></p>
-        <p><a href="#">Help</a></p>
-      </div>
+  <script>
+  // ===== Data =====
+  var PRODUCTS = [
+    {id:'p1', name:'Wireless Headphones', category:'Electronics', price:79.99, rating:4.6, popularity:98, created:20240701, img:'images/products/headphones.jpg', desc:'Bluetooth 5.3, 30h battery, USB‑C fast charge.'},
+    {id:'p2', name:'Smart LED Bulb (2‑pack)', category:'Home', price:24.5, rating:4.3, popularity:82, created:20240615, img:'images/products/bulb.jpg', desc:'Wi‑Fi, voice assistant compatible, 16M colors.'},
+    {id:'p3', name:'Cotton T‑Shirt', category:'Apparel', price:18.0, rating:4.2, popularity:90, created:20240601, img:'images/products/tshirt.jpg', desc:'100% cotton, preshrunk, unisex fit.'},
+    {id:'p4', name:'Mechanical Keyboard', category:'Electronics', price:109.0, rating:4.8, popularity:87, created:20240710, img:'images/products/keyboard.jpg', desc:'Hot‑swappable switches, RGB, USB‑C.'},
+    {id:'p5', name:'Espresso Maker', category:'Home', price:149.0, rating:4.7, popularity:76, created:20240526, img:'images/products/espresso.jpg', desc:'15‑bar pump, milk frother, compact design.'},
+    {id:'p6', name:'Running Shoes', category:'Apparel', price:69.99, rating:4.4, popularity:84, created:20240620, img:'images/products/shoes.jpg', desc:'Lightweight foam, breathable mesh upper.'},
+    {id:'p7', name:'4K Action Camera', category:'Electronics', price:129.0, rating:4.1, popularity:60, created:20240530, img:'images/products/camera.jpg', desc:'4K30, waterproof case, image stabilization.'},
+    {id:'p8', name:'Stainless Cookware Set', category:'Home', price:199.0, rating:4.5, popularity:72, created:20240421, img:'images/products/cookware.jpg', desc:'Tri‑ply, oven safe, dishwasher safe.'},
+    {id:'p9', name:'Hoodie', category:'Apparel', price:39.0, rating:4.6, popularity:75, created:20240311, img:'images/products/hoodie.jpg', desc:'Fleece lining, kangaroo pocket, cozy.'},
+    {id:'p10',name:'USB‑C GaN Charger 65W', category:'Electronics', price:39.99, rating:4.7, popularity:93, created:20240714, img:'images/products/charger.jpg', desc:'Dual port PD, compact travel size.'},
+    {id:'p11',name:'Desk Lamp', category:'Home', price:29.5, rating:4.0, popularity:61, created:20240605, img:'images/products/lamp.jpg', desc:'Dimmable, adjustable arm, warm/cool light.'},
+    {id:'p12',name:'Performance Socks (3‑pack)', category:'Apparel', price:12.99, rating:4.3, popularity:55, created:20240502, img:'images/products/socks.jpg', desc:'Moisture‑wicking, cushioned heel & toe.'}
+  ];
 
-      <div class="w3-col s4 w3-justify">
-        <h4>Store</h4>
-        <p><i class="fa fa-fw fa-map-marker"></i> Company Name</p>
-        <p><i class="fa fa-fw fa-phone"></i> 0044123123</p>
-        <p><i class="fa fa-fw fa-envelope"></i> ex@mail.com</p>
-        <h4>We accept</h4>
-        <p><i class="fa fa-fw fa-cc-amex"></i> Amex</p>
-        <p><i class="fa fa-fw fa-credit-card"></i> Credit Card</p>
-        <br>
-        <i class="fa fa-facebook-official w3-hover-opacity w3-large"></i>
-        <i class="fa fa-instagram w3-hover-opacity w3-large"></i>
-        <i class="fa fa-snapchat w3-hover-opacity w3-large"></i>
-        <i class="fa fa-pinterest-p w3-hover-opacity w3-large"></i>
-        <i class="fa fa-twitter w3-hover-opacity w3-large"></i>
-        <i class="fa fa-linkedin w3-hover-opacity w3-large"></i>
-      </div>
-    </div>
-  </footer>
 
-  <div class="w3-black w3-center w3-padding-24">Powered by <a href="https://www.compay24.com" title="Compay24.com" target="_blank" class="w3-hover-opacity">Compay24.com</a></div>
+  for(var i=0;i<PRODUCTS.length;i++){ PRODUCTS[i].img = '{% static e_commerce_image.webp %}'; }
 
-  <!-- End page content -->
-</div>
+  // ===== State =====
+  var state = { q:'', category:'', pmin:null, pmax:null, sort:'pop', page:1, perPage:12 };
+  var CART_KEY='demo.cart.v1';
+  var cart = JSON.parse(localStorage.getItem(CART_KEY)||'{}'); // id -> qty
 
-<!-- Newsletter Modal -->
-<div id="newsletter" class="w3-modal">
-  <div class="w3-modal-content w3-animate-zoom" style="padding:32px">
-    <div class="w3-container w3-white w3-center">
-      <i onclick="document.getElementById('newsletter').style.display='none'" class="fa fa-remove w3-right w3-button w3-transparent w3-xxlarge"></i>
-      <h2 class="w3-wide">NEWSLETTER</h2>
-      <p>Join our mailing list to receive updates on new arrivals and special offers.</p>
-      <p><input class="w3-input w3-border" type="text" placeholder="Enter e-mail"></p>
-      <button type="button" class="w3-button w3-padding-large w3-red w3-margin-bottom" onclick="document.getElementById('newsletter').style.display='none'">Subscribe</button>
-    </div>
-  </div>
-</div>
+  // ===== Utils =====
+  function $(sel, root){ return (root||document).querySelector(sel); }
+  function $$(sel, root){ return Array.prototype.slice.call((root||document).querySelectorAll(sel)); }
+  function fmt(n){ return '$'+(Math.round(n*100)/100).toFixed(2); }
+  function star(r){ var s=''; for(var i=1;i<=5;i++){ s += i<=Math.round(r)?'★':'☆'; } return s; }
 
-<script>
-// Accordion 
-function myAccFunc() {
-  var x = document.getElementById("demoAcc");
-  if (x.className.indexOf("w3-show") == -1) {
-    x.className += " w3-show";
-  } else {
-    x.className = x.className.replace(" w3-show", "");
+  // ===== Filtering / sorting =====
+  function filtered(){
+    var out = PRODUCTS.filter(function(p){
+      if(state.category && p.category!==state.category) return false;
+      if(state.q){ var t=(p.name+" "+p.desc).toLowerCase(); if(t.indexOf(state.q.toLowerCase())===-1) return false; }
+      if(state.pmin!=null && p.price<state.pmin) return false;
+      if(state.pmax!=null && p.price>state.pmax) return false;
+      return true;
+    });
+    out.sort(function(a,b){
+      if(state.sort==='price-asc') return a.price-b.price;
+      if(state.sort==='price-desc') return b.price-a.price;
+      if(state.sort==='rating') return b.rating-a.rating;
+      if(state.sort==='new') return b.created-a.created;
+      return b.popularity-a.popularity; // pop
+    });
+    return out;
   }
-}
 
-// Click on the "Jeans" link on page load to open the accordion for demo purposes
-document.getElementById("myBtn").click();
+  // ===== Render =====
+  function render(){
+    var list = filtered();
+    var total = list.length; var start = (state.page-1)*state.perPage; var pageItems = list.slice(start, start+state.perPage);
+    $('#resultsMeta').textContent = total+" results"+(state.q||state.category?' (filtered)':'');
 
+    var g=$('#grid'); g.innerHTML='';
+    if(pageItems.length===0){ $('#empty').classList.remove('hidden'); } else { $('#empty').classList.add('hidden'); }
 
-// Open and close sidebar
-function w3_open() {
-  document.getElementById("mySidebar").style.display = "block";
-  document.getElementById("myOverlay").style.display = "block";
-}
- 
-function w3_close() {
-  document.getElementById("mySidebar").style.display = "none";
-  document.getElementById("myOverlay").style.display = "none";
-}
-</script>
+    pageItems.forEach(function(p){
+      var card = document.createElement('article');
+      card.className='group overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-md dark:border-neutral-800 dark:bg-neutral-900';
+      card.innerHTML = ''+
+        '<div class="relative">'+
+          '<img src="'+p.img+'" alt="'+p.name+'" class="h-48 w-full object-cover" onerror="this.src=\'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?q=80&w=1200&auto=format&fit=crop\'">'+
+          '<button data-id="'+p.id+'" class="absolute bottom-3 right-3 rounded-xl bg-white/90 px-3 py-1 text-sm shadow hover:bg-white dark:bg-neutral-800">Quick view</button>'+
+        '</div>'+
+        '<div class="p-4">'+
+          '<div class="flex items-baseline justify-between">'+
+            '<h3 class="line-clamp-2 font-semibold">'+p.name+'</h3><div class="ml-3 text-lg font-bold">'+fmt(p.price)+'</div>'+
+          '</div>'+
+          '<div class="mt-1 text-xs text-yellow-600">'+star(p.rating)+'</div>'+
+          '<p class="mt-2 line-clamp-2 text-sm text-neutral-600 dark:text-neutral-300">'+p.desc+'</p>'+
+          '<div class="mt-3 flex items-center gap-2">'+
+            '<button data-add="'+p.id+'" class="rounded-xl bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700">Add to cart</button>'+
+            '<button data-buy="'+p.id+'" class="rounded-xl border border-neutral-300 px-3 py-2 text-sm hover:bg-neutral-50 dark:border-neutral-700 dark:hover:bg-neutral-800">Buy now</button>'+
+          '</div>'+
+        '</div>';
+      g.appendChild(card);
+    });
 
+    // pagination
+    var maxPage = Math.max(1, Math.ceil(total/state.perPage));
+    $('#pageInfo').textContent = 'Page '+state.page+' of '+maxPage;
+    $('#prev').disabled = state.page<=1; $('#next').disabled = state.page>=maxPage;
+  }
+
+  // ===== Cart =====
+  function cartQty(id){ return cart[id]||0; }
+  function setCart(id, qty){ if(qty<=0){ delete cart[id]; } else { cart[id]=qty; } localStorage.setItem(CART_KEY, JSON.stringify(cart)); updateCartCount(); renderCart(); }
+  function addToCart(id, qty){ qty=qty||1; setCart(id, cartQty(id)+qty); }
+  function totals(){ var sub=0, id; for(id in cart){ if(cart.hasOwnProperty(id)){ var p = PRODUCTS.find(function(x){return x.id===id;}); if(p){ sub += p.price*cart[id]; } } } var tax=sub*0.10; return {sub:sub, tax:tax, total:sub+tax}; }
+  function updateCartCount(){ var n=0, id; for(id in cart){ if(cart.hasOwnProperty(id)){ n+=cart[id]; } } $('#cartCount').textContent = n; }
+
+  function renderCart(){
+    var box=$('#cartItems'); box.innerHTML='';
+    var id; for(id in cart){ if(cart.hasOwnProperty(id)){
+      (function(pid){ var p = PRODUCTS.find(function(x){return x.id===pid;}); if(!p) return; var li=document.createElement('div'); li.className='grid grid-cols-[64px,1fr] gap-3 rounded-xl border border-neutral-200 p-2 dark:border-neutral-800'; li.innerHTML=''+
+        '<img src="'+p.img+'" alt="'+p.name+'" class="h-16 w-16 rounded-lg object-cover">'+
+        '<div>'+
+          '<div class="flex items-center justify-between"><div class="font-semibold">'+p.name+'</div><button data-remove="'+p.id+'" class="text-xs text-neutral-500 hover:underline">Remove</button></div>'+
+          '<div class="mt-1 flex items-center gap-2 text-sm">'+fmt(p.price)+' · '+
+            '<button data-dec="'+p.id+'" class="rounded border px-2 dark:border-neutral-700">−</button>'+ 
+            '<span>'+cart[pid]+'</span>'+ 
+            '<button data-inc="'+p.id+'" class="rounded border px-2 dark:border-neutral-700">+</button>'+
+          '</div>'+
+        '</div>';
+        box.appendChild(li); })(id);
+    }}
+    var t=totals(); $('#subtotal').textContent=fmt(t.sub); $('#tax').textContent=fmt(t.tax); $('#total').textContent=fmt(t.total);
+  }
+
+  // ===== Quick view =====
+  var qProd=null;
+  function openQuick(p){ qProd=p; $('#qTitle').textContent=p.name; $('#qPrice').textContent=fmt(p.price); $('#qDesc').textContent=p.desc; $('#qRating').textContent=star(p.rating); $('#qImg').src=p.img; $('#qQty').value=1; $('#quick').classList.remove('hidden'); $('#quick').classList.add('flex'); }
+  function closeQuick(){ $('#quick').classList.add('hidden'); $('#quick').classList.remove('flex'); }
+
+  // ===== Wire up =====
+  document.getElementById('year').textContent = new Date().getFullYear();
+  document.getElementById('themeToggle').addEventListener('click', function(){ var d=document.documentElement.classList.toggle('dark'); localStorage.setItem('theme', d?'dark':'light'); });
+
+  // Filters
+  $('#q').addEventListener('input', function(e){ state.q = e.target.value.trim(); state.page=1; render(); });
+  $('#category').addEventListener('change', function(e){ state.category = e.target.value; state.page=1; render(); });
+  $('#pmin').addEventListener('change', function(e){ var v=e.target.value; state.pmin = v===''?null:parseFloat(v); state.page=1; render(); });
+  $('#pmax').addEventListener('change', function(e){ var v=e.target.value; state.pmax = v===''?null:parseFloat(v); state.page=1; render(); });
+  $('#sort').addEventListener('change', function(e){ state.sort = e.target.value; render(); });
+  $('#reset').addEventListener('click', function(){ $('#q').value=''; $('#category').value=''; $('#pmin').value=''; $('#pmax').value=''; $('#sort').value='pop'; state={ q:'', category:'', pmin:null, pmax:null, sort:'pop', page:1, perPage:12 }; render(); });
+
+  // Pagination
+  $('#prev').addEventListener('click', function(){ if(state.page>1){ state.page--; render(); } });
+  $('#next').addEventListener('click', function(){ var max=Math.max(1, Math.ceil(filtered().length/state.perPage)); if(state.page<max){ state.page++; render(); } });
+
+  // Grid actions (delegate)
+  document.addEventListener('click', function(e){
+    var t = e.target;
+    if(t.getAttribute('data-add')){ addToCart(t.getAttribute('data-add'), 1); return; }
+    if(t.getAttribute('data-buy')){ addToCart(t.getAttribute('data-buy'), 1); $('#cart').classList.add('cart-open'); return; }
+    if(t.getAttribute('data-id')){ var p = PRODUCTS.find(function(x){ return x.id===t.getAttribute('data-id'); }); if(p){ openQuick(p); } return; }
+    if(t.getAttribute('data-inc')){ var id=t.getAttribute('data-inc'); setCart(id, cartQty(id)+1); return; }
+    if(t.getAttribute('data-dec')){ var id2=t.getAttribute('data-dec'); setCart(id2, cartQty(id2)-1); return; }
+    if(t.getAttribute('data-remove')){ var id3=t.getAttribute('data-remove'); setCart(id3, 0); return; }
+  });
+
+  // Cart drawer
+  $('#cartBtn').addEventListener('click', function(){ $('#cart').classList.add('cart-open'); renderCart(); });
+  $('#closeCart').addEventListener('click', function(){ $('#cart').classList.remove('cart-open'); });
+
+  // Quick view events
+  $('#qClose').addEventListener('click', closeQuick);
+  $('#quick').addEventListener('click', function(e){ if(e.target===this){ closeQuick(); } });
+  $('#qAdd').addEventListener('click', function(){ var qty=parseInt($('#qQty').value||'1',10); if(qProd){ addToCart(qProd.id, qty); closeQuick(); $('#cart').classList.add('cart-open'); }});
+
+  // Init
+  updateCartCount(); renderCart(); render();
+
+  // Self-tests
+  (function(){ try{
+    console.groupCollapsed('E‑commerce demo tests');
+    console.assert(fmt(12.5)==='$12.50','fmt');
+    addToCart('p1',1); var t=totals(); console.assert(t.sub>0,'totals'); setCart('p1',0); // cleanup
+    console.groupEnd();
+  }catch(e){ console.warn('Self-tests failed',e);} })();
+  </script>
 </body>
 </html>

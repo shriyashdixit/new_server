@@ -1,990 +1,275 @@
+{% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
-<title>Tutorials</title>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-<link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-black.css">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<style>
-html,body,h1,h2,h3,h4,h5,h6 {font-family: "Roboto", sans-serif;}
-.w3-sidebar {
-  z-index: 3;
-  width: 250px;
-  top: 43px;
-  bottom: 0;
-  height: inherit;
-}
-.w3-main {
-  margin-left: 250px; /* Width of the sidebar */
-  margin-top: 50px; /* Adjust based on navbar height */
-  padding: 20px; /* Optional padding */
-  min-height: calc(100vh - 50px - 100px); /* Adjust the height calculation */
-  }
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tutorials — Nazukware</title>
+  <meta name="description" content="Hands‑on tutorials for Python, Django, Docker, SQL, Git/CI, Nginx, and Embedded." />
+  <meta property="og:title" content="Tutorials — Nazukware" />
+  <meta property="og:description" content="Guides with copyable code, ToC, progress tracking and search." />
+  <meta property="og:image" content="{% static 'images/og-cover.jpg' %}" />
 
-  /* Sticky footer style */
-.footer {
-    position: relative; /* Changed to relative for sticky positioning */
-    margin-top: auto; /* Pushes footer to bottom if page height is short */
-    width: 100%;
-    background-color: #333; /* Background color of the footer */
-    color: #fff; /* Footer text color */
-    padding: 10px 0; /* Padding for spacing inside the footer */
-}
-.custom-list {
-            list-style-type: none; /* Removes default bullets or numbers */
-            padding-left: 0; /* Removes default padding */
-        }
-.custom-list li::before {
-            content: ". "; /* Adds the dot before each item */
-            color: black; /* Sets the color of the dot */
-        }
-.code-container {
-            position: relative;
-            display: inline-block;
-        }
-.code {
-            display: block;
-            padding: 10px;
-            border: 1px solid #ddd;
-            background: #f9f9f9;
-            overflow-x: auto;
-            font-family: monospace;
-            white-space: pre;
-        }
-.copy-button {
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            background: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            padding: 5px 10px;
-            cursor: pointer;
-        }
-.copy-button:hover {
-            background: #0056b3;
-        }
-</style>
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config={theme:{extend:{colors:{brand:{50:'#effdfc',100:'#c6fbf6',200:'#8ff7ee',300:'#5febdf',400:'#2fd1c7',500:'#12b6ad',600:'#0a8f8a',700:'#0a6f6d',800:'#0a5555',900:'#083f40'}}}}};</script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>body{font-family:'Inter',ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial}</style>
+
+  <!-- Prism (syntax) -->
+  <link rel="stylesheet" href="https://unpkg.com/prismjs@1.29.0/themes/prism.css"/>
+  <script src="https://unpkg.com/prismjs@1.29.0/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+  <script>Prism.plugins.autoloader.languages_path='https://unpkg.com/prismjs@1.29.0/components/'</script>
+
+  <!-- Markdown + Search -->
+  <script src="https://unpkg.com/marked@12.0.2/marked.min.js"></script>
+  <script src="https://unpkg.com/lunr/lunr.js"></script>
+
+  <script>(function(){var s=localStorage.getItem('theme');if(s==='dark'||(!s&&matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark')}})();</script>
+
+  <style>
+    @media print { .no-print{display:none!important} body{color:#000} }
+    .code-actions{position:absolute;top:.5rem;right:.5rem}
+  </style>
 </head>
-<body>
-
-<!-- Navbar -->
-<div class="w3-top">
-  <div class="w3-bar w3-theme w3-top w3-left-align w3-large">
-    
-    <a href="#" class="w3-bar-item w3-button w3-theme-l1" href="javascript:void(0)" onclick="w3_open()"><i class="fa fa-bars"></i> Tutorials</a>
-    <a href="#" class="w3-bar-item w3-button w3-hide-small w3-hover-white" onclick="showContent('aboutUs')">About US</a>
-  </div>
-</div>
-
-
-<!-- Sidebar -->
-<nav class="w3-sidebar w3-bar-block w3-collapse w3-large w3-theme-l5 w3-animate-left" id="mySidebar">
-  <a href="javascript:void(0)" onclick="w3_close()" class="w3-right w3-xlarge w3-padding-large w3-hover-black w3-hide-large" title="Close Menu">
-    <i class="fa fa-remove"></i>
-  </a>
-  <h4 class="w3-bar-item"><b>Menu</b></h4>
-
-  <!-- Python Basics with collapsible sub-sections -->
-  <button class="w3-bar-item w3-button w3-hover-black" onclick="toggleSubMenu('pythonBasicsSub')">Python Basics</button>
-  <div id="pythonBasicsSub" class="w3-hide w3-animate-left">
-    <a class="w3-bar-item w3-button w3-hover-light-grey" href="#" onclick="showContent('introPython')">Introduction to Python</a>
-    <a class="w3-bar-item w3-button w3-hover-light-grey" href="#" onclick="showContent('pythonSyntax')">Python Syntax and Basics</a>
-    <a class="w3-bar-item w3-button w3-hover-light-grey" href="#" onclick="showContent('workingWithData')">Working with Data</a>
-  </div>
-
-  <!-- Advanced Python with collapsible sub-sections -->
-  <button class="w3-bar-item w3-button w3-hover-black" onclick="toggleSubMenu('advancedPythonSub')">Advanced Python</button>
-  <div id="advancedPythonSub" class="w3-hide w3-animate-left">
-    <a class="w3-bar-item w3-button w3-hover-light-grey" href="#" onclick="showContent('oopPython')">OOP in Python</a>
-    <a class="w3-bar-item w3-button w3-hover-light-grey" href="#" onclick="showContent('errorHandling')">Error Handling and Exceptions</a>
-    <a class="w3-bar-item w3-button w3-hover-light-grey" href="#" onclick="showContent('decoratorsGenerators')">Decorators and Generators</a>
-    <a class="w3-bar-item w3-button w3-hover-light-grey" href="#" onclick="showContent('concurrencyPython')">Concurrency in Python</a>
-  </div>
-
-  <!-- Django Framework with collapsible sub-sections -->
-  <button class="w3-bar-item w3-button w3-hover-black" onclick="toggleSubMenu('djangoSub')">Django Framework</button>
-  <div id="djangoSub" class="w3-hide w3-animate-left">
-    <a class="w3-bar-item w3-button w3-hover-light-grey" href="#" onclick="showContent('introDjango')">Introduction to Django</a>
-    <a class="w3-bar-item w3-button w3-hover-light-grey" href="#" onclick="showContent('workingWithModels')">Working with Models</a>
-    <a class="w3-bar-item w3-button w3-hover-light-grey" href="#" onclick="showContent('viewsTemplates')">Views and Templates</a>
-    <a class="w3-bar-item w3-button w3-hover-light-grey" href="#" onclick="showContent('formsValidation')">Forms and Validation</a>
-    <a class="w3-bar-item w3-button w3-hover-light-grey" href="#" onclick="showContent('authDjango')">Authentication and Authorization</a>
-    <a class="w3-bar-item w3-button w3-hover-light-grey" href="#" onclick="showContent('deployDjango')">Deploying Django Applications</a>
-  </div>
-
-  <!-- SQL and Databases with collapsible sub-sections -->
-  <button class="w3-bar-item w3-button w3-hover-black" onclick="toggleSubMenu('sqlSub')">SQL and Databases</button>
-  <div id="sqlSub" class="w3-hide w3-animate-left">
-    <a class="w3-bar-item w3-button w3-hover-light-grey" href="#" onclick="showContent('sqlBasics')">SQL Basics</a>
-    <a class="w3-bar-item w3-button w3-hover-light-grey" href="#" onclick="showContent('advancedSql')">Advanced SQL</a>
-    <a class="w3-bar-item w3-button w3-hover-light-grey" href="#" onclick="showContent('dbIntegration')">Database Integration with Python</a>
-  </div>
-</nav>
-
-<!-- Overlay effect when opening sidebar on small screens -->
-<div class="w3-overlay w3-hide-large" onclick="w3_close()" style="cursor:pointer" title="close side menu" id="myOverlay"></div>
-
-<!-- Main content: shift it to the right by 250 pixels when the sidebar is visible -->
-<div class="w3-main" style="margin-left:250px">
-  <!-- Content Sections -->
-  <div id="introLandingPage" class="content-section w3-container" style="display:block">
-    <h1 class="w3-text-teal">Landing Page</h1>
-    <p>Please navigate from sidebar.</p>
-  </div>
-  <div id="aboutUs" class="content-section w3-container" style="display:none">
-    <h1 class="w3-text-teal">About US</h1>
-    <p>About US.</p>
-  </div>
-  <div id="values" class="content-section w3-container" style="display:none">
-    <h1 class="w3-text-teal">Values</h1>
-    <p>Values</p>
-  </div>
-  <div id="news" class="content-section w3-container" style="display:none">
-    <h1 class="w3-text-teal">News</h1>
-    <p>News</p>
-  </div>
-  <div id="contactUs" class="content-section w3-container" style="display:none">
-    <h1 class="w3-text-teal">Contact US</h1>
-    <p>Contact US</p>
-  </div>
-  <div id="clients" class="content-section w3-container" style="display:none">
-    <h1 class="w3-text-teal">Clients</h1>
-    <p>Clients</p>
-  </div>
-  <div id="partners" class="content-section w3-container" style="display:none">
-    <h1 class="w3-text-teal">Partners</h1>
-    <p>Partners</p>
-  </div>
-
-  <!-- intro to python -->
-  <div id="introPython" class="content-section w3-container" style="display:none">
-    <h1 class="w3-text-teal">Introduction to Python</h1>
-    <p>Python is a high-level, interpreted programming language known for its simplicity and readability. Created by Guido van Rossum and first released in 1991, Python has become one of the most popular programming languages in the world due to its versatility and ease of use.</p>
-    <h2 class="w3-text-teal">Key Features of Python</h2>
-    <ol>
-      <li>Readable and Simple Syntax: Python's syntax is designed to be intuitive and clear, making it easy to read and write. This helps new programmers learn quickly and allows experienced developers to write clean and maintainable code.</li>
-      <li>Interpreted Language: Python is an interpreted language, which means that code is executed line-by-line at runtime. This allows for quick testing and debugging.</li>
-      <li>Dynamic Typing: Python uses dynamic typing, meaning that variables do not need explicit declaration of their type. This makes Python flexible and reduces the amount of code required.</li>
-      <li>Versatile and Powerful: Python supports multiple programming paradigms, including procedural, object-oriented, and functional programming. It is used in a wide range of applications, from web development to data analysis, artificial intelligence, scientific computing, and more.</li>
-      <li>Extensive Standard Library: Python comes with a rich standard library that provides modules and functions for various tasks, including file handling, networking, and data manipulation. This reduces the need to write code from scratch.</li>
-      <li>Large Community and Ecosystem: Python has a vibrant community of developers who contribute to a vast ecosystem of third-party libraries and frameworks. This includes popular tools like Django for web development, NumPy and pandas for data science, and TensorFlow for machine learning.</li>
-    </ol>
-    <h2 class="w3-text-teal">Getting Started</h2>
-    <p>To begin programming in Python, you'll need to install the Python interpreter from the official Python website. You can write and run Python code in various environments, such as:</p>
-    <ol>
-      <li>IDEs and Text Editors: Integrated Development Environments (IDEs) like PyCharm or VS Code provide features like code completion and debugging. Text editors like Sublime Text or Atom can also be used for writing Python code.</li>
-      <li>Interactive Shell: Python's interactive shell allows you to execute code snippets and test ideas quickly.</li>
-      <li>Jupyter Notebooks: Jupyter Notebooks are popular for data analysis and visualization. They provide an interactive environment where you can combine code, text, and visualizations.</li>
-    </ol>
-    <p>Python's simple syntax and powerful features make it a great choice for both beginners and experienced developers. Whether you're building web applications, analyzing data, or exploring new technologies, Python provides the tools and flexibility to help you achieve your goals.</p>
-  </div>
-
-  <!-- Python Syntax -->
-  <div id="pythonSyntax" class="content-section w3-container" style="display:none">
-    <h1 class="w3-text-teal">Python Syntax and Basics</h1>
-    <p>Python is renowned for its clean and readable syntax, which makes it an excellent choice for both novice and experienced programmers. Understanding Python's syntax and basic constructs is crucial for writing effective code. This section covers the fundamental aspects of Python syntax and basic programming concepts.</p>
-    <h2 class="w3-text-teal">Basic Syntax</h2>
-    <ol>
-      <li>Comments:</li>
-      <ul class="custom-list">
-        <li>Single-line comments begin with a #.</li>
-        <li>Multi-line comments are enclosed in triple quotes (''' or """).</li>
-      </ul>
-      <div class="code-container">
-        <button class="copy-button" onclick="copyCode()">Copy</button>
-        <pre class="code" id="code">
-# This is a single-line comment
-
-"""
-This is a
-multi-line comment
-"""
-        </pre>
-    </div>
-    <li>Indentation:</li>
-    <ul class="custom-list">
-      <li>Python uses indentation (whitespace) to define the structure of the code, such as loops, conditionals, and function definitions. Consistent indentation is crucial for correct execution.</li>
-    </ul>
-    <div class="code-container">
-      <button class="copy-button" onclick="copyCode()">Copy</button>
-      <pre class="code" id="code">
-if True:
-    print("This is indented")
-      </pre>
-    </div>
- 
-    <li>Variables:</li>
-    <ul class="custom-list">
-      <li>Variables are used to store data. Python does not require explicit declaration of variable types, and variables are dynamically typed.</li>
-    </ul>
-    <div class="code-container">
-      <button class="copy-button" onclick="copyCode()">Copy</button>
-      <pre class="code" id="code">
-x = 10
-name = "Alice"
-      </pre>
-    </div>
-
-    <li>Data Types:</li>
-    <ul class="custom-list">
-      <li>Common data types include integers (int), floating-point numbers (float), strings (str), and booleans (bool).</li>
-    </ul>
-    <div class="code-container">
-      <button class="copy-button" onclick="copyCode()">Copy</button>
-      <pre class="code" id="code">
-number = 5          # int
-pi = 3.14           # float
-greeting = "Hello" # str
-is_active = True   # bool
-        
-      </pre>
-    </div>
-    </ol>
-    <h2 class="w3-text-teal">Basic Operations</h2>
-    <ol>
-      <li>Arithmetic Operations:</li>
-      <ul class="custom-list">
-        <li>Python supports standard arithmetic operations like addition, subtraction, multiplication, and division.</li>
-      </ul>
-      <div class="code-container">
-        <button class="copy-button" onclick="copyCode()">Copy</button>
-        <pre class="code" id="code">
-a = 10
-b = 5
-sum = a + b        # Addition
-difference = a - b # Subtraction
-product = a * b    # Multiplication
-quotient = a / b   # Division
-        </pre>
-    </div>
-    <li>Comparison Operations:</li>
-    <ul class="custom-list">
-      <li>Comparison operators return boolean values (True or False) and are used to compare values.</li>
-    </ul>
-    <div class="code-container">
-      <button class="copy-button" onclick="copyCode()">Copy</button>
-      <pre class="code" id="code">
-x = 10
-y = 20
-print(x == y)  # Equal to
-print(x != y)  # Not equal to
-print(x < y)   # Less than
-print(x > y)   # Greater than
-      </pre>
-    </div>
- 
-    <li>Logical Operations:</li>
-    <ul class="custom-list">
-      <li>Logical operators combine boolean values and expressions.</li>
-    </ul>
-    <div class="code-container">
-      <button class="copy-button" onclick="copyCode()">Copy</button>
-      <pre class="code" id="code">
-a = True
-b = False
-print(a and b)  # Logical AND
-print(a or b)   # Logical OR
-print(not a)    # Logical NOT
-      </pre>
-    </div>
-    </ol>
-    <h2 class="w3-text-teal">Control Structures</h2>
-    <ol>
-      <li>Conditional Statements:</li>
-      <ul class="custom-list">
-        <li>Python uses if, elif, and else to make decisions based on conditions.</li>
-      </ul>
-      <div class="code-container">
-        <button class="copy-button" onclick="copyCode()">Copy</button>
-        <pre class="code" id="code">
-x = 10
-if x > 0:
-    print("Positive")
-elif x == 0:
-    print("Zero")
-else:
-    print("Negative")
-        </pre>
-    </div>
-    <li>Loops:</li>
-    <ul class="custom-list">
-      <li>for loops and while loops are used to repeat tasks.</li>
-    </ul>
-    <div class="code-container">
-      <button class="copy-button" onclick="copyCode()">Copy</button>
-      <pre class="code" id="code">
-# For loop
-for i in range(5):
-    print(i)
-
-# While loop
-count = 0
-while count < 5:
-    print(count)
-    count += 1
-      </pre>
-    </div>
-    </ol>
-    <h2 class="w3-text-teal">Functions</h2>
-    <ol>
-      <li>Defining Functions:</li>
-      <ul class="custom-list">
-        <li>Functions are defined using the def keyword and can take parameters and return values.</li>
-      </ul>
-      <div class="code-container">
-        <button class="copy-button" onclick="copyCode()">Copy</button>
-        <pre class="code" id="code">
-def greet(name):
-    return f"Hello, {name}!"
-
-message = greet("Alice")
-print(message)
-        </pre>
-    </div>
-    <li>Calling Functions:</li>
-    <ul class="custom-list">
-      <li>Functions are called by their name followed by parentheses.</li>
-    </ul>
-    <div class="code-container">
-      <button class="copy-button" onclick="copyCode()">Copy</button>
-      <pre class="code" id="code">
-greet("Bob")
-      </pre>
-    </div>
-    </ol>
-    <h2 class="w3-text-teal">Conclusion</h2>
-    <p>Python's syntax emphasizes readability and simplicity. Understanding these basic constructs—such as variables, data types, operations, control structures, and functions—forms the foundation for more advanced programming in Python. Mastery of these fundamentals will help you write clear, efficient, and effective Python code.</p>
-  </div>
-
-
-    <!-- working with data -->
-  <div id="workingWithData" class="content-section w3-container" style="display:none">
-    <h1 class="w3-text-teal">Working with Data</h1>
-    <p>Python is widely used for data analysis, manipulation, and visualization due to its simplicity and the vast array of libraries available. Working with data in Python involves understanding how to handle various data structures, perform operations on data, and leverage powerful libraries to simplify tasks. This section provides an overview of essential data handling techniques in Python.</p>
-    <h2 class="w3-text-teal">Data Structures</h2>
-    <p>Python offers several built-in data structures that are crucial for handling and organizing data:</p>
-    <ol>
-      <li>Lists:</li>
-      <ul class="custom-list">
-        <li>A list is an ordered collection of items, which can be of different types. Lists are mutable, meaning their contents can be changed.</li>
-      </ul>
-      <div class="code-container">
-        <button class="copy-button" onclick="copyCode()">Copy</button>
-        <pre class="code" id="code">
-fruits = ["apple", "banana", "cherry"]
-fruits.append("orange")  # Adding an item
-print(fruits[1])         # Accessing an item by index
-        </pre>
-    </div>
-    <li>Tuples:</li>
-    <ul class="custom-list">
-      <li>Tuples are similar to lists but are immutable, meaning once defined, their contents cannot be altered. They are used for fixed collections of items.</li>
-    </ul>
-    <div class="code-container">
-      <button class="copy-button" onclick="copyCode()">Copy</button>
-      <pre class="code" id="code">
-coordinates = (10.0, 20.0)
-print(coordinates[0])    # Accessing an item by index
-      </pre>
-    </div>
- 
-    <li>Dictionaries:</li>
-    <ul class="custom-list">
-      <li>Dictionaries store data in key-value pairs, allowing for efficient data retrieval by key.</li>
-    </ul>
-    <div class="code-container">
-      <button class="copy-button" onclick="copyCode()">Copy</button>
-      <pre class="code" id="code">
-person = {"name": "Alice", "age": 30}
-print(person["name"])    # Accessing value by key
-person["age"] = 31       # Modifying a value        
-      </pre>
-    </div>
-
-    <li>Sets:</li>
-    <ul class="custom-list">
-      <li>Sets are unordered collections of unique items, useful for membership testing and eliminating duplicates.</li>
-    </ul>
-    <div class="code-container">
-      <button class="copy-button" onclick="copyCode()">Copy</button>
-      <pre class="code" id="code">
-unique_numbers = {1, 2, 3, 3, 4}
-print(unique_numbers)    # Output: {1, 2, 3, 4}
-      </pre>
-    </div>
-    </ol>
-    <h2 class="w3-text-teal">Reading and Writing Data</h2>
-    <p>Python makes it easy to read from and write to various data sources:</p>
-    <ol>
-      <li>Text Files:</li>
-      <ul class="custom-list">
-        <li>You can read from and write to text files using Python's built-in functions.</li>
-      </ul>
-      <div class="code-container">
-        <button class="copy-button" onclick="copyCode()">Copy</button>
-        <pre class="code" id="code">
-# Reading a file
-with open("example.txt", "r") as file:
-    content = file.read()
-    print(content)
-
-# Writing to a file
-with open("output.txt", "w") as file:
-    file.write("Hello, World!")
-        </pre>
-    </div>
-    <li>CSV Files:</li>
-    <ul class="custom-list">
-      <li>CSV (Comma-Separated Values) files are commonly used for storing tabular data. The csv module in Python provides tools to work with CSV files.</li>
-    </ul>
-    <div class="code-container">
-      <button class="copy-button" onclick="copyCode()">Copy</button>
-      <pre class="code" id="code">
-import csv
-
-# Reading a CSV file
-with open("data.csv", newline='') as csvfile:
-    reader = csv.reader(csvfile)
-    for row in reader:
-        print(row)
-
-# Writing to a CSV file
-with open("output.csv", "w", newline='') as csvfile:
-    writer = csv.writer(csvfile)
-    writer.writerow(["Name", "Age"])
-    writer.writerow(["Alice", 30])
-      </pre>
-    </div>
- 
-    <li>JSON Files:</li>
-    <ul class="custom-list">
-      <li>JSON (JavaScript Object Notation) is a popular format for exchanging data between web services and applications. Python's json module allows for easy reading and writing of JSON data.</li>
-    </ul>
-    <div class="code-container">
-      <button class="copy-button" onclick="copyCode()">Copy</button>
-      <pre class="code" id="code">
-import json
-
-# Reading JSON
-with open("data.json", "r") as file:
-    data = json.load(file)
-    print(data)
-
-# Writing JSON
-data = {"name": "Alice", "age": 30}
-with open("output.json", "w") as file:
-    json.dump(data, file)
-      </pre>
-    </div>
-    </ol>
-    <h2 class="w3-text-teal">Using Libraries for Data Analysis</h2>
-    <ol>
-      <li>Pandas:</li>
-      <ul class="custom-list">
-        <li>Pandas is a powerful library for data manipulation and analysis. It provides data structures like DataFrames, which are similar to tables in databases or spreadsheets.</li>
-      </ul>
-      <div class="code-container">
-        <button class="copy-button" onclick="copyCode()">Copy</button>
-        <pre class="code" id="code">
-import pandas as pd
-
-# Creating a DataFrame
-data = {
-    "Name": ["Alice", "Bob", "Charlie"],
-    "Age": [25, 30, 35]
-}
-df = pd.DataFrame(data)
-print(df)
-
-# Reading from a CSV file
-df = pd.read_csv("data.csv")
-
-# Basic data operations
-print(df.head())  # Display the first few rows
-print(df.describe())  # Summary statistics
-        </pre>
-    </div>
-    <li>NumPy:</li>
-    <ul class="custom-list">
-      <li>NumPy is used for numerical computing and working with arrays. It offers powerful tools for performing mathematical operations on large datasets.</li>
-    </ul>
-    <div class="code-container">
-      <button class="copy-button" onclick="copyCode()">Copy</button>
-      <pre class="code" id="code">
-import numpy as np
-
-# Creating a NumPy array
-array = np.array([1, 2, 3, 4, 5])
-print(array * 2)  # Element-wise multiplication
-      </pre>
-    </div>
-    <li>Matplotlib and Seaborn:</li>
-    <ul class="custom-list">
-      <li>For data visualization, Python provides libraries like Matplotlib and Seaborn. These tools allow you to create a wide range of static, animated, and interactive plots.</li>
-    </ul>
-    <div class="code-container">
-      <button class="copy-button" onclick="copyCode()">Copy</button>
-      <pre class="code" id="code">
-import matplotlib.pyplot as plt
-import seaborn as sns
-
-# Simple plot with Matplotlib
-plt.plot([1, 2, 3, 4], [1, 4, 9, 16])
-plt.title("Simple Line Plot")
-plt.show()
-
-# Advanced visualization with Seaborn
-sns.set(style="darkgrid")
-tips = sns.load_dataset("tips")
-sns.scatterplot(x="total_bill", y="tip", data=tips)
-plt.show()
-      </pre>
-    </div>
-    </ol>
-    <h2 class="w3-text-teal">Conclusion</h2>
-    <p>Python's capabilities for working with data are extensive, making it a leading choice for data analysis, manipulation, and visualization. Understanding how to effectively use Python’s data structures and libraries allows you to handle and analyze data efficiently, empowering you to draw insights and make data-driven decisions.</p>
-  </div>
-
-<!-- OOP python -->
-
-<div id="oopPython" class="content-section w3-container" style="display:none">
-  <h1 class="w3-text-teal">OOP in Python</h1>
-  <p>Object-Oriented Programming (OOP) in Python allows you to structure your code using classes and objects, which helps in organizing code and managing complexity. OOP principles like inheritance, encapsulation, and polymorphism enable you to create reusable and modular code.</p>
-  <h2 class="w3-text-teal">Basic OOP Concepts</h2>
-  <ul class="custom-list">
-      <li><b>Classes and Objects:</b> Classes are blueprints for creating objects (instances). Objects are instances of classes.</li>
-      <li><b>Inheritance:</b> Inheritance allows a class to inherit attributes and methods from another class.</li>
-      <li><b>Encapsulation:</b> Encapsulation refers to bundling data and methods that work on the data within a single unit, or class.</li>
-      <li><b>Polymorphism:</b> Polymorphism allows methods to do different things based on the object it is acting upon.</li>
-  </ul>
-  <div class="code-container">
-      <button class="copy-button" onclick="copyCode()">Copy</button>
-      <pre class="code" id="code">
-class Animal:
-  def __init__(self, name):
-      self.name = name
-
-  def speak(self):
-      pass
-
-class Dog(Animal):
-  def speak(self):
-      return f"{self.name} says Woof!"
-
-dog = Dog("Buddy")
-print(dog.speak())  # Output: Buddy says Woof!
-      </pre>
-  </div>
-</div>
-
-<!-- Error Handling And Exceptions-->
-<div id="errorHandling" class="content-section w3-container" style="display:none">
-  <h1 class="w3-text-teal">Error Handling and Exceptions</h1>
-  <p>Error handling in Python is done using exceptions, which are events that can alter the normal flow of a program. Python provides a robust mechanism for handling errors using <code>try</code>, <code>except</code>, <code>else</code>, and <code>finally</code> blocks.</p>
-  <h2 class="w3-text-teal">Basic Exception Handling</h2>
-  <ul class="custom-list">
-      <li><b>try:</b> The code that might cause an exception is placed inside the <code>try</code> block.</li>
-      <li><b>except:</b> The <code>except</code> block lets you handle the error.</li>
-      <li><b>else:</b> The <code>else</code> block executes if no exceptions were raised.</li>
-      <li><b>finally:</b> The <code>finally</code> block always executes, regardless of whether an exception was raised or not.</li>
-  </ul>
-  <div class="code-container">
-      <button class="copy-button" onclick="copyCode()">Copy</button>
-      <pre class="code" id="code">
-try:
-  number = int(input("Enter a number: "))
-  print(f"You entered: {number}")
-except ValueError:
-  print("That's not a valid number!")
-finally:
-  print("This block always executes.")
-      </pre>
-  </div>
-</div>
-
-<!-- Decorators and Generators -->
-<div id="decoratorsGenerators" class="content-section w3-container" style="display:none">
-  <h1 class="w3-text-teal">Decorators and Generators</h1>
-  <p>Decorators in Python are functions that modify the functionality of other functions or methods. Generators are a type of iterable that allows you to iterate over data without storing it in memory, using the <code>yield</code> keyword.</p>
-  <h2 class="w3-text-teal">Using Decorators</h2>
-  <div class="code-container">
-      <button class="copy-button" onclick="copyCode()">Copy</button>
-      <pre class="code" id="code">
-def my_decorator(func):
-  def wrapper():
-      print("Something is happening before the function is called.")
-      func()
-      print("Something is happening after the function is called.")
-  return wrapper
-
-@my_decorator
-def say_hello():
-  print("Hello!")
-
-say_hello()
-      </pre>
-  </div>
-  <h2 class="w3-text-teal">Using Generators</h2>
-  <div class="code-container">
-      <button class="copy-button" onclick="copyCode()">Copy</button>
-      <pre class="code" id="code">
-def count_up_to(max):
-  count = 1
-  while count <= max:
-      yield count
-      count += 1
-
-for number in count_up_to(5):
-  print(number)  # Outputs 1, 2, 3, 4, 5
-      </pre>
-  </div>
-</div>
-<!-- Concurrency in Python -->
-<div id="concurrencyPython" class="content-section w3-container" style="display:none">
-  <h1 class="w3-text-teal">Concurrency in Python</h1>
-  <p>Concurrency in Python involves running multiple tasks at the same time, which can be achieved using threads, multiprocessing, and asynchronous programming (asyncio). Concurrency helps in performing I/O-bound and high-level structured network code more efficiently.</p>
-  <h2 class="w3-text-teal">Using Threads</h2>
-  <div class="code-container">
-      <button class="copy-button" onclick="copyCode()">Copy</button>
-      <pre class="code" id="code">
-import threading
-
-def print_numbers():
-  for i in range(5):
-      print(i)
-
-thread = threading.Thread(target=print_numbers)
-thread.start()
-thread.join()  # Wait for the thread to finish
-      </pre>
-  </div>
-  <h2 class="w3-text-teal">Using Asyncio</h2>
-  <div class="code-container">
-      <button class="copy-button" onclick="copyCode()">Copy</button>
-      <pre class="code" id="code">
-import asyncio
-
-async def say_hello():
-  print("Hello")
-  await asyncio.sleep(1)
-  print("World")
-
-asyncio.run(say_hello())
-      </pre>
-  </div>
-</div>
-<!-- Introduction to Django -->
-<div id="introDjango" class="content-section w3-container" style="display:none">
-  <h1 class="w3-text-teal">Introduction to Django</h1>
-  <p>Django is a high-level web framework for Python that encourages rapid development and clean, pragmatic design. It follows the Model-View-Template (MVT) architecture, making it easy to build and maintain complex web applications.</p>
-  <h2 class="w3-text-teal">Getting Started with Django</h2>
-  <div class="code-container">
-      <button class="copy-button" onclick="copyCode()">Copy</button>
-      <pre class="code" id="code">
-# Installing Django
-pip install django
-
-# Creating a new project
-django-admin startproject myproject
-
-# Running the server
-cd myproject
-python manage.py runserver
-      </pre>
-  </div>
-</div>
-
-<!-- Working with Models -->
-<div id="workingWithModels" class="content-section w3-container" style="display:none">
-  <h1 class="w3-text-teal">Working with Models</h1>
-  <p>In Django, models are Python classes that represent the data structure of your application. They define the schema of your database tables and provide an interface for interacting with the data.</p>
-  <h2 class="w3-text-teal">Defining a Model</h2>
-  <div class="code-container">
-      <button class="copy-button" onclick="copyCode()">Copy</button>
-      <pre class="code" id="code">
-from django.db import models
-
-class Book(models.Model):
-  title = models.CharField(max_length=200)
-  author = models.CharField(max_length=100)
-  published_date = models.DateField()
-
-  def __str__(self):
-      return self.title
-      </pre>
-  </div>
-</div>
-
-<!-- Views and Templates -->
-<div id="viewsTemplates" class="content-section w3-container" style="display:none">
-  <h1 class="w3-text-teal">Views and Templates</h1>
-  <p>Views in Django handle the logic of your application, while templates manage the presentation layer. Views receive requests, process data using models, and render responses using templates.</p>
-  <h2 class="w3-text-teal">Creating a View</h2>
-  <div class="code-container">
-      <button class="copy-button" onclick="copyCode()">Copy</button>
-      <pre class="code" id="code">
-from django.shortcuts import render
-
-def home(request):
-  return render(request, 'home.html')
-      </pre>
-  </div>
-  <h2 class="w3-text-teal">Creating a Template</h2>
-  <div class="code-container">
-      <button class="copy-button" onclick="copyCode()">Copy</button>
-      <pre class="code" id="code">
-<!-- home.html -->
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <title>Home</title>
-</head>
-<body>
-  <h1>Welcome to Django!</h1>
-</body>
-</html>
-      </pre>
-  </div>
-</div>
-<!-- Forms and Validation -->
-<div id="formsValidation" class="content-section w3-container" style="display:none">
-  <h1 class="w3-text-teal">Forms and Validation</h1>
-  <p>Django provides a powerful form-handling library that simplifies the process of creating and validating forms. It offers built-in validators, form fields, and widgets, making it easy to manage form data and enforce data integrity.</p>
-  <h2 class="w3-text-teal">Creating a Form</h2>
-  <div class="code-container">
-      <button class="copy-button" onclick="copyCode()">Copy</button>
-      <pre class="code" id="code">
-from django import forms
-
-class ContactForm(forms.Form):
-  name = forms.CharField(max_length=100)
-  email = forms.EmailField()
-  message = forms.CharField(widget=forms.Textarea)
-      </pre>
-  </div>
-</div>
-<!-- Authentication and Authorization -->
-<div id="authDjango" class="content-section w3-container" style="display:none">
-  <h1 class="w3-text-teal">Authentication and Authorization</h1>
-  <p>Django’s built-in authentication system manages user accounts, passwords, and permissions. It provides tools for user registration, login, logout, password reset, and more.</p>
-  <h2 class="w3-text-teal">User Registration View</h2>
-  <div class="code-container">
-      <button class="copy-button" onclick="copyCode()">Copy</button>
-      <pre class="code" id="code">
-from django.contrib.auth.forms import UserCreationForm
-from django.shortcuts import render, redirect
-
-def register(request):
-  if request.method == 'POST':
-      form = UserCreationForm(request.POST)
-      if form.is_valid():
-          form.save()
-          return redirect('login')
-  else:
-      form = UserCreationForm()
-  return render(request, 'register.html', {'form': form})
-      </pre>
-  </div>
-</div>
-
-<!-- Deploying Django Applications -->
-<div id="deployDjango" class="content-section w3-container" style="display:none">
-  <h1 class="w3-text-teal">Deploying Django Applications</h1>
-  <p>Deploying a Django application involves configuring your code to run on a server, setting up a database, and ensuring the application is accessible to users. Proper deployment ensures that your application is secure, scalable, and performant.</p>
-  <h2 class="w3-text-teal">Basic Deployment with Gunicorn and Nginx</h2>
-  <div class="code-container">
-      <button class="copy-button" onclick="copyCode()">Copy</button>
-      <pre class="code" id="code">
-# Install Gunicorn
-pip install gunicorn
-
-# Running Gunicorn
-gunicorn myproject.wsgi:application
-
-# Basic Nginx Configuration
-server {
-  listen 80;
-  server_name mysite.com;
-
-  location / {
-      proxy_pass http://127.0.0.1:8000;
-      proxy_set_header Host $host;
-      proxy_set_header X-Real-IP $remote_addr;
-  }
-}
-      </pre>
-  </div>
-</div>
-
-<!-- SQL Basics -->
-<div id="sqlBasics" class="content-section w3-container" style="display:none">
-  <h1 class="w3-text-teal">SQL Basics</h1>
-  <p>SQL (Structured Query Language) is the standard language for interacting with relational databases. It allows you to perform various operations on databases, such as creating tables, inserting data, querying, updating, and deleting records.</p>
-  <h2 class="w3-text-teal">Basic SQL Commands</h2>
-  <div class="code-container">
-      <button class="copy-button" onclick="copyCode()">Copy</button>
-      <pre class="code" id="code">
--- Creating a table
-CREATE TABLE users (
-  id INT PRIMARY KEY,
-  name VARCHAR(100),
-  email VARCHAR(100)
-);
-
--- Inserting data
-INSERT INTO users (id, name, email) VALUES (1, 'Alice', 'alice@example.com');
-
--- Querying data
-SELECT * FROM users;
-
--- Updating data
-UPDATE users SET name = 'Alice Smith' WHERE id = 1;
-
--- Deleting data
-DELETE FROM users WHERE id = 1;
-      </pre>
-  </div>
-</div>
-<!-- Advanced SQL -->
-<div id="advancedSql" class="content-section w3-container" style="display:none">
-  <h1 class="w3-text-teal">Advanced SQL</h1>
-  <p>Advanced SQL concepts go beyond basic queries, covering topics like subqueries, joins, transactions, indexes, and stored procedures. These advanced techniques enable you to write more efficient and complex queries.</p>
-  <h2 class="w3-text-teal">Using Joins</h2>
-  <div class="code-container">
-      <button class="copy-button" onclick="copyCode()">Copy</button>
-      <pre class="code" id="code">
--- Joining two tables
-SELECT orders.id, customers.name
-FROM orders
-JOIN customers ON orders.customer_id = customers.id;
-      </pre>
-  </div>
-</div>
-<!-- Database Integration with Python -->
-<div id="dbIntegration" class="content-section w3-container" style="display:none">
-  <h1 class="w3-text-teal">Database Integration with Python</h1>
-  <p>Python integrates seamlessly with databases through various libraries, such as SQLite, MySQL, PostgreSQL, and SQLAlchemy. These libraries provide Pythonic ways to interact with databases, execute SQL queries, and manage database connections.</p>
-  <h2 class="w3-text-teal">Using SQLite with Python</h2>
-  <div class="code-container">
-      <button class="copy-button" onclick="copyCode()">Copy</button>
-      <pre class="code" id="code">
-import sqlite3
-
-# Connecting to SQLite
-conn = sqlite3.connect('example.db')
-cursor = conn.cursor()
-
-# Creating a table
-cursor.execute('''CREATE TABLE users (id INT, name TEXT)''')
-
-# Inserting a record
-cursor.execute('''INSERT INTO users (id, name) VALUES (1, 'Alice')''')
-
-# Querying the table
-cursor.execute('''SELECT * FROM users''')
-print(cursor.fetchall())
-
-# Closing the connection
-conn.close()
-      </pre>
-  </div>
-</div>
-
-
-  <!-- Add similar content sections for other topics -->
-
-
-
-<!-- END MAIN -->
-</div>
-<footer id="myFooter">
-  <div class="w3-container w3-theme-l2" style="text-align: center;">
-    <h4>Footer</h4>
-  </div>
-
-  <div class="w3-container w3-theme-l1" style="text-align: center;">
-    <p>Powered by <a href="https://compay24.com" target="_blank">Tutorials</a></p>
-  </div>
-</footer>
-
-<script>
- // JavaScript to handle sub-menu toggling
- function toggleSubMenu(id) {
-    var submenu = document.getElementById(id);
-    var button = document.querySelector(`button[onclick="toggleSubMenu('${id}')"]`);
-
-    if (submenu.className.indexOf("w3-show") == -1) {
-        // Add "w3-show" and "w3-theme-l1" classes to the submenu
-        submenu.className += " w3-show w3-theme-l2";
-        // Add "w3-theme-l1" class to the button
-        button.className += " w3-theme-l1";
-    } else {
-        // Remove "w3-show" and "w3-theme-l1" classes from the submenu
-        submenu.className = submenu.className.replace(" w3-show", "");
-        submenu.className = submenu.className.replace(" w3-theme-l2", "");
-        // Remove "w3-theme-l1" class from the button
-        button.className = button.className.replace(" w3-theme-l1", "");
-    }
-}
-
-  // Get the Sidebar
-  var mySidebar = document.getElementById("mySidebar");
-
-  // Get the DIV with overlay effect
-  var overlayBg = document.getElementById("myOverlay");
-
-  // Toggle between showing and hiding the sidebar, and add overlay effect
-  function w3_open() {
-    if (mySidebar.style.display === 'block') {
-      mySidebar.style.display = 'none';
-      overlayBg.style.display = "none";
-    } else {
-      mySidebar.style.display = 'block';
-      overlayBg.style.display = "block";
-    }
+<body class="bg-white text-neutral-800 dark:bg-neutral-950 dark:text-neutral-100">
+  <header class="sticky top-0 z-50 backdrop-blur supports-[backdrop-filter]:bg-white/60 dark:supports-[backdrop-filter]:bg-neutral-900/60">
+    <nav class="mx-auto max-w-7xl px-4">
+      <div class="flex h-16 items-center justify-between">
+        <a href="{% url 'homepage_main' %}" class="flex items-center gap-2">
+          <img src="{% static 'images/nazukware-logo.svg' %}" class="h-8 w-auto" alt="Nazukware"/>
+          <span class="hidden text-xl font-extrabold tracking-tight text-brand-600 dark:text-brand-300">Nazukware</span>
+        </a>
+        <div class="hidden items-center gap-8 md:flex">
+          <a class="text-brand-600 dark:text-brand-300" href="{% url 'tutorials_webpage' %}">Tutorials</a>
+          <a class="hover:text-brand-600" href="{% url 'e_commerce' %}">E‑commerce</a>
+          <a href="https://cloud.nazukware.com" target="_blank" rel="noopener noreferrer" class="hover:text-brand-600 dark:hover:text-brand-300">Live Demos</a>
+          <a class="hover:text-brand-600" href="{% url 'homepage_main' %}#contact">Contact</a>
+        </div>
+        <div class="flex items-center gap-2">
+          <input id="globalSearch" placeholder="Search tutorials…" class="no-print hidden w-64 rounded-xl border border-neutral-300 bg-white/80 px-3 py-2 text-sm outline-none placeholder:text-neutral-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-200 dark:border-neutral-700 dark:bg-neutral-900/80 md:block"/>
+          <button id="themeToggle" class="no-print rounded-full border border-neutral-200 p-2 text-neutral-700 shadow-sm hover:bg-neutral-50 active:scale-95 dark:border-neutral-700 dark:text-neutral-200 dark:hover:bg-neutral-800">🌓</button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main class="mx-auto grid max-w-7xl grid-cols-1 gap-8 px-4 py-8 md:grid-cols-[260px,1fr]">
+    <aside class="md:sticky md:top-20 md:self-start">
+      <nav class="rounded-2xl border border-neutral-200 bg-white p-4 text-sm shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
+        <h2 class="mb-2 text-xs font-semibold uppercase tracking-wide text-neutral-500">Sections</h2>
+        <ul id="sections" class="space-y-2"></ul>
+      </nav>
+      <div class="mt-4 rounded-2xl border border-brand-200 bg-brand-50 p-4 text-sm dark:border-brand-900/40 dark:bg-brand-900/20">
+        <div class="font-semibold">Progress</div>
+        <div id="progressSummary" class="mt-1 text-neutral-700 dark:text-neutral-300">0% complete</div>
+      </div>
+    </aside>
+
+    <section>
+      <nav id="breadcrumbs" class="no-print mb-4 text-sm text-neutral-500"></nav>
+      <header id="articleHeader" class="mb-4 hidden">
+        <h1 id="articleTitle" class="text-3xl font-extrabold"></h1>
+        <div class="mt-2 flex flex-wrap items-center gap-2 text-sm text-neutral-500">
+          <span id="articleBadges" class="flex flex-wrap gap-2"></span>
+          <span>•</span>
+          <span id="updatedAt"></span>
+          <button id="markDone" class="no-print ml-auto rounded-lg border border-neutral-300 px-3 py-1 text-sm hover:bg-neutral-50 dark:border-neutral-700 dark:hover:bg-neutral-800">Mark as done</button>
+          <button id="printBtn" class="no-print rounded-lg border border-neutral-300 px-3 py-1 text-sm hover:bg-neutral-50 dark:border-neutral-700 dark:hover:bg-neutral-800">Print / PDF</button>
+        </div>
+      </header>
+      <aside id="toc" class="no-print mb-6 hidden rounded-2xl border border-neutral-200 bg-white p-4 text-sm shadow-sm dark:border-neutral-800 dark:bg-neutral-900"></aside>
+
+      <article id="article" class="prose max-w-none dark:prose-invert">
+        <div id="landing">
+          <h1 class="text-3xl font-extrabold">Developer Tutorials</h1>
+          <p class="mt-2 text-neutral-600 dark:text-neutral-300">Curated guides with copyable code, tabs, ToC, exercises and full‑text search.</p>
+          <ul class="mt-6 grid gap-3 sm:grid-cols-2">
+            <li class="rounded-xl border border-neutral-200 bg-white p-4 dark:border-neutral-800 dark:bg-neutral-900"><strong>Tip:</strong> Hit <kbd>/</kbd> to focus search. Use the sidebar to jump by section.</li>
+            <li class="rounded-xl border border-neutral-200 bg-white p-4 dark:border-neutral-800 dark:bg-neutral-900"><strong>Progress:</strong> Completed lessons are remembered on this device.</li>
+          </ul>
+        </div>
+        <div id="articleContent" class="hidden"></div>
+        <div id="feedback" class="no-print mt-8 hidden rounded-2xl border border-neutral-200 bg-white p-4 text-sm shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
+          <div class="mb-2 font-semibold">Was this helpful?</div>
+          <div class="flex gap-2">
+            <button data-fb="up" class="rounded-lg border border-neutral-300 px-3 py-1 hover:bg-neutral-50 dark:border-neutral-700 dark:hover:bg-neutral-800">👍 Yes</button>
+            <button data-fb="down" class="rounded-lg border border-neutral-300 px-3 py-1 hover:bg-neutral-50 dark:border-neutral-700 dark:hover:bg-neutral-800">👎 No</button>
+            <a id="openIssue" class="ml-2 inline-flex items-center rounded-lg border border-neutral-300 px-3 py-1 hover:bg-neutral-50 dark:border-neutral-700 dark:hover:bg-neutral-800" target="_blank" rel="noreferrer">Open GitHub issue</a>
+          </div>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <footer class="border-t border-neutral-100 py-10 dark:border-neutral-800"><div class="mx-auto max-w-7xl px-4 text-sm text-neutral-500">© <span id="year"></span> Nazukware.</div></footer>
+
+  <script>
+  // ===== Tutorial data =====
+  // Keep ES5-friendly syntax for broad compatibility
+  var ARTICLES = [
+    // --- PYTHON ---
+    { id:'py-venv', section:'Python', slug:'venv-basics', title:'Python Environments (venv)', difficulty:'Beginner', versions:['Python 3.12'], updated:'2025-08-08', est:'10 min', keywords:'venv pip requirements virtualenv', content:
+      "\n## What you'll learn\n- Create and activate venv\n- Freeze and install dependencies\n\n## Prerequisites\n- Python 3.10+\n\n## Steps\n<div class=\"tabset\"><button class=\"tab active\" data-for=\"bash1\">Bash</button><button class=\"tab\" data-for=\"ps1\">PowerShell</button><div class=\"panel active\" id=\"bash1\"><pre><code class=\"language-bash\">python3 -m venv .venv\nsource .venv/bin/activate\npip -V</code></pre></div><div class=\"panel\" id=\"ps1\"><pre><code class=\"language-powershell\">py -m venv .venv\n.venv\\Scripts\\Activate.ps1\npip -V</code></pre></div></div>\n\n> try-it\n> Verify your prompt shows `(.venv)` and `which python` points to `.venv`.\n\n## Pitfalls\n- Mixing system packages with venv\n\n## Further reading\n- https://docs.python.org/3/library/venv.html\n" },
+    { id:'py-oop', section:'Python', slug:'oop-dataclass', title:'OOP & Dataclasses', difficulty:'Beginner', versions:['Python 3.12'], updated:'2025-08-08', est:'12 min', keywords:'class dataclass eq order slots', content:
+      "\n## What you'll learn\n- Classes vs `@dataclass`\n- `__repr__`, `eq`, ordering, `slots`\n\n## Steps\n<pre><code class=\"language-python\">from dataclasses import dataclass\n\n@dataclass(eq=True, order=True, slots=True)\nclass Point:\n    x: int\n    y: int\n\np1 = Point(1,2)\np2 = Point(1,2)\nassert p1 == p2\nprint(sorted([Point(2,1), Point(1,5)]))</code></pre>\n\n## Pitfalls\n- Mutability: prefer `frozen=True` for value objects\n" },
+    { id:'py-async', section:'Python', slug:'asyncio-threads-procs', title:'Concurrency: asyncio vs Threads vs Procs', difficulty:'Intermediate', versions:['Python 3.12'], updated:'2025-08-08', est:'15 min', keywords:'asyncio threading multiprocessing GIL', content:
+      "\n## What you'll learn\n- Pick the right model per workload\n\n## Steps\n<pre><code class=\"language-python\"># I/O bound: asyncio\nimport asyncio, httpx\nasync def main():\n    async with httpx.AsyncClient() as c:\n        r = await c.get('https://example.com')\n    print(r.status_code)\nasyncio.run(main())</code></pre>\n<pre><code class=\"language-python\"># CPU bound: multiprocessing\nfrom multiprocessing import Pool\nprint(Pool().map(lambda x:x*x, range(5)))</code></pre>\n\n## Pitfalls\n- Threads limited by GIL for CPU work\n- Use `asyncio.to_thread` to call blocking I/O\n" },
+
+    // --- DJANGO ---
+    { id:'dj-structure', section:'Django', slug:'project-structure', title:'Project Structure & Settings Split', difficulty:'Beginner', versions:['Django 5'], updated:'2025-08-08', est:'12 min', keywords:'settings base dev prod env', content:
+      "\n## What you'll learn\n- Split settings: base/dev/prod\n\n## Steps\n<pre><code class=\"language-python\"># settings/__init__.py\nfrom .base import *\n</code></pre>\n<pre><code class=\"language-python\"># manage.py\nos.environ.setdefault('DJANGO_SETTINGS_MODULE','project.settings.dev')</code></pre>\n\n## Pitfalls\n- Never commit secrets; use env vars\n" },
+    { id:'dj-orm', section:'Django', slug:'queryset-essentials', title:'ORM: QuerySet Essentials', difficulty:'Intermediate', versions:['Django 5','PostgreSQL'], updated:'2025-08-08', est:'15 min', keywords:'select_related prefetch_related annotate', content:
+      "\n## Steps\n<pre><code class=\"language-python\">Order.objects.select_related('customer').prefetch_related('lines')</code></pre>\n<pre><code class=\"language-python\">from django.db.models import Count\nCustomer.objects.annotate(orders=Count('order')).order_by('-orders')</code></pre>\n\n## Pitfalls\n- N+1 queries; confirm with Debug Toolbar\n" },
+    { id:'dj-drf-auth', section:'Django', slug:'drf-auth-jwt', title:'DRF Auth with JWT', difficulty:'Intermediate', versions:['DRF','Django 5'], updated:'2025-08-08', est:'14 min', keywords:'drf jwt simplejwt permissions throttling', content:
+      "\n## Steps\n<pre><code class=\"language-bash\">pip install djangorestframework djangorestframework-simplejwt</code></pre>\n<pre><code class=\"language-python\">REST_FRAMEWORK = {\n  'DEFAULT_AUTHENTICATION_CLASSES': ('rest_framework_simplejwt.authentication.JWTAuthentication',),\n}</code></pre>\n<pre><code class=\"language-bash\">python manage.py migrate\npython manage.py runserver</code></pre>\n" },
+    { id:'dj-cache', section:'Django', slug:'caching-redis', title:'Caching with Redis', difficulty:'Intermediate', versions:['Django 5','Redis'], updated:'2025-08-08', est:'12 min', keywords:'cache redis per-view low-level', content:
+      "\n## Steps\n<pre><code class=\"language-python\">CACHES={'default':{'BACKEND':'django.core.cache.backends.redis.RedisCache','LOCATION':'redis://redis:6379/1'}}</code></pre>\n<pre><code class=\"language-python\">from django.views.decorators.cache import cache_page\n@cache_page(60*5)\ndef home(request): ...</code></pre>\n" },
+
+    // --- DOCKER ---
+    { id:'dk-multistage', section:'Docker', slug:'multi-stage', title:'Multi‑stage Builds', difficulty:'Intermediate', versions:['Docker 24+','linux/arm64'], updated:'2025-08-08', est:'12 min', keywords:'dockerfile multistage layers size', content:
+      "\n## Dockerfile\n<pre><code class=\"language-docker\">FROM python:3.12-slim AS base\nWORKDIR /app\nCOPY requirements.txt .\nRUN pip install -r requirements.txt\nCOPY . .\nFROM base AS tests\nRUN pytest -q\nFROM python:3.12-slim AS run\nWORKDIR /app\nCOPY --from=base /app /app\nCMD ['python','app.py']</code></pre>\n" },
+    { id:'dk-compose', section:'Docker', slug:'compose-django-postgres-redis', title:'Compose: Django + Postgres + Redis', difficulty:'Intermediate', versions:['Compose v2'], updated:'2025-08-08', est:'18 min', keywords:'compose healthcheck volumes env', content:
+      "\n## compose.yml\n<pre><code class=\"language-yaml\">services:\n  web:\n    build: .\n    command: gunicorn app.wsgi:application -b 0.0.0.0:8000\n    depends_on: [db, redis]\n    environment: [DATABASE_URL=postgres://postgres:postgres@db:5432/app]\n    ports: ['8000:8000']\n  db:\n    image: postgres:16\n    environment: [POSTGRES_PASSWORD=postgres]\n    volumes: ['pg:/var/lib/postgresql/data']\n  redis:\n    image: redis:7\nvolumes: { pg: {} }</code></pre>\n" },
+    { id:'dk-health', section:'Docker', slug:'healthchecks', title:'Healthchecks & Graceful Shutdown', difficulty:'Intermediate', versions:['Docker 24'], updated:'2025-08-08', est:'10 min', keywords:'HEALTHCHECK stop-signal', content:
+      "\n## Dockerfile\n<pre><code class=\"language-docker\">HEALTHCHECK --interval=30s --timeout=5s CMD curl -f http://localhost:8000/health || exit 1\nSTOPSIGNAL SIGTERM</code></pre>\n" },
+
+    // --- SQL / POSTGRES ---
+    { id:'sql-index', section:'SQL / Postgres', slug:'index-explain', title:'Indexes & EXPLAIN', difficulty:'Intermediate', versions:['PostgreSQL 16'], updated:'2025-08-08', est:'12 min', keywords:'index btree gin explain analyze', content:
+      "\n## Steps\n<pre><code class=\"language-sql\">CREATE INDEX CONCURRENTLY idx_user_email ON users (email);\nEXPLAIN ANALYZE SELECT * FROM users WHERE email='a@b.com';</code></pre>\n\n## Pitfalls\n- Don't over-index writes; watch bloat\n" },
+    { id:'sql-tx', section:'SQL / Postgres', slug:'transactions-isolation', title:'Transactions & Isolation', difficulty:'Intermediate', versions:['PostgreSQL 16'], updated:'2025-08-08', est:'10 min', keywords:'read committed repeatable serializable', content:
+      "\n## Notes\n- Defaults to READ COMMITTED\n- Use SERIALIZABLE for correctness-critical flows\n" },
+
+    // --- GIT / CI ---
+    { id:'ci-actions', section:'Git / CI', slug:'github-actions-django', title:'GitHub Actions: Test Django', difficulty:'Beginner', versions:['Ubuntu','Python 3.12'], updated:'2025-08-08', est:'10 min', keywords:'ci pytest matrix cache', content:
+      "\n## .github/workflows/ci.yml\n<pre><code class=\"language-yaml\">name: CI\non: [push, pull_request]\njobs:\n  test:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - uses: actions/setup-python@v5\n        with: {python-version: '3.12'}\n      - run: pip install -r requirements.txt\n      - run: pytest -q</code></pre>\n" },
+    { id:'git-cc', section:'Git / CI', slug:'conventional-commits', title:'Conventional Commits & Versioning', difficulty:'Beginner', versions:['Any'], updated:'2025-08-08', est:'8 min', keywords:'semver changelog', content:
+      "\n## Examples\n- feat(auth): add JWT refresh\n- fix(api): handle empty payload\n" },
+
+    // --- NGINX ---
+    { id:'nx-proxy', section:'Nginx', slug:'reverse-proxy-gunicorn', title:'Reverse Proxy → Django/Gunicorn', difficulty:'Intermediate', versions:['Nginx 1.24'], updated:'2025-08-08', est:'12 min', keywords:'proxy buffers timeouts headers', content:
+      "\n## nginx.conf (snippet)\n<pre><code class=\"language-nginx\">location /static/ { alias /home/app/web/staticfiles/; }\nlocation /media/  { alias /home/app/web/media/; }\nlocation / {\n  proxy_pass http://web:8000;\n  proxy_set_header Host $host;\n  proxy_read_timeout 60s;\n}</code></pre>\n" },
+    { id:'nx-security', section:'Nginx', slug:'security-headers', title:'Security Headers (CSP/HSTS)', difficulty:'Intermediate', versions:['Nginx 1.24'], updated:'2025-08-08', est:'10 min', keywords:'csp hsts referrer', content:
+      "\n## Add headers\n<pre><code class=\"language-nginx\">add_header X-Frame-Options SAMEORIGIN always;\nadd_header X-Content-Type-Options nosniff always;\nadd_header Referrer-Policy strict-origin-when-cross-origin always;\nadd_header Strict-Transport-Security \"max-age=31536000; includeSubDomains\" always;</code></pre>\n" },
+
+    // --- EMBEDDED ---
+    { id:'em-startup', section:'Embedded', slug:'startup-linker', title:'Startup & Linker (STM32)', difficulty:'Intermediate', versions:['ARM Cortex-M'], updated:'2025-08-08', est:'15 min', keywords:'isr_vector reset handler sections', content:
+      "\n## Steps\n- Vector table at 0x08000000\n- Reset handler → init data/bss → main\n<pre><code class=\"language-asm\">.section .isr_vector\n.word _estack\n.word Reset_Handler</code></pre>\n" },
+    { id:'em-freertos', section:'Embedded', slug:'freertos-tasks', title:'FreeRTOS Tasks Basics', difficulty:'Intermediate', versions:['STM32','ESP32'], updated:'2025-08-08', est:'12 min', keywords:'tasks stack tick priority', content:
+      "\n## Steps\n<pre><code class=\"language-c\">xTaskCreate(BlinkTask, \"blink\", 256, NULL, 1, NULL);\nvTaskStartScheduler();</code></pre>\n" }
+  ];
+
+  // ===== Utilities (ES5) =====
+  var $ = function(sel, root){ return (root||document).querySelector(sel); };
+  var $$ = function(sel, root){ return Array.prototype.slice.call((root||document).querySelectorAll(sel)); };
+  var slugify = function(s){ return (s||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,''); };
+
+  // Progress (no Object.values)
+  var PKEY = 'tutorials.progress.v1';
+  var progress = JSON.parse(localStorage.getItem(PKEY) || '{}');
+  var setDone = function(id, v){ progress[id] = !!v; localStorage.setItem(PKEY, JSON.stringify(progress)); renderProgress(); };
+  var isDone = function(id){ return !!progress[id]; };
+  var renderProgress = function(){
+    var total = ARTICLES.length, done = 0, k;
+    for(k in progress){ if(progress.hasOwnProperty(k) && progress[k]) done++; }
+    var pct = total? Math.round(done*100/total) : 0;
+    $('#progressSummary').textContent = done+"/"+total+" ("+pct+"%) complete";
+  };
+
+  // Sidebar (no Set / Array.from)
+  var sectionsEl = $('#sections');
+  var seen = {}; var sections = []; var i;
+  for(i=0;i<ARTICLES.length;i++){ var sec=ARTICLES[i].section; if(!seen[sec]){ seen[sec]=true; sections.push(sec); } }
+  sections.forEach(function(sec){
+    var items = ARTICLES.filter(function(a){ return a.section===sec; });
+    var li = document.createElement('li');
+    li.innerHTML = '<details '+(items.length<6?'open':'')+' class="rounded-lg border border-neutral-200 dark:border-neutral-800">\
+        <summary class="cursor-pointer select-none px-3 py-2 font-semibold">'+sec+'</summary>\
+        <ul class="p-2 space-y-1 text-sm"></ul>\
+      </details>';
+    var ul = $('ul', li);
+    items.forEach(function(a){
+      var link = document.createElement('a');
+      link.className = 'flex items-center justify-between rounded-md px-2 py-1 hover:bg-neutral-50 dark:hover:bg-neutral-800';
+      link.href = '#/tutorials/'+slugify(a.section)+'/'+a.slug;
+      link.innerHTML = '<span>'+a.title+'</span><span class="text-xs '+(isDone(a.id)?'text-brand-600':'text-neutral-400')+'">'+(isDone(a.id)?'✓':'')+'</span>';
+      var lii = document.createElement('li'); lii.appendChild(link); ul.appendChild(lii);
+    });
+    sectionsEl.appendChild(li);
+  });
+
+  // Search (Lunr)
+  var idx = lunr(function(){ this.ref('id'); this.field('title'); this.field('section'); this.field('keywords'); ARTICLES.forEach(function(a){ this.add(a); }, this); });
+  var gs = $('#globalSearch');
+  if(gs){
+    window.addEventListener('keydown', function(e){ if(e.key==='/' && document.activeElement!==gs){ e.preventDefault(); gs.focus(); }});
+    gs.addEventListener('keydown', function(e){ if(e.key==='Escape'){ var sr=$('#searchResults'); if(sr){ sr.parentNode.removeChild(sr); } gs.blur(); }});
+    gs.addEventListener('input', function(e){
+      var q = e.target.value.trim();
+      var old = $('#searchResults'); if(old){ old.parentNode.removeChild(old); }
+      if(!q){ return; }
+      var res = idx.search(q).slice(0,8).map(function(r){ var j, a=null; for(j=0;j<ARTICLES.length;j++){ if(ARTICLES[j].id===r.ref){ a=ARTICLES[j]; break; } } return a; }).filter(Boolean);
+      var box = document.createElement('div'); box.id='searchResults'; box.className='absolute right-4 z-[60] mt-2 w-[32rem] rounded-xl border border-neutral-200 bg-white p-2 shadow-lg dark:border-neutral-800 dark:bg-neutral-900';
+      box.innerHTML = (res.map(function(a){ return "<a class='block rounded-lg px-3 py-2 hover:bg-neutral-50 dark:hover:bg-neutral-800' href='#/tutorials/"+slugify(a.section)+"/"+a.slug+"'><div class='font-semibold'>"+a.title+"</div><div class='text-xs text-neutral-500'>"+a.section+" • "+(a.keywords||'')+"</div></a>"; }).join('')) || "<div class='px-3 py-2 text-sm text-neutral-500'>No results</div>";
+      gs.parentElement.appendChild(box);
+    });
+    document.addEventListener('click', function(e){ if(!e.target.closest || (!e.target.closest('#searchResults') && e.target!==gs)){ var sr=$('#searchResults'); if(sr){ sr.parentNode.removeChild(sr); } } });
   }
 
-  // Close the sidebar with the close button
-  function w3_close() {
-    mySidebar.style.display = "none";
-    overlayBg.style.display = "none";
+  // Router
+  function parseHash(){ var m = location.hash.match(/^#\/tutorials\/([^/]+)\/([^/]+)$/); if(!m) return null; return { section:m[1], slug:m[2] }; }
+
+  function renderArticle(article){
+    $('#landing').classList.add('hidden');
+    $('#articleHeader').classList.remove('hidden');
+    $('#articleContent').classList.remove('hidden');
+    $('#feedback').classList.remove('hidden');
+    $('#articleTitle').textContent = article.title;
+    $('#updatedAt').textContent = 'Updated '+article.updated+' • ~'+article.est;
+    var badges = [];
+    if(article.difficulty) badges.push("<span class='rounded-md bg-brand-50 px-2 py-0.5 text-brand-700 dark:bg-brand-900/30 dark:text-brand-300'>"+article.difficulty+"</span>");
+    (article.versions||[]).forEach(function(v){ badges.push("<span class='rounded-md bg-neutral-100 px-2 py-0.5 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-200'>"+v+"</span>"); });
+    $('#articleBadges').innerHTML = badges.join('');
+    $('#breadcrumbs').innerHTML = "<a class='hover:underline' href='{% url 'tutorials_webpage' %}'>Tutorials</a> › <span class='capitalize'>"+article.section+"</span> › <span class='text-neutral-700 dark:text-neutral-200'>"+article.title+"</span>";
+    var doneBtn = $('#markDone');
+    doneBtn.textContent = isDone(article.id)?'✓ Done':'Mark as done';
+    doneBtn.onclick = function(){ setDone(article.id, !isDone(article.id)); doneBtn.textContent = isDone(article.id)?'✓ Done':'Mark as done'; };
+    $('#printBtn').onclick = function(){ window.print(); };
+    var issue = "https://github.com/shriyashdixit/new_server/issues/new?title="+encodeURIComponent('Tutorial feedback: '+article.title)+"&labels=tutorial&body="+encodeURIComponent('URL: '+location.href+'\n\nFeedback: ');
+    $('#openIssue').href = issue;
+    $('#feedback [data-fb="up"]').onclick = function(){ alert('Thanks for the feedback!'); };
+    $('#feedback [data-fb="down"]').onclick = function(){ location.href = issue; };
+
+    var html = marked.parse(article.content);
+    var container = $('#articleContent'); container.innerHTML = html;
+
+    $$('#articleContent blockquote').forEach(function(b){ var txt=(b.textContent||'').trim(); if(/^try-it/i.test(txt)){ b.className='border-l-4 border-brand-400 bg-brand-50/50 p-4 rounded-lg dark:border-brand-800 dark:bg-brand-900/20'; b.innerHTML = "<div class='font-semibold mb-1'>Try it</div><div>"+txt.replace(/^try-it/i,'').trim()+"</div>"; }});
+
+    $$('#articleContent .tabset').forEach(function(ts){ var tabs=$$('.tab', ts), panels=$$('.panel', ts); tabs.forEach(function(t){ t.addEventListener('click', function(){ tabs.forEach(function(x){ x.classList.remove('active'); }); panels.forEach(function(x){ x.classList.remove('active'); }); t.classList.add('active'); var target='#'+t.getAttribute('data-for'); $(target, ts).classList.add('active'); }); }); ts.classList.add('rounded-xl','border','border-neutral-200','p-3','dark:border-neutral-800','bg-white','dark:bg-neutral-900'); tabs.forEach(function(t){ t.classList.add('mr-2','rounded-lg','border','border-neutral-300','px-3','py-1','text-sm','dark:border-neutral-700'); }); $$('.panel', ts).forEach(function(p){ p.classList.add('mt-3'); }); });
+
+    $$('#articleContent pre').forEach(function(pre){ pre.classList.add('relative','rounded-xl','border','border-neutral-200','bg-neutral-50','dark:border-neutral-800','dark:bg-neutral-900'); var btn=document.createElement('button'); btn.textContent='Copy'; btn.className='code-actions rounded-md border border-neutral-300 bg-white/80 px-2 py-0.5 text-xs hover:bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-800'; btn.onclick=function(){ navigator.clipboard.writeText(pre.innerText); btn.textContent='Copied!'; setTimeout(function(){ btn.textContent='Copy'; },1200); }; pre.appendChild(btn); });
+    Prism.highlightAllUnder(container);
+
+    var heads = $$('#articleContent h2, #articleContent h3'); heads.forEach(function(h){ var id=slugify(h.textContent); h.id=id; }); var toc = heads.map(function(h){ return "<a class='block truncate "+(h.tagName==='H2'?'font-semibold':'pl-4 text-neutral-500')+" hover:text-brand-600' href='#"+h.id+"'>"+h.textContent+"</a>"; }).join(''); var tocBox=$('#toc'); tocBox.innerHTML=toc; tocBox.classList.remove('hidden');
+
+    var h2s = $$('#articleContent h2'); var steps=[]; h2s.forEach(function(h, i){ steps.push({ '@type':'HowToStep', position:i+1, name:h.textContent }); }); var ld={ '@context':'https://schema.org', '@type':'HowTo', name:article.title, description:document.querySelector('meta[name="description"]').content, step:steps }; var old=$('#ldjson'); if(old){ old.parentNode.removeChild(old); } var s=document.createElement('script'); s.id='ldjson'; s.type='application/ld+json'; s.textContent=JSON.stringify(ld); document.head.appendChild(s);
+
+    document.title = article.title+' — Tutorials — Nazukware';
   }
 
-  // Show the content based on sidebar link click
-  function showContent(contentId) {
-    // Hide all content sections
-    var sections = document.getElementsByClassName('content-section');
-    for (var i = 0; i < sections.length; i++) {
-      sections[i].style.display = 'none';
-    }
-    // Show the selected content section
-    document.getElementById(contentId).style.display = 'block';
-  }
-  function copyCode() {
-            // Get the code element
-            const codeElement = document.getElementById('code');
-            
-            // Create a temporary textarea to hold the code
-            const textArea = document.createElement('textarea');
-            textArea.value = codeElement.textContent;
-            document.body.appendChild(textArea);
-            
-            // Select and copy the text
-            textArea.select();
-            document.execCommand('copy');
-            
-            // Remove the temporary textarea
-            document.body.removeChild(textArea);
-            
-            // Optional: Provide feedback to the user
-            alert('Code copied to clipboard!');
-        }
-</script>
+  function route(){ var r=parseHash(); if(!r){ $('#articleHeader').classList.add('hidden'); $('#toc').classList.add('hidden'); $('#articleContent').classList.add('hidden'); $('#feedback').classList.add('hidden'); $('#landing').classList.remove('hidden'); document.title='Tutorials — Nazukware'; return; } var section=decodeURIComponent(r.section); var j,a=null; for(j=0;j<ARTICLES.length;j++){ if(slugify(ARTICLES[j].section)===section && ARTICLES[j].slug===r.slug){ a=ARTICLES[j]; break; } } if(a){ renderArticle(a); } else { location.hash=''; } }
 
+  document.getElementById('year').textContent = new Date().getFullYear();
+  document.getElementById('themeToggle').addEventListener('click', function(){ var d=document.documentElement.classList.toggle('dark'); localStorage.setItem('theme', d?'dark':'light'); });
+  renderProgress();
+  window.addEventListener('hashchange', route); route();
+
+  // Self-tests
+  (function(){ try{ console.groupCollapsed('Tutorials self-tests'); console.assert(slugify('Hello World!')==='hello-world','slugify'); console.assert(/^#\/tutorials\/([^/]+)\/([^/]+)$/.test('#/tutorials/python/venv-basics'),'route regex'); console.groupEnd(); }catch(e){ console.warn('Self-tests failed',e);} })();
+  </script>
 </body>
 </html>
