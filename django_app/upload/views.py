@@ -1,10 +1,11 @@
 from django.shortcuts import render
 from django.core.files.storage import FileSystemStorage
 import os
+import requests
 from django.conf import settings
 from django.contrib import messages
 # views.py
-from django.http import JsonResponse
+from django.http import JsonResponse, StreamingHttpResponse, HttpResponseBadRequest
 from django.views.decorators.csrf import csrf_exempt
 # from .models import TelegramMessage  # Your model to save messages
 import json
@@ -15,6 +16,7 @@ from .forms import SendMessageForm
 from django.contrib.auth.decorators import login_required
 # Create your views here.
 
+LLM_URL = os.getenv("LLM_SERVER_URL", "http://host.docker.internal:8080")
 
 def image_upload(request):
     if request.method == "POST" and request.FILES["image_file"]:
@@ -130,3 +132,34 @@ def send_message_view(request):
         form = SendMessageForm()
     
     return render(request, 'send_message.html', {'form': form})
+
+def chat_stream(request):
+    q = request.GET.get("q", "").strip()
+    if not q:
+        return HttpResponseBadRequest("q required")
+
+    def gen():
+        with requests.post(
+            f"{LLM_URL}/v1/chat/completions",
+            json={
+                "model": "mistral",
+                "messages": [
+                    {"role": "system", "content": "Answer concisely."},
+                    {"role": "user", "content": q},
+                ],
+                "stream": True,
+                "max_tokens": 2048,
+            },
+            headers={"Accept": "text/event-stream"},
+            stream=True,
+            timeout=None,
+        ) as r:
+            r.raise_for_status()
+            for chunk in r.iter_content(chunk_size=1024):
+                if chunk: 
+                    yield chunk
+
+    resp = StreamingHttpResponse(gen(), content_type="text/event-stream")
+    resp["Cache-Control"] = "no-cache"
+    resp["X-Accel-Buffering"] = "no"
+    return resp

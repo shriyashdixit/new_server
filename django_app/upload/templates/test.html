@@ -36,6 +36,10 @@
 
     <!-- Dark mode (persist) -->
     <script>(function(){const s=localStorage.getItem('theme');if(s==='dark'||(!s&&matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark')}})();</script>
+    <style>
+      .nw-bot { color:#000; }        /* light mode: black */
+      .dark .nw-bot { color:#fff; }  /* dark mode: keep white for contrast */
+    </style>
   </head>
 
   <body class="bg-white text-neutral-800 dark:bg-neutral-950 dark:text-neutral-100">
@@ -297,13 +301,105 @@
         const r=document.documentElement;const d=r.classList.toggle('dark');localStorage.setItem('theme',d?'dark':'light');
       });
     </script>
+    <!-- Chat toggle -->
+    <button id="nw-chat-toggle" class="fixed bottom-6 right-6 px-4 py-2 rounded-full shadow-lg bg-blue-600 text-white">
+      Local LLM / AI Chatbot
+    </button>
 
-    <!-- Dev notes:
-      • Copy‑paste into templates/test.html. This is a standalone Django template.
-      • Static files: put images under one of your STATICFILES_DIRS (e.g. mystaticfiles/images/...).
-        Example paths used above: images/nazukware-logo.svg, images/hero.jpg, images/projects/*, tech/*.svg
-      • Nginx must serve /static; you already map /static → /home/app/web/staticfiles.
-      • Live demo links use your existing URL names: tutorials_webpage, e_commerce, test. Replace as needed.
-    -->
+    <!-- Chat panel -->
+    <div id="nw-chat" class="hidden fixed bottom-20 right-6 w-80 max-h-[70vh] flex flex-col rounded-2xl shadow-xl bg-white dark:bg-neutral-900 border">
+      <div class="px-3 py-2 border-b font-semibold">Nazukware AI BOT</div>
+      <div id="nw-chat-log" class="p-3 space-y-2 overflow-y-auto text-sm" style="max-height:50vh"></div>
+      <form id="nw-chat-form" class="flex gap-2 p-3 border-t">
+        <input id="nw-chat-input"
+          class="flex-1 border rounded px-2 py-1 bg-white dark:bg-neutral-900
+                text-black dark:text-white placeholder-gray-600 dark:placeholder-gray-400"
+          placeholder="Ask me anything…" />
+        <button class="px-3 py-1 rounded bg-blue-600 text-white">Send</button>
+      </form>
+    </div>
+
+  <script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // --- Footer year + theme toggle ---
+    const yearEl = document.getElementById('year');
+    if (yearEl) yearEl.textContent = new Date().getFullYear();
+
+    const root = document.documentElement;
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') root.classList.add('dark');
+    document.getElementById('themeToggle')?.addEventListener('click', () => {
+      const dark = root.classList.toggle('dark');
+      localStorage.setItem('theme', dark ? 'dark' : 'light');
+    });
+
+    // --- Chat popup + streaming ---
+    const toggle = document.getElementById('nw-chat-toggle');
+    const panel  = document.getElementById('nw-chat');
+    const form   = document.getElementById('nw-chat-form');
+    const input  = document.getElementById('nw-chat-input');
+    const log    = document.getElementById('nw-chat-log');
+
+    let es = null; // active EventSource
+    let busy = false;
+
+    toggle?.addEventListener('click', () => {
+      panel.classList.toggle('hidden');
+      if (panel.classList.contains('hidden') && es) { es.close(); es = null; busy = false; }
+      input?.focus();
+    });
+
+    function addBubble(text, who) {
+      const wrap = document.createElement('div');
+      wrap.className = who === 'me' ? 'text-right' : 'text-left';
+      wrap.innerHTML =
+        `<div class="${who==='me'
+          ? 'bg-blue-600 text-white'
+          : 'bg-gray-100 dark:bg-neutral-800 nw-bot'} inline-block px-3 py-2 rounded-xl whitespace-pre-wrap break-words"></div>`;
+      wrap.firstChild.textContent = text;
+      log.appendChild(wrap);
+      log.scrollTop = log.scrollHeight;
+      return wrap.firstChild; // return the bubble node
+    }
+
+    form?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      if (busy) return;
+      const q = (input?.value || '').trim();
+      if (!q) return;
+
+      addBubble(q, 'me');
+      input.value = '';
+      const bubble = addBubble('', 'bot');
+
+      busy = true;
+      es = new EventSource(`/api/chat/stream?q=${encodeURIComponent(q)}`);
+
+      es.onopen = () => console.debug('SSE open');
+
+      es.onmessage = (ev) => {
+        if (ev.data === '[DONE]') { es.close(); es = null; busy = false; return; }
+        try {
+          const j = JSON.parse(ev.data);
+          const delta = j?.choices?.[0]?.delta?.content ?? '';
+          if (delta) bubble.textContent += delta;
+          const fr = j?.choices?.[0]?.finish_reason || null;
+          if (fr && fr !== null) { es.close(); es = null; busy = false; }
+        } catch {
+          // keep-alives or non-JSON lines
+        }
+        log.scrollTop = log.scrollHeight;
+      };
+
+      es.onerror = (err) => {
+        console.error('SSE error', err);
+        if (es) es.close();
+        es = null;
+        busy = false;
+      };
+    });
+  });
+  </script>
+
   </body>
 </html>

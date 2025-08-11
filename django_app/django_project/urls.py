@@ -19,7 +19,7 @@ from django.views.generic.base import RedirectView
 from django.conf import settings
 from django.conf.urls.static import static
 
-from upload.views import chatbot, env, tutorials_webpage, homepage_main, e_commerce, test, save_message, send_message_view
+from upload.views import chatbot, env, tutorials_webpage, homepage_main, e_commerce, test, save_message, send_message_view, chat_stream
 from algo_trading.views import import_csv, success_page, prediction_model
 from onedrive_clone.views import upload_file, file_list, download_file
 from image_generator.views import generate_image
@@ -44,6 +44,7 @@ urlpatterns = [
     path('generate-image/', generate_image, name='generate_image'),
     path('api/save_message/', save_message, name='save_message'),
     path('send-message/', send_message_view, name='send_message'),
+    path("api/chat/stream", chat_stream, name="chat_stream"),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

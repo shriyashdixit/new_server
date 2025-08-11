@@ -19,6 +19,10 @@ services:
       - ./.env.prod
     depends_on:
       - pg_db
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      - LLM_SERVER_URL=http://host.docker.internal:8080
 
   pg_db:
     image: postgres:13.0-alpine
