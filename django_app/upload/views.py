@@ -2,6 +2,8 @@ from django.shortcuts import render
 from django.core.files.storage import FileSystemStorage
 import os
 import requests
+import threading
+import queue
 from django.conf import settings
 from django.contrib import messages
 # views.py
@@ -16,7 +18,7 @@ from .forms import SendMessageForm
 from django.contrib.auth.decorators import login_required
 # Create your views here.
 
-LLM_URL = os.getenv("LLM_SERVER_URL", "http://host.docker.internal:8080")
+LLM_URL = getattr(settings, "LLM_SERVER_URL", "http://llm:8080")
 
 def image_upload(request):
     if request.method == "POST" and request.FILES["image_file"]:
@@ -133,33 +135,50 @@ def send_message_view(request):
     
     return render(request, 'send_message.html', {'form': form})
 
+@csrf_exempt
 def chat_stream(request):
-    q = request.GET.get("q", "").strip()
-    if not q:
+    qtxt = request.GET.get("q", "").strip()
+    if not qtxt:
         return HttpResponseBadRequest("q required")
 
     def gen():
-        with requests.post(
-            f"{LLM_URL}/v1/chat/completions",
-            json={
-                "model": "mistral",
-                "messages": [
-                    {"role": "system", "content": "Answer concisely."},
-                    {"role": "user", "content": q},
-                ],
-                "stream": True,
-                "max_tokens": 2048,
-            },
-            headers={"Accept": "text/event-stream"},
-            stream=True,
-            timeout=None,
-        ) as r:
-            r.raise_for_status()
-            for chunk in r.iter_content(chunk_size=1024):
-                if chunk: 
-                    yield chunk
+        buf: queue.Queue[bytes | object] = queue.Queue(maxsize=256)
+        STOP = object()
 
-    resp = StreamingHttpResponse(gen(), content_type="text/event-stream")
-    resp["Cache-Control"] = "no-cache"
-    resp["X-Accel-Buffering"] = "no"
-    return resp
+        def reader():
+            try:
+                with requests.post(
+                    f"{LLM_URL}/v1/chat/completions",
+                    json={
+                        "model": "mistral",
+                        "messages": [{"role": "user", "content": qtxt}],
+                        "stream": True,
+                    },
+                    stream=True, timeout=None,
+                ) as r:
+                    r.raise_for_status()
+                    for chunk in r.iter_content(chunk_size=1024):
+                        if chunk:
+                            buf.put(chunk)
+            finally:
+                buf.put(STOP)
+
+        threading.Thread(target=reader, daemon=True).start()
+
+        while True:
+            try:
+                chunk = buf.get(timeout=5)  # heartbeat every 5s if idle
+                if chunk is STOP:
+                    yield b"data: [DONE]\n\n"
+                    break
+                yield chunk
+            except queue.Empty:
+                # keep the HTTP connection alive
+                yield b":keepalive\n\n"
+
+    response = StreamingHttpResponse(gen(), content_type="text/event-stream; charset=utf-8")
+    # important for proxies/servers
+    response["Cache-Control"] = "no-cache, no-transform"
+    response["Connection"] = "keep-alive"
+    response["X-Accel-Buffering"] = "no"
+    return response

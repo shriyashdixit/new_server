@@ -1,6 +1,28 @@
 version: '3.8'
 
 services:
+  llm:
+    platform: ${LLM_PLATFORM}
+    build:
+      context: ./llm
+      dockerfile: Dockerfile
+    command: >
+      -m /models/${LLM_MODEL} --host 0.0.0.0 --port ${LLM_PORT}
+      -t ${LLM_THREADS} -c ${LLM_CTX} --n-predict ${LLM_N_PREDICT} --chat-template mistral
+    volumes:
+      - ${LLM_MODELS_DIR}:/models:ro
+      # - ./llm/ui:/ui:ro 
+    ports:
+      - "${LLM_PORT}:${LLM_PORT}"
+    restart: unless-stopped
+    env_file:
+      - ./.env.llm
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:${LLM_PORT}/v1/models"]
+      interval: 10s
+      timeout: 5s
+      retries: 8
+
   web:
     build:
       context: ./django_app
@@ -9,7 +31,14 @@ services:
     command: sh -c "python manage.py makemigrations &&
         python manage.py migrate &&
         python manage.py collectstatic --noinput &&
-        gunicorn django_project.wsgi:application --bind 0.0.0.0:8000"
+        exec gunicorn django_app.wsgi:application
+        --bind 0.0.0.0:8000
+        --workers 2
+        --threads 4
+        --worker-class gthread
+        --timeout 600
+        --graceful-timeout 600
+        --keep-alive 75"
     volumes:
       - static_volume:/home/app/web/staticfiles
       - media_volume:/home/app/web/mediafiles
@@ -18,11 +47,12 @@ services:
     env_file:
       - ./.env.prod
     depends_on:
-      - pg_db
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+      pg_db:
+        condition: service_started
+      llm:
+        condition: service_healthy
     environment:
-      - LLM_SERVER_URL=http://host.docker.internal:8080
+          - LLM_SERVER_URL=http://llm:${LLM_PORT}
 
   pg_db:
     image: postgres:13.0-alpine
