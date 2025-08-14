@@ -23,6 +23,10 @@ from upload.views import chatbot, env, tutorials_webpage, homepage_main, e_comme
 from algo_trading.views import import_csv, success_page, prediction_model
 from onedrive_clone.views import upload_file, file_list, download_file
 from image_generator.views import generate_image
+from django.http import HttpResponse
+
+def health(_request):
+    return HttpResponse("ok", content_type="text/plain")
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -45,6 +49,8 @@ urlpatterns = [
     path('api/save_message/', save_message, name='save_message'),
     path('send-message/', send_message_view, name='send_message'),
     path("api/chat/stream", chat_stream, name="chat_stream"),
+
+    path("health", health), 
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
