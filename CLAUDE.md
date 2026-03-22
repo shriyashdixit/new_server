@@ -101,7 +101,6 @@ Before making any edits or reads at the start of a task:
   2. Make changes
   3. `git add <files>` → `git commit -m "..."`
   4. `git push origin features/DD_MM_YY_NN`
-  5. `gh pr create` to open a pull request
 - A PreToolUse hook enforces this — file edits will be blocked if the branch doesn't match the required format
 
 ## Conventions
