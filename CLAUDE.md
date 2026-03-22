@@ -83,14 +83,16 @@ python manage.py createsuperuser
 
 ## Git Workflow
 - **Never commit directly to `main`** — always create a feature branch first
-- Branch naming: `feature/<short-description>` or `fix/<short-description>`
+- Branch naming: `features/DD_MM_YY_NN` where DD/MM/YY is the date and NN is a zero-padded sequence number
+  - Example: `features/22_03_26_00`, `features/22_03_26_01`, `features/22_03_26_02`
+  - Check existing branches for the day with `git branch -a | grep DD_MM_YY` to find the next number
 - Workflow for every change:
-  1. `git checkout -b feature/<name>`
+  1. `git checkout -b features/DD_MM_YY_NN`
   2. Make changes
   3. `git add <files>` → `git commit -m "..."`
-  4. `git push origin feature/<name>`
+  4. `git push origin features/DD_MM_YY_NN`
   5. `gh pr create` to open a pull request
-- A PreToolUse hook enforces this — file edits will be blocked if you are on `main`
+- A PreToolUse hook enforces this — file edits will be blocked if the branch doesn't match the required format
 
 ## Conventions
 - Django template tags (`{% static %}`) must not be placed inside inline CSS `style=""` attributes — use `data-bg` attributes and apply via JavaScript instead
