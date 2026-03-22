@@ -1,27 +1,27 @@
 version: '3.8'
 
 services:
-  llm:
-    platform: ${LLM_PLATFORM}
-    build:
-      context: ./llm
-      dockerfile: Dockerfile
-    command: >
-      -m /models/${LLM_MODEL} --host 0.0.0.0 --port ${LLM_PORT}
-      -t ${LLM_THREADS} -c ${LLM_CTX} --n-predict ${LLM_N_PREDICT} --chat-template mistral
-    volumes:
-      - ${LLM_MODELS_DIR}:/models:ro
-      # - ./llm/ui:/ui:ro 
-    ports:
-      - "${LLM_PORT}:${LLM_PORT}"
-    restart: unless-stopped
-    env_file:
-      - ./.env.llm
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:${LLM_PORT}/v1/models"]
-      interval: 10s
-      timeout: 5s
-      retries: 8
+#  llm:
+#    platform: ${LLM_PLATFORM}
+#    build:
+#      context: ./llm
+#      dockerfile: Dockerfile
+#    command: >
+#      -m /models/${LLM_MODEL} --host 0.0.0.0 --port ${LLM_PORT}
+#      -t ${LLM_THREADS} -c ${LLM_CTX} --n-predict ${LLM_N_PREDICT} --chat-template mistral
+#    volumes:
+#      - ${LLM_MODELS_DIR}:/models:ro
+#      # - ./llm/ui:/ui:ro 
+#    ports:
+#      - "${LLM_PORT}:${LLM_PORT}"
+#    restart: unless-stopped
+#    env_file:
+#      - ./.env.llm
+#    healthcheck:
+#      test: ["CMD", "curl", "-f", "http://localhost:${LLM_PORT}/v1/models"]
+#      interval: 10s
+#      timeout: 5s
+#      retries: 8
 
 
   web:
@@ -50,8 +50,8 @@ services:
     depends_on:
       pg_db:
         condition: service_healthy
-      llm:
-        condition: service_healthy
+#      llm:
+#        condition: service_healthy
     environment:
           - LLM_SERVER_URL=http://llm:${LLM_PORT}
     healthcheck:
@@ -74,7 +74,6 @@ services:
       timeout: 3s
       retries: 5
 
-
   npm:
     image: jc21/nginx-proxy-manager:latest
     container_name: npm
@@ -88,67 +87,56 @@ services:
       - npm_letsencrypt:/etc/letsencrypt
     environment:
       DB_SQLITE_FILE: "/data/database.sqlite"
-  # nginx-proxy:
-  #   container_name: nginx-proxy
-  #   build: nginx
-  #   restart: always
-  #   ports:
-  #     - 443:443
-  #     - 200:80
-  #   volumes:
-  #     - static_volume:/home/app/web/staticfiles
-  #     - media_volume:/home/app/web/mediafiles
-  #     - certs:/etc/nginx/certs
-  #     - html:/usr/share/nginx/html
-  #     - vhost:/etc/nginx/vhost.d
-  #     - /var/run/docker.sock:/tmp/docker.sock:ro
-  #   depends_on:
-  #     - web
 
-  # acme-companion:
-  #   image: nginxproxy/acme-companion
-  #   restart: always
+  # nextcloud_db:
+  #   image: mariadb:10.11
+  #   container_name: nextcloud_db
+  #   restart: unless-stopped
   #   env_file:
-  #     - ./.env.prod.proxy-companion
+  #     - ./.env.prod.nextcloud
   #   volumes:
-  #     - /var/run/docker.sock:/var/run/docker.sock:ro
-  #     - certs:/etc/nginx/certs
-  #     - html:/usr/share/nginx/html
-  #     - vhost:/etc/nginx/vhost.d
-  #     - acme:/etc/acme.sh
+  #     - /mnt/nextcloud_data/data:/var/lib/mysql
+
+  # nextcloud_redis:
+  #   image: redis:7
+  #   container_name: nextcloud_redis
+  #   restart: unless-stopped
+
+  # nextcloud_app:
+  #   image: nextcloud
+  #   container_name: nextcloud_app
+  #   restart: unless-stopped
+  #   environment:
+  #     - PHP_UPLOAD_MAX_FILESIZE=10G
+  #     - PHP_POST_MAX_SIZE=10G
+  #   env_file:
+  #     - ./.env.prod.redis
+  #   volumes:
+  #     - /mnt/nextcloud_data/app:/var/www/html
+  #   networks:
+  #     - default
   #   depends_on:
-  #     - nginx-proxy
-
-  nextcloud_db:
-    image: mariadb:10.11
-    container_name: nextcloud_db
-    restart: unless-stopped
-    env_file:
-      - ./.env.prod.nextcloud
-    volumes:
-      - /mnt/nextcloud_data/data:/var/lib/mysql
-
-  nextcloud_redis:
-    image: redis:7
-    container_name: nextcloud_redis
-    restart: unless-stopped
-
-  nextcloud_app:
-    image: nextcloud
-    container_name: nextcloud_app
-    restart: unless-stopped
-    environment:
-      - PHP_UPLOAD_MAX_FILESIZE=10G
-      - PHP_POST_MAX_SIZE=10G
-    env_file:
-      - ./.env.prod.redis
-    volumes:
-      - /mnt/nextcloud_data/app:/var/www/html
-    networks:
-      - default
-    depends_on:
-      - nextcloud_db
-      - nextcloud_redis
+  #     - nextcloud_db
+  #     - nextcloud_redis
+#   jellyfin:
+#     image: jellyfin/jellyfin:latest
+#     container_name: jellyfin
+#     user: "1000:1000"
+#     environment:
+#       TZ: Asia/Kolkata
+#     volumes:
+#       - /srv/jellyfin/config:/config
+#       - /srv/jellyfin/cache:/cache
+#       - /mnt/backup_drive/additional_media:/mnt/backup_drive/additional_media:ro
+# #      - /mnt/shared_drive/media:/media_drive:ro
+#       - /mnt/nextcloud_data/media:/media_drive_2:ro
+#       - /dev/video:/dev/video
+#     devices:
+#     - /dev/dri:/dev/dri
+#     group_add: ["44","105", "1000", "1001"]
+#     restart: unless-stopped
+#     depends_on:
+#       - npm
 
   # telegram_bot:
   #   build: ./telegram_bot
