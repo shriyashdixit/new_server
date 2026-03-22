@@ -2,6 +2,7 @@ aiohttp==3.9.3
 Django==4.2.3
 fyers_apiv3
 gunicorn==21.2.0
+whitenoise==6.7.0
 numpy
 openai
 psycopg2-binary==2.9.6

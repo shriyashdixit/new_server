@@ -28,7 +28,8 @@ services:
     build:
       context: ./django_app
       dockerfile: Dockerfile.prod
-    restart: always  
+    user: root
+    restart: always
     command: sh -c "python manage.py makemigrations &&
         python manage.py migrate &&
         python manage.py collectstatic --noinput &&

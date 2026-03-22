@@ -56,12 +56,20 @@ def homepage_main(request):
     folder1_path = os.path.join(settings.STATIC_ROOT, 'folder1')
     folder2_path = os.path.join(settings.STATIC_ROOT, 'folder2')
 
-    images_folder1 = [f'folder1/{img}' for img in os.listdir(folder1_path) if img.endswith(('.png', '.jpg', '.jpeg', '.webp'))]
-    images_folder2 = [f'folder2/{img}' for img in os.listdir(folder2_path) if img.endswith(('.png', '.jpg', '.jpeg', '.webp'))]
+    images_folder1 = [
+        f'folder1/{img}'
+        for img in os.listdir(folder1_path)
+        if img.endswith(('.png', '.jpg', '.jpeg', '.webp'))
+    ]
+    images_folder2 = [
+        f'folder2/{img}'
+        for img in os.listdir(folder2_path)
+        if img.endswith(('.png', '.jpg', '.jpeg', '.webp'))
+    ]
 
-    return render(request, 'test.html', {
+    return render(request, 'homepage_main.html', {
         'images_folder1': images_folder1,
-        'images_folder2': images_folder2
+        'images_folder2': images_folder2,
     })
 
 
