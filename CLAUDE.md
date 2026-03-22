@@ -81,6 +81,16 @@ python manage.py createsuperuser
   docker compose -f docker-compose.prod.yml up -d --build
   ```
 
+## Session Start Checklist
+Before making any edits or reads at the start of a task:
+1. Check the current branch: `git branch --show-current`
+2. If you are **not on `main`** and there are **no uncommitted changes** (`git status` is clean), switch to main and pull latest:
+   ```bash
+   git checkout main
+   git pull origin main
+   ```
+3. Then create a new feature branch and proceed.
+
 ## Git Workflow
 - **Never commit directly to `main`** — always create a feature branch first
 - Branch naming: `features/DD_MM_YY_NN` where DD/MM/YY is the date and NN is a zero-padded sequence number
