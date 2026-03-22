@@ -415,7 +415,7 @@
         .service-card {
             position: absolute;
             bottom: calc(100% + 16px);
-            right: 0;
+            left: 0;
             width: 320px;
             background: #ffffff;
             color: #1d2532;
@@ -474,7 +474,7 @@
             content: "";
             position: absolute;
             bottom: -12px;
-            right: 24px;
+            left: 15px;
             border-width: 12px 12px 0;
             border-style: solid;
             border-color: #fff transparent transparent;
@@ -662,6 +662,24 @@
         /* ── Services Swiper ── */
         .services-swiper-wrap {
             position: relative;
+        }
+
+        .servicesSwiper .swiper-wrapper {
+            align-items: stretch;
+        }
+
+        .servicesSwiper .swiper-slide {
+            height: auto;
+        }
+
+        .servicesSwiper .swiper-slide .card {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .servicesSwiper .swiper-slide .card .card-link {
+            margin-top: auto;
         }
 
         .swiper-nav-btn {
@@ -1433,6 +1451,12 @@
     const servicesSwiper = new Swiper('.servicesSwiper', {
         slidesPerView: 1,
         spaceBetween: 22,
+        loop: true,
+        autoplay: {
+            delay: 10000,
+            disableOnInteraction: false,
+            pauseOnMouseEnter: true,
+        },
         breakpoints: {
             640:  { slidesPerView: 2 },
             1024: { slidesPerView: 3 },

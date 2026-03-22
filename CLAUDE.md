@@ -99,8 +99,10 @@ Before making any edits or reads at the start of a task:
 - Workflow for every change:
   1. `git checkout -b features/DD_MM_YY_NN`
   2. Make changes
-  3. `git add <files>` → `git commit -m "..."`
-  4. `git push origin features/DD_MM_YY_NN`
+  3. `git add <files>`
+  4. **Ask the user for a commit message before committing** — do not auto-generate one
+  5. `git commit -m "<user-provided message>"`
+  6. `git push origin features/DD_MM_YY_NN`
 - A PreToolUse hook enforces this — file edits will be blocked if the branch doesn't match the required format
 
 ## Conventions
