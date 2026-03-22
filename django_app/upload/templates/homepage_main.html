@@ -92,6 +92,10 @@
             transition: background 0.4s ease, padding 0.4s ease, box-shadow 0.4s ease;
         }
 
+        .site-header .container {
+            position: relative;
+        }
+
         .site-header.scrolled {
             background: rgba(7, 17, 31, 0.97);
             backdrop-filter: blur(12px);
@@ -189,6 +193,52 @@
         }
 
         .nav-cta::after { display: none !important; }
+
+        /* ── Hamburger Menu ── */
+        .nav-toggle {
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            gap: 5px;
+            width: 40px;
+            height: 40px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 6px;
+            border-radius: 8px;
+            transition: background 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .nav-toggle:hover {
+            background: rgba(255,255,255,0.07);
+        }
+
+        .nav-toggle span {
+            display: block;
+            height: 2px;
+            background: rgba(255,255,255,0.88);
+            border-radius: 2px;
+            transition: transform 0.3s ease, opacity 0.3s ease, width 0.3s ease;
+        }
+
+        .nav-toggle span:nth-child(2) {
+            width: 70%;
+        }
+
+        .nav-toggle.open span:nth-child(1) {
+            transform: translateY(7px) rotate(45deg);
+        }
+
+        .nav-toggle.open span:nth-child(2) {
+            opacity: 0;
+            width: 0;
+        }
+
+        .nav-toggle.open span:nth-child(3) {
+            transform: translateY(-7px) rotate(-45deg);
+        }
 
         /* ── Hero ── */
         .hero {
@@ -300,19 +350,19 @@
             justify-content: center;
             min-width: 160px;
             height: 60px;
-            border: 2px solid var(--primary);
+            border: none;
             border-radius: 999px;
             color: #fff;
             font-weight: 700;
             font-size: 1rem;
-            transition: background 0.25s ease, box-shadow 0.25s ease, transform 0.2s ease;
-            background: rgba(40,199,251,0.06);
+            transition: box-shadow 0.25s ease, transform 0.2s ease;
+            background: #28c7fb;
             letter-spacing: 0.3px;
+            box-shadow: 0 6px 20px rgba(40,199,251,0.4);
         }
 
         .hero-btn:hover {
-            background: rgba(40,199,251,0.18);
-            box-shadow: 0 6px 24px rgba(40,199,251,0.28);
+            box-shadow: 0 10px 30px rgba(40,199,251,0.55);
             transform: translateY(-2px);
         }
 
@@ -643,7 +693,7 @@
         /* ── Clients ── */
         .clients-strip {
             display: grid;
-            grid-template-columns: repeat(6, 1fr);
+            grid-template-columns: repeat(5, 1fr);
             gap: 14px;
         }
 
@@ -672,6 +722,32 @@
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 22px;
+        }
+
+        /* ── Case study card image thumbnail ── */
+        .case-img {
+            width: calc(100% + 56px);
+            margin: -28px -28px 22px -28px;
+            height: 200px;
+            border-radius: var(--radius) var(--radius) 0 0;
+            overflow: hidden;
+            background: linear-gradient(135deg, rgba(40,199,251,0.15), rgba(4,48,185,0.25));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .case-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .case-img-placeholder {
+            font-size: 2.5rem;
+            opacity: 0.4;
         }
 
         .case-tag {
@@ -866,6 +942,7 @@
             .hero-right { min-height: auto; display: none; }
 
             .clients-strip { grid-template-columns: repeat(3, 1fr); }
+            .case-img { height: 180px; }
 
             .section-head {
                 align-items: flex-start;
@@ -878,9 +955,41 @@
             }
         }
 
+        @media (max-width: 1024px) {
+            .nav-toggle { display: flex; }
+
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                flex-direction: column;
+                background: rgba(7,17,31,0.98);
+                backdrop-filter: blur(16px);
+                -webkit-backdrop-filter: blur(16px);
+                padding: 16px 20px 20px;
+                gap: 4px;
+                border-top: 1px solid rgba(255,255,255,0.07);
+                box-shadow: 0 12px 30px rgba(0,0,0,0.4);
+            }
+
+            .nav-links.open { display: flex; }
+
+            .nav-links a {
+                padding: 11px 14px;
+                border-radius: 10px;
+                font-size: 0.97rem;
+            }
+
+            .nav-cta {
+                margin-top: 6px;
+                text-align: center;
+            }
+        }
+
         @media (max-width: 820px) {
-            .nav-wrap { flex-direction: column; align-items: flex-start; }
-            .nav-links { gap: 6px; }
+            .nav-wrap { position: relative; }
             .hero-content { padding-top: 140px; padding-bottom: 50px; }
             .hero-mini { font-size: 1rem; }
             .hero h1 { font-size: 2rem; }
@@ -909,7 +1018,13 @@
                 <span>Nazukware</span>
             </a>
 
-            <nav class="nav-links">
+            <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation" aria-expanded="false">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+
+            <nav class="nav-links" id="navLinks">
                 <a href="{% url 'homepage_main' %}" class="active">Home</a>
                 <a href="{% url 'homepage_main' %}">Services</a>
                 <a href="{% url 'homepage_main' %}">Skills</a>
@@ -1123,6 +1238,9 @@
 
                 <div class="case-grid">
                     <article class="card mil-animated">
+                        <div class="case-img">
+                            <span class="case-img-placeholder">🛡️</span>
+                        </div>
                         <span class="case-tag">Cloud &bull; Backend &bull; Web Apps</span>
                         <h3 class="case-title">AI Security Platform</h3>
                         <p class="case-copy">A modern cloud-native platform that detects risky interactions, automates workflows, and provides actionable security visibility across enterprise environments.</p>
@@ -1130,6 +1248,9 @@
                     </article>
 
                     <article class="card mil-animated mil-animated-delay-1">
+                        <div class="case-img">
+                            <span class="case-img-placeholder">🌐</span>
+                        </div>
                         <span class="case-tag">Connectivity &bull; Platform Engineering</span>
                         <h3 class="case-title">Unified Network Management</h3>
                         <p class="case-copy">A scalable management platform for connected devices, bringing visibility, control, and simplified operations across multiple network environments.</p>
@@ -1137,6 +1258,9 @@
                     </article>
 
                     <article class="card mil-animated mil-animated-delay-2">
+                        <div class="case-img">
+                            <span class="case-img-placeholder">🤖</span>
+                        </div>
                         <span class="case-tag">AI &bull; Cloud &bull; Backend</span>
                         <h3 class="case-title">LLM Performance Layer</h3>
                         <p class="case-copy">An AI infrastructure solution focused on faster responses, improved throughput, and reduced serving costs for production-grade language model applications.</p>
@@ -1255,6 +1379,25 @@
 
     document.getElementById('servicesPrev').addEventListener('click', () => servicesSwiper.slidePrev());
     document.getElementById('servicesNext').addEventListener('click', () => servicesSwiper.slideNext());
+
+    // ── Mobile nav hamburger ──
+    (function () {
+        const toggle = document.getElementById('navToggle');
+        const nav = document.getElementById('navLinks');
+        toggle.addEventListener('click', () => {
+            const open = nav.classList.toggle('open');
+            toggle.classList.toggle('open', open);
+            toggle.setAttribute('aria-expanded', open);
+        });
+        // Close on link click
+        nav.querySelectorAll('a').forEach(a => {
+            a.addEventListener('click', () => {
+                nav.classList.remove('open');
+                toggle.classList.remove('open');
+                toggle.setAttribute('aria-expanded', 'false');
+            });
+        });
+    })();
 
     // ── Scroll animations ──
     const observer = new IntersectionObserver((entries) => {
