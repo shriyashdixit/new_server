@@ -83,13 +83,14 @@ python manage.py createsuperuser
 
 ## Session Start Checklist
 Before making any edits or reads at the start of a task:
-1. Check the current branch: `git branch --show-current`
-2. If you are **not on `main`** and there are **no uncommitted changes** (`git status` is clean), switch to main and pull latest:
-   ```bash
-   git checkout main
-   git pull origin main
-   ```
-3. Then create a new feature branch and proceed.
+1. Check the current branch (`git branch --show-current`) and status (`git status`)
+2. If the working tree is **clean**:
+   - If on `main`: pull latest → `git pull origin main`
+   - If on a feature branch: switch to main and pull latest:
+     ```bash
+     git checkout main && git pull origin main
+     ```
+3. Create a new feature branch and proceed.
 
 ## Git Workflow
 - **Never commit directly to `main`** — always create a feature branch first
@@ -105,7 +106,20 @@ Before making any edits or reads at the start of a task:
   6. `git push origin features/DD_MM_YY_NN`
 - A PreToolUse hook enforces this — file edits will be blocked if the branch doesn't match the required format
 
+## Frontend Dependencies (homepage_main.html)
+- **Fonts**: Google Fonts — Sora (body) + Syne (headings)
+- **Carousel**: Swiper.js v11 (CDN) — used for the Core Capabilities services swiper
+- **No JS framework** — vanilla JS only
+
 ## Conventions
 - Django template tags (`{% static %}`) must not be placed inside inline CSS `style=""` attributes — use `data-bg` attributes and apply via JavaScript instead
 - `mystaticfiles/` is the only place to add static assets
 - Do not add unused templates or orphaned views
+- **Do not auto-create pull requests** — push the branch and stop; let the user open the PR manually
+- **Always ask the user for a commit message** before running `git commit` — never auto-generate one
+
+## Webpage Content Guidelines
+- `homepage_main.html` is a **company portfolio page** for Nazukware — target audience is clients, recruiters, and potential buyers
+- Write all content from a **company/studio perspective** ("we build", "our capabilities") — never from a personal/individual perspective
+- Do not reference personal job titles or designations (e.g. "Tech Lead", "Senior Engineer") — these are irrelevant to the company page
+- Content should be impactful and outcome-oriented, not CV-style
