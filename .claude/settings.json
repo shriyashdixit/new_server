@@ -1,0 +1,63 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(*)",
+      "Write(*)",
+      "Edit(*)",
+      "Bash(git status)",
+      "Bash(git diff*)",
+      "Bash(git log*)",
+      "Bash(git show*)",
+      "Bash(git branch*)",
+      "Bash(git checkout*)",
+      "Bash(git add*)",
+      "Bash(git commit*)",
+      "Bash(git push origin*)",
+      "Bash(gh pr create*)",
+      "Bash(gh pr view*)",
+      "Bash(docker ps*)",
+      "Bash(docker logs*)",
+      "Bash(docker inspect*)",
+      "Bash(docker exec new_server-web-1 python manage.py check*)",
+      "Bash(docker exec new_server-web-1 python manage.py migrate*)",
+      "Bash(docker exec new_server-web-1 python manage.py collectstatic*)",
+      "Bash(docker exec new_server-web-1 python manage.py showmigrations*)",
+      "Bash(ls*)"
+    ],
+    "deny": [
+      "Bash(docker compose*)",
+      "Bash(docker-compose*)",
+      "Read(.env*)",
+      "Bash(cat .env*)",
+      "Bash(grep* .env*)",
+      "Read(/root/*)",
+      "Read(/etc/*)",
+      "Read(~/*)",
+      "Bash(cat /root/*)",
+      "Bash(ls /root/*)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "BRANCH=$(git branch --show-current 2>/dev/null); if [ \"$BRANCH\" = \"main\" ]; then printf '{\"continue\": false, \"stopReason\": \"You are on the main branch. Create a feature branch first with: git checkout -b <branch-name>\"}'; fi"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '{\"systemMessage\": \"Remember to update CLAUDE.md if anything significant changed today.\"}'"
+          }
+        ]
+      }
+    ]
+  }
+}
