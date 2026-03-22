@@ -32,7 +32,7 @@
       "Bash(grep* .env*)",
       "Read(/root/*)",
       "Read(/etc/*)",
-      "Read(~/*)",
+      "Read(~/.ssh/*)",
       "Bash(cat /root/*)",
       "Bash(ls /root/*)"
     ]
@@ -44,7 +44,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "BRANCH=$(git branch --show-current 2>/dev/null); if [ \"$BRANCH\" = \"main\" ]; then printf '{\"continue\": false, \"stopReason\": \"You are on the main branch. Create a feature branch first with: git checkout -b <branch-name>\"}'; fi"
+            "command": "bash /home/puneserver/new_server/.claude/check-branch.sh"
           }
         ]
       }
