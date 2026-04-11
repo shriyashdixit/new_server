@@ -4,6 +4,49 @@ from django.utils.html import format_html
 from .models import TelegramMessage, TelegramUser, ContactSubmission, PageVisit, IPRecord, CountrySummary
 
 
+# ── Inlines ────────────────────────────────────────────────────────────────────
+
+class PageVisitInline(admin.TabularInline):
+    model = PageVisit
+    fields = ['visited_at', 'path', 'country', 'city', 'user_agent']
+    readonly_fields = ['visited_at', 'path', 'country', 'city', 'user_agent']
+    extra = 0
+    can_delete = False
+    ordering = ['-visited_at']
+    max_num = 20
+    show_change_link = True
+
+    def has_add_permission(self, request, obj=None):
+        return False
+
+
+class ContactSubmissionInline(admin.TabularInline):
+    model = ContactSubmission
+    fields = ['submitted_at', 'name', 'email', 'service', 'is_bot']
+    readonly_fields = ['submitted_at', 'name', 'email', 'service', 'is_bot']
+    extra = 0
+    can_delete = False
+    ordering = ['-submitted_at']
+    max_num = 20
+    show_change_link = True
+
+    def has_add_permission(self, request, obj=None):
+        return False
+
+
+class TelegramMessageInline(admin.TabularInline):
+    model = TelegramMessage
+    fields = ['date_sent', 'message_text', 'chat_type']
+    readonly_fields = ['date_sent', 'message_text', 'chat_type']
+    extra = 0
+    can_delete = False
+    ordering = ['-date_sent']
+    max_num = 20
+
+    def has_add_permission(self, request, obj=None):
+        return False
+
+
 # ── Contact Submissions ────────────────────────────────────────────────────────
 
 @admin.register(ContactSubmission)
@@ -126,6 +169,7 @@ class IPRecordAdmin(admin.ModelAdmin):
                        'visit_count', 'form_submission_count', 'bot_submission_count', 'pages_hit_display']
     ordering = ['-last_seen']
     list_per_page = 100
+    inlines = [PageVisitInline, ContactSubmissionInline]
 
     fieldsets = (
         ('IP Info', {
@@ -241,3 +285,4 @@ class TelegramUserAdmin(admin.ModelAdmin):
     search_fields = ['username']
     list_display = ['username', 'user_id', 'chat_id']
     list_per_page = 100
+    inlines = [TelegramMessageInline]
