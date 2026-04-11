@@ -77,6 +77,32 @@ def get_ip_location(ip: str) -> dict:
     return {'city': '?', 'country': '?', 'regionName': '?', 'isp': '?'}
 
 
+_CACHE_MISS = object()  # Sentinel — never stored in cache, so acts as a reliable "not found" signal
+
+
+def get_cached_abuse_score(ip: str):
+    """
+    Return the cached abuse score for an IP without hitting the API.
+    Lookup order: Django cache → IPRecord DB row → None (unknown).
+    Only caches when a real integer score exists — never caches None/unknown.
+    """
+    if not ip or ip in ('127.0.0.1', '::1', 'unknown'):
+        return None
+    from django.core.cache import cache
+    cached = cache.get(f'abuse_{ip}', _CACHE_MISS)
+    if cached is not _CACHE_MISS:
+        return cached  # int (already looked up) — fast path
+    try:
+        from upload.models import IPRecord
+        record = IPRecord.objects.filter(ip_address=ip).only('abuse_score').first()
+        if record is not None and record.abuse_score is not None:
+            cache.set(f'abuse_{ip}', record.abuse_score, timeout=86400)  # 24 h
+            return record.abuse_score
+    except Exception:
+        pass
+    return None
+
+
 def get_reverse_dns(ip):
     """Return the PTR (reverse DNS) hostname for an IP, or '' if none exists."""
     import socket
@@ -153,6 +179,10 @@ def update_ip_record(ip, path=None, geo=None, form_submitted=False, is_bot=False
                 abuse_score=_abuse_score,
                 abuse_total_reports=_abuse_reports,
             )
+            # Populate cache so the blocker middleware has it on the very next request
+            if _abuse_score is not None:
+                from django.core.cache import cache
+                cache.set(f'abuse_{ip}', _abuse_score, timeout=86400)
 
         update = {'last_seen': timezone.now()}
 
@@ -174,8 +204,11 @@ def update_ip_record(ip, path=None, geo=None, form_submitted=False, is_bot=False
             pages[path] = pages.get(path, 0) + 1
             IPRecord.objects.filter(pk=record.pk).update(pages_hit=pages)
 
+        return record
+
     except Exception:
         pass
+    return None
 
 
 def notify_landing_page_visit(request):

@@ -157,13 +157,7 @@ def contact_page(request):
                     hostname = get_reverse_dns(raw_ip)
                     abuse_score, abuse_reports = get_abuse_score(raw_ip)
 
-                    CS.objects.filter(pk=sub_id).update(
-                        city=geo.get('city', ''),
-                        region=geo.get('regionName', ''),
-                        country=geo.get('country', ''),
-                        isp=geo.get('isp', ''),
-                    )
-                    update_ip_record(
+                    ip_rec = update_ip_record(
                         raw_ip, geo=geo,
                         form_submitted=not is_bot,
                         is_bot=is_bot,
@@ -171,6 +165,15 @@ def contact_page(request):
                         abuse_score=abuse_score,
                         abuse_total_reports=abuse_reports,
                     )
+                    update_kwargs = {
+                        'city': geo.get('city', ''),
+                        'region': geo.get('regionName', ''),
+                        'country': geo.get('country', ''),
+                        'isp': geo.get('isp', ''),
+                    }
+                    if ip_rec is not None:
+                        update_kwargs['ip_record'] = ip_rec
+                    CS.objects.filter(pk=sub_id).update(**update_kwargs)
 
                     if chat_id:
                         IST = timezone(timedelta(hours=5, minutes=30))
@@ -254,6 +257,7 @@ def save_message(request):
                 is_bot=data.get('is_bot'),
                 chat_type=data.get('chat_type'),
                 reply_to_message_id=data.get('reply_to_message_id'),
+                sender=user,
             )
             return JsonResponse({'status': 'success', 'message': 'Message saved successfully'})
         except Exception as e:

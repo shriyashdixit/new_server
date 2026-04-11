@@ -15,6 +15,10 @@ class ContactSubmission(models.Model):
     country = models.CharField(max_length=100, blank=True)
     isp = models.CharField(max_length=255, blank=True)
     is_bot = models.BooleanField(default=False)
+    ip_record = models.ForeignKey(
+        'IPRecord', null=True, blank=True, on_delete=models.SET_NULL,
+        related_name='contact_submissions',
+    )
 
     class Meta:
         ordering = ['-submitted_at']
@@ -35,6 +39,10 @@ class PageVisit(models.Model):
     country = models.CharField(max_length=100, blank=True)
     isp = models.CharField(max_length=255, blank=True)
     visited_at = models.DateTimeField(auto_now_add=True)
+    ip_record = models.ForeignKey(
+        'IPRecord', null=True, blank=True, on_delete=models.SET_NULL,
+        related_name='page_visits',
+    )
 
     class Meta:
         ordering = ['-visited_at']
@@ -98,6 +106,10 @@ class TelegramMessage(models.Model):
     reply_to_message_id = models.BigIntegerField(null=True, blank=True)  # If replying to another message
     location = models.JSONField(null=True, blank=True)  # Optional location data if the message has it
     attachments = models.JSONField(null=True, blank=True)  # Store any attachments (e.g., file URLs)
+    sender = models.ForeignKey(
+        'TelegramUser', null=True, blank=True, on_delete=models.SET_NULL,
+        to_field='user_id', related_name='messages',
+    )
 
     def __str__(self):
         return f"Message from {self.username or self.user_id} in chat {self.chat_id}"

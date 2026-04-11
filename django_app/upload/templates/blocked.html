@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🚨 Hold It Right There — Nice Try Though</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&display=swap');
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      min-height: 100vh;
+      font-family: 'Sora', 'Segoe UI', sans-serif;
+      color: #fff;
+      background-color: #0c0303;
+      /* warning-tape stripes */
+      background-image: repeating-linear-gradient(
+        -55deg,
+        transparent,
+        transparent 28px,
+        rgba(180, 0, 0, 0.07) 28px,
+        rgba(180, 0, 0, 0.07) 56px
+      );
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2.5rem 1.25rem;
+    }
+
+    /* subtle red radial glow in centre */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(ellipse 70% 55% at 50% 40%, rgba(200, 0, 0, 0.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .wrap {
+      position: relative;
+      max-width: 680px;
+      width: 100%;
+      text-align: center;
+      z-index: 1;
+    }
+
+    /* ── siren ── */
+    .siren {
+      font-size: 4.5rem;
+      display: block;
+      animation: siren-pulse 0.75s ease-in-out infinite alternate;
+      margin-bottom: 1.25rem;
+      filter: drop-shadow(0 0 18px rgba(255, 60, 0, 0.7));
+    }
+    @keyframes siren-pulse {
+      from { transform: scale(1);   filter: drop-shadow(0 0 14px rgba(255,60,0,0.6)); }
+      to   { transform: scale(1.1); filter: drop-shadow(0 0 28px rgba(255,20,0,0.9)); }
+    }
+
+    /* ── status badge ── */
+    .badge {
+      display: inline-block;
+      background: linear-gradient(135deg, #c0000a, #6b0005);
+      border: 1.5px solid rgba(255, 80, 80, 0.45);
+      border-radius: 999px;
+      padding: 0.35rem 1.1rem;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #ffb3b3;
+      margin-bottom: 1.4rem;
+      box-shadow: 0 0 18px rgba(200, 0, 0, 0.35);
+    }
+
+    /* ── headline ── */
+    h1 {
+      font-size: clamp(1.7rem, 5vw, 2.5rem);
+      font-weight: 800;
+      line-height: 1.2;
+      color: #ff4444;
+      text-shadow: 0 0 28px rgba(255, 50, 50, 0.55);
+      margin-bottom: 0.6rem;
+    }
+
+    .subtitle {
+      color: #888;
+      font-size: 1rem;
+      line-height: 1.6;
+      margin-bottom: 2rem;
+    }
+
+    .ip-chip {
+      display: inline-block;
+      font-family: 'Courier New', monospace;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 80, 80, 0.25);
+      border-radius: 6px;
+      padding: 0.1rem 0.55rem;
+      font-size: 0.9rem;
+      color: #ff9999;
+    }
+
+    /* ── score card ── */
+    .score-card {
+      background: rgba(200, 0, 0, 0.07);
+      border: 1px solid rgba(255, 60, 60, 0.22);
+      border-radius: 18px;
+      padding: 1.75rem 2rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .score-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: #666;
+      margin-bottom: 0.4rem;
+    }
+
+    .score-number {
+      font-size: 5.5rem;
+      font-weight: 800;
+      line-height: 1;
+      color: #ff2020;
+      text-shadow: 0 0 40px rgba(255, 30, 30, 0.75);
+      animation: glow-pulse 1.4s ease-in-out infinite alternate;
+    }
+    @keyframes glow-pulse {
+      from { text-shadow: 0 0 24px rgba(255, 30, 30, 0.6); }
+      to   { text-shadow: 0 0 50px rgba(255, 30, 30, 0.95); }
+    }
+
+    .score-unit {
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: #ff5555;
+    }
+
+    .score-verdict {
+      margin-top: 0.5rem;
+      font-size: 0.92rem;
+      color: #ff7777;
+      min-height: 1.4em;
+    }
+
+    /* progress bar */
+    .bar-track {
+      background: #1a0a0a;
+      border-radius: 999px;
+      height: 10px;
+      margin: 1.2rem 0 0.35rem;
+      overflow: hidden;
+    }
+    .bar-fill {
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #ff6500, #ff0000);
+      box-shadow: 0 0 10px rgba(255, 0, 0, 0.6);
+    }
+    .bar-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.68rem;
+      color: #444;
+    }
+
+    /* ── info cards ── */
+    .card {
+      background: rgba(255, 255, 255, 0.025);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-radius: 14px;
+      padding: 1.4rem 1.6rem;
+      margin-bottom: 1.2rem;
+      text-align: left;
+    }
+
+    .card-title {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: #555;
+      margin-bottom: 0.9rem;
+    }
+
+    .card ul, .card ol {
+      padding-left: 0;
+      list-style: none;
+    }
+    .card ol { padding-left: 1.3rem; list-style: decimal; }
+
+    .card li {
+      font-size: 0.93rem;
+      color: #bbb;
+      padding: 0.32rem 0;
+      line-height: 1.5;
+    }
+    .card ul li::before { content: '☑️  '; }
+    .card ol li { color: #aaa; }
+
+    code {
+      font-family: 'Courier New', monospace;
+      background: rgba(255,255,255,0.06);
+      border-radius: 4px;
+      padding: 0.1rem 0.4rem;
+      font-size: 0.88em;
+      color: #ff9999;
+    }
+
+    /* ── footer ── */
+    .footer {
+      color: #333;
+      font-size: 0.76rem;
+      line-height: 1.7;
+      margin-top: 1.5rem;
+    }
+    .footer a { color: #555; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+
+    <span class="siren">🚨</span>
+
+    <div class="badge">⛔ Access Denied · IP Under Investigation</div>
+
+    <h1>Hold It Right There,<br>Internet Criminal.</h1>
+
+    <p class="subtitle">
+      Your IP <span class="ip-chip">{{ ip }}</span> has been reported to
+      <a href="https://www.abuseipdb.com" style="color:#ff7777;text-decoration:none;">AbuseIPDB</a>
+      enough times to make a grown server weep.<br>
+      We're not angry. We're just deeply, profoundly disappointed.
+    </p>
+
+    <!-- Score card -->
+    <div class="score-card">
+      <div class="score-label">Your Abuse Confidence Score</div>
+      <div>
+        <span class="score-number">{{ score }}</span><span class="score-unit">%</span>
+      </div>
+      <div class="score-verdict">
+        {% if score >= 95 %}
+          Absolute legend. The hall-of-shame kind. 🏆
+        {% elif score >= 85 %}
+          A truly committed bad actor. Respect, in the worst way. 🎖️
+        {% else %}
+          Respectably terrible. You didn't even half-ass it. 👏
+        {% endif %}
+      </div>
+      <div class="bar-track">
+        <div class="bar-fill" style="width: {{ score }}%"></div>
+      </div>
+      <div class="bar-labels">
+        <span>0% — Angel</span>
+        <span>75% — Blocked ← you are here</span>
+        <span>100%</span>
+      </div>
+    </div>
+
+    <!-- Alleged crimes -->
+    <div class="card">
+      <div class="card-title">🔍 What AbuseIPDB alleges you've been up to</div>
+      <ul>
+        <li>Port-scanning neighbourhoods at 3 AM in a trench coat</li>
+        <li>Sending emails your "Nigerian uncle" definitely wrote for you</li>
+        <li>Brute-forcing passwords with <code>admin123</code>, <code>password</code>, and sheer audacity</li>
+        <li>Running bots so bad even other bots are embarrassed to be associated with them</li>
+        <li>General crimes against the internet, the vibe, and common decency</li>
+      </ul>
+    </div>
+
+    <!-- Rehab steps -->
+    <div class="card">
+      <div class="card-title">📋 Steps to regain access (good luck with these)</div>
+      <ol>
+        <li>Time-travel back and stop doing whatever it was you were doing</li>
+        <li>File a formal letter of apology with AbuseIPDB at <code>abuseipdb.com</code></li>
+        <li>Enrol in a 12-step Internet Citizenship Rehabilitation Programme</li>
+        <li>Wait 6–12 months for the reports to expire — or get a new IP, or a new hobby</li>
+        <li>Touch grass. Seriously. It helps.</li>
+      </ol>
+    </div>
+
+    <p class="footer">
+      This message was brought to you by someone who is very tired.<br>
+      Abuse score data is provided by <a href="https://www.abuseipdb.com">AbuseIPDB</a> and cached for 24 hours.<br>
+      If you believe this is a mistake, it probably isn't — but you can dispute reports on their site.
+    </p>
+
+  </div>
+</body>
+</html>
