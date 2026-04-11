@@ -94,8 +94,9 @@ Before making any edits or reads at the start of a task:
 
 ## Git Workflow
 - **Never commit directly to `main`** — always create a feature branch first
-- Branch naming: `features/DD_MM_YY_NN` where DD/MM/YY is the date and NN is a zero-padded sequence number
-  - Example: `features/22_03_26_00`, `features/22_03_26_01`, `features/22_03_26_02`
+- Branch naming: `features/DD_MM_YY_NN` where DD/MM/YY is today's date and NN is a zero-padded counter starting at 01
+  - Example: `features/11_04_26_01`, `features/11_04_26_02`, `features/12_04_26_01`
+  - Counter resets to 01 each new day
   - Check existing branches for the day with `git branch -a | grep DD_MM_YY` to find the next number
 - Workflow for every change:
   1. `git checkout -b features/DD_MM_YY_NN`
