@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sitemaps',
     "upload",
     "algo_trading",
     'onedrive_clone',
@@ -58,6 +59,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'upload.middleware.PageVisitMiddleware',
 ]
 
 ROOT_URLCONF = 'django_project.urls'
@@ -73,6 +75,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'upload.context_processors.site_context',
             ],
         },
     },
@@ -119,6 +122,8 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
+DATETIME_FORMAT = 'd M Y, H:i:s'
+DATE_FORMAT = 'd M Y'
 
 TIME_ZONE = 'Asia/Calcutta'
 
@@ -157,3 +162,17 @@ CSRF_TRUSTED_ORIGINS = os.environ.get("CSRF_TRUSTED_ORIGINS").split(" ")
 
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 USE_X_FORWARDED_HOST = True
+
+# ── Security headers ──
+X_FRAME_OPTIONS = 'DENY'
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_BROWSER_XSS_FILTER = True
+
+# ── Site identity (used in sitemap, canonical tags, OG urls) ──
+# Set this to your live domain, e.g. 'https://nazukware.com'
+SITE_URL = os.environ.get('SITE_URL', '')
+
+# ── Analytics ──
+# Set to your Plausible domain (e.g. 'nazukware.com') to enable analytics.
+# Leave blank to disable.
+PLAUSIBLE_DOMAIN = os.environ.get('PLAUSIBLE_DOMAIN', '')

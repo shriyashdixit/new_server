@@ -11,12 +11,20 @@ from django.http import JsonResponse, StreamingHttpResponse, HttpResponseBadRequ
 from django.views.decorators.csrf import csrf_exempt
 # from .models import TelegramMessage  # Your model to save messages
 import json
-from .models import TelegramMessage, TelegramUser
+from .models import TelegramMessage, TelegramUser, ContactSubmission
 from datetime import datetime
 from .utils import send_telegram_message_to_chat, send_telegram_message, notify_landing_page_visit
 from .forms import SendMessageForm
 from django.contrib.auth.decorators import login_required
 # Create your views here.
+
+
+def error_404(request, exception=None):
+    return render(request, '404.html', status=404)
+
+
+def error_500(request):
+    return render(request, '500.html', status=500)
 
 LLM_URL = getattr(settings, "LLM_SERVER_URL", "http://llm:8080")
 
@@ -105,29 +113,93 @@ def blogs_page(request):
 
 def contact_page(request):
     if request.method == 'POST':
+        # Extract all data first so we can log bot attempts too
+        raw_ip = (
+            request.META.get('HTTP_X_FORWARDED_FOR', '')
+            .split(',')[0].strip()
+            or request.META.get('REMOTE_ADDR', '')
+        )
         name = request.POST.get('name', '').strip()
         email = request.POST.get('email', '').strip()
         phone = request.POST.get('phone', '').strip()
         company = request.POST.get('company', '').strip()
         service = request.POST.get('service', '').strip()
         message = request.POST.get('message', '').strip()
+        is_bot = bool(request.POST.get('website', ''))  # honeypot field
 
-        chat_id = settings.TELEGRAM_CHAT_ID
-        if chat_id and name and email:
-            from datetime import datetime, timezone, timedelta
-            IST = timezone(timedelta(hours=5, minutes=30))
-            ts = datetime.now(IST).strftime('%Y-%m-%d %H:%M:%S IST')
-            msg = (
-                '📬 <b>New Contact Form Submission</b>\n\n'
-                f'🕒 <b>Time:</b> {ts}\n'
-                f'👤 <b>Name:</b> {name}\n'
-                f'📧 <b>Email:</b> {email}\n'
-                f'📞 <b>Phone:</b> {phone or "—"}\n'
-                f'🏢 <b>Company:</b> {company or "—"}\n'
-                f'🔧 <b>Service:</b> {service or "—"}\n'
-                f'💬 <b>Message:</b>\n{message}'
+        # Rate limit real users only (bots bypass silently)
+        if not is_bot:
+            from django.core.cache import cache
+            rate_key = f'contact_rate_{raw_ip}'
+            submit_count = cache.get(rate_key, 0)
+            if submit_count >= 5:
+                return render(request, 'contact.html', {'rate_limited': True})
+            cache.set(rate_key, submit_count + 1, timeout=3600)
+
+        if name and email:
+            # Save immediately with basic data; background thread adds geo
+            submission = ContactSubmission.objects.create(
+                name=name, email=email, phone=phone,
+                company=company, service=service, message=message,
+                ip_address=raw_ip or None,
+                is_bot=is_bot,
             )
-            send_telegram_message(chat_id, msg)
+
+            import threading
+
+            def _enrich_and_notify(sub_id, raw_ip, chat_id, is_bot):
+                try:
+                    from upload.utils import get_ip_location, update_ip_record
+                    from upload.models import ContactSubmission as CS
+                    from datetime import datetime, timezone, timedelta
+
+                    geo = get_ip_location(raw_ip)
+                    CS.objects.filter(pk=sub_id).update(
+                        city=geo.get('city', ''),
+                        region=geo.get('regionName', ''),
+                        country=geo.get('country', ''),
+                        isp=geo.get('isp', ''),
+                    )
+                    update_ip_record(
+                        raw_ip, geo=geo,
+                        form_submitted=not is_bot,
+                        is_bot=is_bot,
+                    )
+
+                    if chat_id:
+                        IST = timezone(timedelta(hours=5, minutes=30))
+                        ts = datetime.now(IST).strftime('%Y-%m-%d %H:%M:%S IST')
+                        city = geo.get('city', '?')
+                        region = geo.get('regionName', '?')
+                        country = geo.get('country', '?')
+                        isp = geo.get('isp', '?')
+                        status_line = (
+                            '🤖 <b>BOT SUBMISSION DETECTED</b>'
+                            if is_bot else
+                            '✅ <b>New Contact Form Submission</b>'
+                        )
+                        msg = (
+                            f'{status_line}\n\n'
+                            f'🕒 <b>Time:</b> {ts}\n'
+                            f'👤 <b>Name:</b> {name}\n'
+                            f'📧 <b>Email:</b> {email}\n'
+                            f'📞 <b>Phone:</b> {phone or "—"}\n'
+                            f'🏢 <b>Company:</b> {company or "—"}\n'
+                            f'🔧 <b>Service:</b> {service or "—"}\n'
+                            f'💬 <b>Message:</b>\n{message}\n\n'
+                            f'🌍 <b>IP:</b> {raw_ip}\n'
+                            f'📍 <b>Location:</b> {city}, {region}, {country}\n'
+                            f'📡 <b>ISP:</b> {isp}'
+                        )
+                        send_telegram_message(chat_id, msg)
+                except Exception:
+                    pass
+
+            threading.Thread(
+                target=_enrich_and_notify,
+                args=(submission.pk, raw_ip, settings.TELEGRAM_CHAT_ID, is_bot),
+                daemon=True,
+            ).start()
 
         from django.shortcuts import redirect
         return redirect('/contact/?sent=1')

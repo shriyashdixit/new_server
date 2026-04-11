@@ -5,6 +5,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contact — Nazukware</title>
+    <meta name="description" content="Get in touch with Nazukware. We work with engineering teams, startups, and enterprises on backend systems, AI automation, and cloud infrastructure. We respond within 24 hours.">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Contact Nazukware">
+    <meta property="og:description" content="Get in touch with Nazukware. We work with engineering teams, startups, and enterprises on backend systems, AI automation, and cloud infrastructure. We respond within 24 hours.">
+    <link rel="icon" type="image/svg+xml" href="{% static 'favicon.svg' %}">
+    <link rel="apple-touch-icon" href="{% static 'logo.png' %}">
+    <meta name="theme-color" content="#07111f">
+    {% if SITE_URL %}<link rel="canonical" href="{{ SITE_URL }}{{ request.path }}">{% endif %}
+    {% if PLAUSIBLE_DOMAIN %}<script defer data-domain="{{ PLAUSIBLE_DOMAIN }}" src="https://plausible.io/js/script.js"></script>{% endif %}
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -480,6 +489,43 @@
             box-shadow: 0 10px 30px rgba(40,199,251,0.45);
         }
 
+        /* ── Error state ── */
+        .error-banner {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            background: rgba(251,100,100,0.07);
+            border: 1px solid rgba(251,100,100,0.22);
+            border-radius: 14px;
+            padding: 20px 22px;
+            margin-bottom: 28px;
+        }
+
+        .error-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(251,100,100,0.15);
+            display: grid;
+            place-items: center;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+
+        .error-banner p {
+            color: #f4a8a8;
+            font-size: 0.95rem;
+            line-height: 1.65;
+            margin: 0;
+        }
+
+        .error-banner p strong {
+            display: block;
+            font-size: 1rem;
+            margin-bottom: 4px;
+            color: #fb9090;
+        }
+
         /* ── Success state ── */
         .success-banner {
             display: flex;
@@ -762,6 +808,16 @@
                         <h3>Send Us a Message</h3>
                         <p>Fill in the details below and we'll get back to you shortly.</p>
 
+                        {% if rate_limited %}
+                        <div class="error-banner">
+                            <div class="error-icon">⚠</div>
+                            <p>
+                                <strong>Too many submissions</strong>
+                                You've submitted too many messages in a short period. Please try again in an hour.
+                            </p>
+                        </div>
+                        {% endif %}
+
                         {% if sent %}
                         <div class="success-banner">
                             <div class="success-icon">✓</div>
@@ -774,6 +830,8 @@
 
                         <form method="post" action="{% url 'contact_page' %}">
                             {% csrf_token %}
+                            <!-- Honeypot: bots fill this, humans don't see it -->
+                            <input type="text" name="website" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0;" aria-hidden="true">
                             <div class="form-row">
                                 <div class="form-group">
                                     <label for="name">Full Name *</label>

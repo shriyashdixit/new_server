@@ -1,0 +1,51 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+
+{% block content %}
+<div id="content-main">
+    <h2>Hits by Country</h2>
+    <table style="width:100%; border-collapse:collapse; margin-top:16px;">
+        <thead>
+            <tr style="background:#f8f8f8; border-bottom:2px solid #ddd;">
+                <th style="padding:10px 14px; text-align:left;">#</th>
+                <th style="padding:10px 14px; text-align:left;">Country</th>
+                <th style="padding:10px 14px; text-align:right;">Total Visits</th>
+                <th style="padding:10px 14px; text-align:right;">Unique IPs</th>
+                <th style="padding:10px 14px; text-align:right;">Form Submissions</th>
+                <th style="padding:10px 14px; text-align:right;">Bot Submissions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in summary_rows %}
+            <tr style="border-bottom:1px solid #eee; {% if forloop.counter|divisibleby:2 %}background:#fafafa;{% endif %}">
+                <td style="padding:9px 14px; color:#999;">{{ forloop.counter }}</td>
+                <td style="padding:9px 14px; font-weight:600;">{{ row.country|default:"Unknown" }}</td>
+                <td style="padding:9px 14px; text-align:right;">{{ row.total_visits }}</td>
+                <td style="padding:9px 14px; text-align:right;">{{ row.unique_ips }}</td>
+                <td style="padding:9px 14px; text-align:right;">{{ row.total_form_submissions }}</td>
+                <td style="padding:9px 14px; text-align:right; color:{% if row.total_bot_submissions %}#c0392b{% else %}#999{% endif %};">
+                    {{ row.total_bot_submissions }}
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" style="padding:20px 14px; color:#999; text-align:center;">No data yet.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        {% if summary_rows %}
+        <tfoot>
+            <tr style="border-top:2px solid #ddd; font-weight:700; background:#f0f0f0;">
+                <td style="padding:10px 14px;" colspan="2">Total</td>
+                <td style="padding:10px 14px; text-align:right;">
+                    {% with total=0 %}
+                        {% for row in summary_rows %}{{ row.total_visits }}{% if not forloop.last %}+{% endif %}{% endfor %}
+                    {% endwith %}
+                </td>
+                <td colspan="3"></td>
+            </tr>
+        </tfoot>
+        {% endif %}
+    </table>
+</div>
+{% endblock %}
