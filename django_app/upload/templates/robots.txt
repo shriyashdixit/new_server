@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+Disallow: /admin/
+Disallow: /media/
+
+{% if SITE_URL %}Sitemap: {{ SITE_URL }}/sitemap.xml{% endif %}
