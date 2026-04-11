@@ -1,0 +1,1087 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Services — Nazukware</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #07111f;
+            --bg-soft: #0d1b2d;
+            --card: #0f2238;
+            --text: #f4f7fb;
+            --muted: #b7c4d6;
+            --primary: #28c7fb;
+            --primary-2: #0430b9;
+            --accent: #7cf0c8;
+            --border: rgba(255,255,255,0.08);
+            --shadow: 0 10px 30px rgba(0,0,0,0.28);
+            --radius: 22px;
+            --max: 1240px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Sora', Inter, Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            overflow-x: hidden;
+        }
+
+        a { color: inherit; text-decoration: none; }
+        img { max-width: 100%; display: block; }
+
+        .container {
+            width: min(100% - 32px, var(--max));
+            margin: 0 auto;
+        }
+
+        /* ── Preloader ── */
+        #preloader {
+            position: fixed;
+            inset: 0;
+            background: var(--bg);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+        #preloader.hidden { opacity: 0; visibility: hidden; }
+        .preloader-bounce { display: flex; gap: 10px; }
+        .preloader-bounce span {
+            width: 16px; height: 16px; border-radius: 50%;
+            background: var(--primary);
+            animation: bounce 1.2s infinite ease-in-out both;
+        }
+        .preloader-bounce span:nth-child(1) { animation-delay: -0.32s; }
+        .preloader-bounce span:nth-child(2) { animation-delay: -0.16s; }
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); opacity: 0.3; }
+            40% { transform: scale(1); opacity: 1; }
+        }
+
+        /* ── Header ── */
+        .site-header {
+            position: fixed;
+            top: 0; left: 0; width: 100%;
+            z-index: 100;
+            padding: 20px 0;
+            background: rgba(7, 17, 31, 0.97);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            box-shadow: 0 4px 30px rgba(0,0,0,0.4);
+            transition: padding 0.4s ease;
+        }
+        .site-header .container { position: relative; }
+        .nav-wrap { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+        .brand {
+            display: flex; align-items: center; gap: 12px;
+            font-weight: 800; font-size: 1.15rem; letter-spacing: 0.3px;
+            font-family: 'Syne', sans-serif;
+        }
+        .brand-badge {
+            width: 46px; height: 46px; border-radius: 12px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-2));
+            display: grid; place-items: center;
+            font-weight: 900; font-size: 1.1rem; color: #fff;
+            box-shadow: 0 4px 16px rgba(40,199,251,0.35); flex-shrink: 0;
+        }
+        .nav-links { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+        .nav-links a {
+            color: rgba(255,255,255,0.88); font-size: 0.9rem; font-weight: 500;
+            padding: 7px 11px; border-radius: 8px;
+            transition: color 0.2s ease; position: relative;
+        }
+        .nav-links a:not(.nav-cta)::after {
+            content: ''; position: absolute; bottom: 4px; left: 11px; right: 11px;
+            height: 1.5px; background: var(--primary);
+            transform: scaleX(0); transform-origin: right;
+            transition: transform 0.25s ease;
+        }
+        .nav-links a:not(.nav-cta):hover::after,
+        .nav-links a.active::after { transform: scaleX(1); transform-origin: left; }
+        .nav-links a:not(.nav-cta):hover,
+        .nav-links a.active { color: #fff; }
+        .nav-cta {
+            padding: 10px 20px; border-radius: 999px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-2));
+            color: #fff !important; font-weight: 700; font-size: 0.9rem;
+            box-shadow: 0 4px 18px rgba(40,199,251,0.3);
+            transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+        }
+        .nav-cta:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(40,199,251,0.45) !important; }
+        .nav-cta::after { display: none !important; }
+
+        /* ── Hamburger ── */
+        .nav-toggle {
+            display: none; flex-direction: column; justify-content: center; gap: 5px;
+            width: 40px; height: 40px; background: none; border: none;
+            cursor: pointer; padding: 6px; border-radius: 8px;
+            transition: background 0.2s ease; flex-shrink: 0;
+        }
+        .nav-toggle:hover { background: rgba(255,255,255,0.07); }
+        .nav-toggle span {
+            display: block; height: 2px; background: rgba(255,255,255,0.88);
+            border-radius: 2px; transition: transform 0.3s ease, opacity 0.3s ease, width 0.3s ease;
+        }
+        .nav-toggle span:nth-child(2) { width: 70%; }
+        .nav-toggle.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+        .nav-toggle.open span:nth-child(2) { opacity: 0; width: 0; }
+        .nav-toggle.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+        /* ── Page Hero ── */
+        .page-hero {
+            padding: 160px 0 80px;
+            background:
+                linear-gradient(105deg, rgba(4,14,28,0.96) 0%, rgba(4,14,28,0.88) 100%),
+                linear-gradient(135deg, rgba(40,199,251,0.07) 0%, rgba(4,48,185,0.1) 100%);
+            position: relative; overflow: hidden;
+        }
+        .page-hero::before {
+            content: ''; position: absolute; top: -200px; right: -200px;
+            width: 600px; height: 600px; border-radius: 50%;
+            background: radial-gradient(circle, rgba(40,199,251,0.06) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .page-hero .mini {
+            display: inline-block; color: var(--primary);
+            font-weight: 700; font-size: 0.82rem; letter-spacing: 2px;
+            text-transform: uppercase; margin-bottom: 18px;
+            padding: 6px 14px; border: 1px solid rgba(40,199,251,0.22);
+            border-radius: 999px; background: rgba(40,199,251,0.07);
+        }
+        .page-hero h1 {
+            font-family: 'Syne', sans-serif;
+            font-size: clamp(2.4rem, 5vw, 4rem);
+            font-weight: 700; line-height: 1.1; letter-spacing: -0.5px; margin-bottom: 24px;
+        }
+        .page-hero p {
+            color: var(--muted); font-size: 1.05rem; line-height: 1.8; max-width: 580px;
+        }
+
+        /* ── Breadcrumb ── */
+        .breadcrumb {
+            display: flex; align-items: center; gap: 8px;
+            font-size: 0.85rem; color: var(--muted); margin-bottom: 28px;
+        }
+        .breadcrumb a { color: var(--primary); transition: opacity 0.2s ease; }
+        .breadcrumb a:hover { opacity: 0.75; }
+        .breadcrumb span { opacity: 0.4; }
+
+        /* ── Section base ── */
+        .section { padding: 80px 0; }
+        .section-dark { background: linear-gradient(180deg, #07111f 0%, #091625 100%); }
+        .section-soft { background: linear-gradient(180deg, #091625 0%, #0d1b2d 100%); }
+        .section-accent {
+            background: linear-gradient(135deg, rgba(40,199,251,0.06) 0%, rgba(4,48,185,0.08) 100%), #07111f;
+        }
+
+        .section-head { margin-bottom: 48px; }
+        .section-head .mini {
+            display: block; color: var(--primary); font-weight: 700;
+            font-size: 0.82rem; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px;
+        }
+        .section-head h2 {
+            margin: 0 0 14px; font-size: clamp(1.8rem, 3vw, 2.6rem);
+            font-weight: 700; letter-spacing: -0.5px; font-family: 'Syne', sans-serif;
+        }
+        .section-head p { color: var(--muted); line-height: 1.8; font-size: 0.97rem; max-width: 640px; }
+
+        /* ── Service Tabs ── */
+        .service-tabs-wrap { }
+
+        .tab-nav {
+            display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 36px;
+            border-bottom: 1px solid var(--border); padding-bottom: 20px;
+        }
+        .tab-btn {
+            padding: 9px 18px; border-radius: 999px;
+            border: 1px solid var(--border);
+            background: transparent; color: var(--muted);
+            font-family: 'Sora', sans-serif; font-size: 0.88rem; font-weight: 600;
+            cursor: pointer; transition: all 0.22s ease; white-space: nowrap;
+        }
+        .tab-btn:hover { border-color: rgba(40,199,251,0.3); color: var(--text); }
+        .tab-btn.active {
+            background: linear-gradient(135deg, var(--primary), var(--primary-2));
+            border-color: transparent; color: #fff;
+            box-shadow: 0 4px 16px rgba(40,199,251,0.28);
+        }
+
+        .tab-panel { display: none; }
+        .tab-panel.active { display: grid; grid-template-columns: 1fr 1.1fr; gap: 56px; align-items: center; }
+
+        .tab-panel-text .tag {
+            display: inline-block; margin-bottom: 16px; padding: 5px 13px;
+            border-radius: 999px; background: rgba(40,199,251,0.08);
+            color: #a8e8ff; font-size: 0.78rem; font-weight: 600;
+            border: 1px solid rgba(40,199,251,0.14); letter-spacing: 0.3px;
+        }
+        .tab-panel-text h3 {
+            font-family: 'Syne', sans-serif; font-size: clamp(1.5rem, 2.5vw, 2rem);
+            font-weight: 700; line-height: 1.2; margin-bottom: 18px;
+        }
+        .tab-panel-text p { color: var(--muted); line-height: 1.85; font-size: 0.97rem; margin-bottom: 24px; }
+        .tab-panel-text .tab-link {
+            display: inline-flex; align-items: center; gap: 8px;
+            color: var(--primary); font-weight: 700; font-size: 0.92rem;
+            transition: gap 0.2s ease;
+        }
+        .tab-panel-text .tab-link:hover { gap: 13px; }
+
+        .tab-panel-visual {
+            background: linear-gradient(160deg, rgba(15,34,56,0.97), rgba(10,22,36,0.97));
+            border: 1px solid var(--border); border-radius: var(--radius);
+            padding: 36px; min-height: 280px;
+            display: flex; flex-direction: column; gap: 18px;
+        }
+        .tab-bullet {
+            display: flex; align-items: flex-start; gap: 14px;
+        }
+        .tab-bullet-dot {
+            width: 8px; height: 8px; border-radius: 50%;
+            background: var(--primary); flex-shrink: 0; margin-top: 7px;
+        }
+        .tab-bullet p { color: #d4e4f4; font-size: 0.93rem; line-height: 1.65; margin: 0; }
+
+        /* ── Service Cards Grid ── */
+        .service-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 22px;
+        }
+        .service-card {
+            background: linear-gradient(160deg, rgba(15,34,56,0.97), rgba(10,22,36,0.97));
+            border: 1px solid var(--border); border-radius: var(--radius);
+            padding: 28px; box-shadow: var(--shadow);
+            display: flex; flex-direction: column;
+            transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .service-card:hover {
+            transform: translateY(-6px);
+            border-color: rgba(40,199,251,0.3);
+            box-shadow: 0 18px 40px rgba(0,0,0,0.35), 0 0 0 1px rgba(40,199,251,0.08);
+        }
+        .service-card-icon {
+            width: 52px; height: 52px; border-radius: 14px;
+            display: grid; place-items: center; margin-bottom: 18px;
+            background: linear-gradient(135deg, rgba(40,199,251,0.16), rgba(4,48,185,0.16));
+            border: 1px solid rgba(40,199,251,0.12); font-size: 1.3rem;
+        }
+        .service-card h3 {
+            margin: 0 0 12px; font-size: 1.1rem; font-weight: 700;
+            font-family: 'Syne', sans-serif; line-height: 1.3;
+        }
+        .service-card p {
+            margin: 0 0 18px; color: var(--muted); line-height: 1.75; font-size: 0.93rem; flex: 1;
+        }
+        .bullet-list { padding: 0; margin: 0 0 20px; list-style: none; display: grid; gap: 9px; }
+        .bullet-list li {
+            color: #d4e4f4; font-size: 0.9rem; position: relative;
+            padding-left: 18px; line-height: 1.55;
+        }
+        .bullet-list li::before {
+            content: ''; width: 7px; height: 7px; border-radius: 50%;
+            background: var(--primary); position: absolute; left: 0; top: 7px;
+        }
+        .card-link {
+            display: inline-flex; align-items: center; gap: 6px;
+            margin-top: auto; color: var(--primary);
+            font-weight: 700; font-size: 0.9rem; transition: gap 0.2s ease;
+        }
+        .card-link:hover { gap: 10px; }
+
+        /* ── Cloud Platforms ── */
+        .cloud-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; margin-top: 40px;
+        }
+        .cloud-card {
+            border-radius: var(--radius); padding: 36px 28px; text-align: center;
+            background: linear-gradient(160deg, rgba(15,34,56,0.97), rgba(10,22,36,0.97));
+            border: 1px solid var(--border);
+            transition: border-color 0.3s ease, transform 0.3s ease;
+        }
+        .cloud-card:hover { border-color: rgba(40,199,251,0.28); transform: translateY(-4px); }
+        .cloud-card-logo {
+            font-size: 2.6rem; margin-bottom: 18px; display: block;
+        }
+        .cloud-card h3 {
+            font-family: 'Syne', sans-serif; font-size: 1.15rem; font-weight: 700;
+            margin-bottom: 12px;
+        }
+        .cloud-card p { color: var(--muted); font-size: 0.92rem; line-height: 1.75; }
+
+        /* ── Delivery Methodology ── */
+        .method-tabs-nav {
+            display: flex; gap: 0; margin-bottom: 36px;
+            border-bottom: 1px solid var(--border);
+        }
+        .method-tab-btn {
+            padding: 14px 28px; background: none; border: none;
+            color: var(--muted); font-family: 'Sora', sans-serif;
+            font-size: 0.95rem; font-weight: 600; cursor: pointer;
+            border-bottom: 2px solid transparent; margin-bottom: -1px;
+            transition: color 0.2s ease, border-color 0.2s ease;
+        }
+        .method-tab-btn:hover { color: var(--text); }
+        .method-tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
+
+        .method-panel { display: none; }
+        .method-panel.active {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start;
+        }
+        .method-panel-text h3 {
+            font-family: 'Syne', sans-serif; font-size: 1.5rem; font-weight: 700;
+            margin-bottom: 16px; line-height: 1.25;
+        }
+        .method-panel-text p { color: var(--muted); line-height: 1.85; font-size: 0.97rem; margin-bottom: 20px; }
+        .method-panel-text p:last-child { margin-bottom: 0; }
+
+        .method-panel-steps { display: grid; gap: 18px; }
+        .method-step {
+            display: flex; gap: 18px; align-items: flex-start;
+            background: rgba(255,255,255,0.025);
+            border: 1px solid var(--border); border-radius: 14px; padding: 20px;
+            transition: border-color 0.25s ease;
+        }
+        .method-step:hover { border-color: rgba(40,199,251,0.2); }
+        .method-step-num {
+            width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0;
+            background: linear-gradient(135deg, rgba(40,199,251,0.2), rgba(4,48,185,0.2));
+            border: 1px solid rgba(40,199,251,0.15);
+            display: grid; place-items: center;
+            font-family: 'Syne', sans-serif; font-weight: 700;
+            font-size: 0.9rem; color: var(--primary);
+        }
+        .method-step-body strong {
+            display: block; font-size: 0.95rem; font-weight: 700; margin-bottom: 5px;
+        }
+        .method-step-body span { color: var(--muted); font-size: 0.88rem; line-height: 1.6; }
+
+        /* ── CTA Band ── */
+        .cta-band {
+            padding: 64px 0;
+            background: linear-gradient(
+                135deg,
+                rgba(40,199,251,0.08) 0%,
+                rgba(4,48,185,0.1) 100%
+            ), #07111f;
+            border-top: 1px solid rgba(40,199,251,0.1);
+            border-bottom: 1px solid rgba(40,199,251,0.1);
+        }
+        .cta-band-inner {
+            display: flex; align-items: center; justify-content: space-between;
+            gap: 32px; flex-wrap: wrap;
+        }
+        .cta-band h2 {
+            font-family: 'Syne', sans-serif; font-size: clamp(1.8rem, 3vw, 2.6rem);
+            font-weight: 700; line-height: 1.2; margin-bottom: 12px;
+        }
+        .cta-band p { color: var(--muted); font-size: 1rem; line-height: 1.75; max-width: 500px; }
+        .btn {
+            display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+            padding: 16px 32px; border-radius: 999px; border: none;
+            font-family: 'Sora', sans-serif; font-weight: 700; font-size: 1rem;
+            white-space: nowrap; cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-2));
+            color: #fff; box-shadow: 0 6px 20px rgba(40,199,251,0.3);
+        }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(40,199,251,0.45); }
+
+        /* ── Footer ── */
+        footer {
+            padding: 52px 0 28px;
+            border-top: 1px solid rgba(255,255,255,0.06);
+            background: rgba(0,0,0,0.22);
+        }
+        .footer-grid {
+            display: grid; grid-template-columns: 1.3fr 0.7fr 0.7fr 0.7fr;
+            gap: 32px; align-items: start;
+        }
+        .footer-brand p { color: var(--muted); line-height: 1.75; font-size: 0.93rem; margin-top: 16px; }
+        .footer-col h4 {
+            margin: 0 0 18px; font-size: 0.88rem; font-weight: 700;
+            letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.5);
+        }
+        .footer-links { display: grid; gap: 12px; }
+        .footer-links a {
+            color: var(--muted); font-size: 0.95rem; position: relative;
+            display: inline-flex; align-items: center; gap: 0;
+            transition: color 0.2s ease, gap 0.2s ease;
+        }
+        .footer-links a::before {
+            content: '→'; opacity: 0; transform: translateX(-8px);
+            transition: opacity 0.2s ease, transform 0.2s ease;
+            font-size: 0.85rem; color: var(--primary);
+        }
+        .footer-links a:hover { color: #fff; gap: 6px; }
+        .footer-links a:hover::before { opacity: 1; transform: translateX(0); }
+        .footer-bottom {
+            margin-top: 36px; padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.06);
+            display: flex; justify-content: space-between; gap: 12px;
+            flex-wrap: wrap; color: var(--muted); font-size: 0.88rem;
+        }
+
+        /* ── Scroll Animations ── */
+        .mil-animated {
+            opacity: 0; transform: translateY(28px);
+            transition: opacity 0.65s ease, transform 0.65s ease;
+        }
+        .mil-animated.in-view { opacity: 1; transform: translateY(0); }
+        .mil-animated-delay-1 { transition-delay: 0.12s; }
+        .mil-animated-delay-2 { transition-delay: 0.24s; }
+        .mil-animated-delay-3 { transition-delay: 0.36s; }
+
+        /* ── Responsive ── */
+        @media (max-width: 1024px) {
+            .nav-toggle { display: flex; }
+            .nav-links {
+                display: none; position: absolute; top: 100%; left: 0; right: 0;
+                flex-direction: column;
+                background: rgba(7,17,31,0.98); backdrop-filter: blur(16px);
+                -webkit-backdrop-filter: blur(16px);
+                padding: 16px 20px 20px; gap: 4px;
+                border-top: 1px solid rgba(255,255,255,0.07);
+                box-shadow: 0 12px 30px rgba(0,0,0,0.4);
+            }
+            .nav-links.open { display: flex; }
+            .nav-links a { padding: 11px 14px; border-radius: 10px; font-size: 0.97rem; }
+            .nav-cta { margin-top: 6px; text-align: center; }
+
+            .tab-panel.active { grid-template-columns: 1fr; }
+            .service-grid { grid-template-columns: repeat(2, 1fr); }
+            .cloud-grid { grid-template-columns: 1fr; gap: 16px; }
+            .method-panel.active { grid-template-columns: 1fr; }
+            .footer-grid { grid-template-columns: 1fr 1fr; }
+            .cta-band-inner { flex-direction: column; align-items: flex-start; }
+        }
+
+        @media (max-width: 820px) {
+            .nav-wrap { position: relative; }
+            .page-hero { padding: 130px 0 60px; }
+            .service-grid { grid-template-columns: 1fr; }
+            .tab-nav { gap: 6px; }
+            .method-tabs-nav { overflow-x: auto; }
+            .method-tab-btn { padding: 12px 18px; font-size: 0.88rem; white-space: nowrap; }
+            .footer-grid { grid-template-columns: 1fr; }
+            .section { padding: 60px 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Preloader -->
+    <div id="preloader">
+        <div class="preloader-bounce">
+            <span></span><span></span><span></span>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="site-header">
+        <div class="container nav-wrap">
+            <a href="{% url 'homepage_main' %}" class="brand">
+                <span class="brand-badge">N</span>
+                <span>Nazukware</span>
+            </a>
+
+            <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation" aria-expanded="false">
+                <span></span><span></span><span></span>
+            </button>
+
+            <nav class="nav-links" id="navLinks">
+                <a href="{% url 'homepage_main' %}">Home</a>
+                <a href="{% url 'services_page' %}" class="active">Services</a>
+                <a href="{% url 'skills_page' %}">Skills</a>
+                <a href="{% url 'work_page' %}">Work</a>
+                <a href="{% url 'team_page' %}">Team</a>
+                <a href="{% url 'culture_page' %}">Culture</a>
+                <a href="{% url 'careers_page' %}">Careers</a>
+                <a href="{% url 'blogs_page' %}">Blogs</a>
+                <a href="{% url 'contact_page' %}" class="nav-cta">Contact</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+
+        <!-- ── Page Hero ── -->
+        <section class="page-hero">
+            <div class="container">
+                <div class="breadcrumb">
+                    <a href="{% url 'homepage_main' %}">Home</a>
+                    <span>/</span>
+                    <span>Services</span>
+                </div>
+                <div class="mil-animated">
+                    <span class="mini">What We Do</span>
+                    <h1>Engineering Services<br>Built for Scale</h1>
+                    <p>End-to-end backend engineering, AI-driven automation, and cloud platform delivery — across regulated industries and high-growth product teams.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ── Tabbed Service Overview ── -->
+        <section class="section section-dark">
+            <div class="container">
+                <div class="section-head mil-animated">
+                    <span class="mini">Core Disciplines</span>
+                    <h2>Our Service Areas</h2>
+                    <p>From system architecture to AI pipelines — a full-spectrum engineering practice covering every layer of modern software delivery.</p>
+                </div>
+
+                <div class="service-tabs-wrap mil-animated">
+                    <div class="tab-nav" id="serviceTabNav">
+                        <button class="tab-btn active" data-tab="backend">Backend Architecture</button>
+                        <button class="tab-btn" data-tab="ai">AI Automation</button>
+                        <button class="tab-btn" data-tab="llm">LLM &amp; GenAI</button>
+                        <button class="tab-btn" data-tab="data">Data Engineering</button>
+                        <button class="tab-btn" data-tab="cloud">AWS Cloud</button>
+                        <button class="tab-btn" data-tab="devops">DevOps</button>
+                        <button class="tab-btn" data-tab="security">API Security</button>
+                        <button class="tab-btn" data-tab="distributed">Distributed Systems</button>
+                    </div>
+
+                    <!-- Backend Architecture -->
+                    <div class="tab-panel active" id="tab-backend">
+                        <div class="tab-panel-text">
+                            <span class="tag">Backend Engineering</span>
+                            <h3>Backend Architecture &amp; API Design</h3>
+                            <p>Production-grade Python and Django systems designed for scale, modularity, and long-term maintainability. We engineer APIs and service layers that handle high-volume processing with strict contract enforcement and operational resilience.</p>
+                            <a href="{% url 'contact_page' %}" class="tab-link">Start a project →</a>
+                        </div>
+                        <div class="tab-panel-visual">
+                            <div class="tab-bullet"><div class="tab-bullet-dot"></div><p>Modular Django and Flask service layers with clear separation of concerns</p></div>
+                            <div class="tab-bullet"><div class="tab-bullet-dot"></div><p>Pydantic schema validation and strict API contract enforcement</p></div>
+                            <div class="tab-bullet"><div class="tab-bullet-dot"></div><p>Webhook-driven event integrations with signature security</p></div>
+                            <div class="tab-bullet"><div class="tab-bullet-dot"></div><p>RESTful API design, versioning, and OOP design patterns</p></div>
+                            <div class="tab-bullet"><div class="tab-bullet-dot"></div><p>High-volume transaction processing pipelines</p></div>
+                        </div>
+                    </div>
+
+                    <!-- AI Automation -->
+                    <div class="tab-panel" id="tab-ai">
+                        <div class="tab-panel-text">
+                            <span class="tag">AI &amp; Machine Learning</span>
+                            <h3>AI &amp; Intelligent Automation</h3>
+                            <p>End-to-end automation pipelines powered by machine learning and active learning — eliminating manual effort at scale. We build systems that learn from feedback and continuously improve accuracy across data-intensive workflows.</p>
+                            <a href="{% url 'contact_page' %}" class="tab-link">Start a project →</a>
+                        </div>
+                        <div class="tab-panel-visual">
+                            <div class="tab-bullet"><div class="tab-bullet-dot"></div><p>NLP-based document extraction, classification, and transformation</p></div>
+                            <div class="tab-bullet"><div class="tab-bullet-dot"></div><p>Active learning feedback loops for continuous accuracy improvement</p></div>
+                            <div class="tab-bullet"><div class="tab-bullet-dot"></div><p>Scikit-learn, clustering algorithms, and structured data validation</p></div>
+                            <div class="tab-bullet"><div class="tab-bullet-dot"></div><p>Up to 95% reduction in manual processing through automation</p></div>
+                            <div class="tab-bullet"><div class="tab-bullet-dot"></div><p>AI-assisted code review and test generation workflows</p></div>
+                        </div>
+                    </div>
+
+                    <!-- LLM & GenAI -->
+                    <div class="tab-panel" id="tab-llm">
+                        <div class="tab-panel-text">
+                            <span class="tag">Generative AI</span>
+                            <h3>LLM &amp; GenAI Engineering</h3>
+                            <p>Practical LLM integration and GenAI platform engineering — from local inference to production-ready cloud AI pipelines. We build grounded, reliable AI systems that integrate seamlessly into existing product infrastructure.</p>
+                            <a href="{% url 'contact_page' %}" class="tab-link">Start a project →</a>
+                        </div>
+                        <div class="tab-panel-visual">
+                            <div class="tab-bullet"><div class="tab-bullet-dot"></div><p>Claude AI, OpenAI APIs, and AWS Bedrock integration</p></div>
+                            <div class="tab-bullet"><div class="tab-bullet-dot"></div><p>Local LLM deployment via Ollama and Stable Diffusion</p></div>
+                            <div class="tab-bullet"><div class="tab-bullet-dot"></div><p>RAG pipelines, LangChain, and LlamaIndex</p></div>
+                            <div class="tab-bullet"><div class="tab-bullet-dot"></div><p>Multimodal AI assistant and GenAI product development</p></div>
+                            <div class="tab-bullet"><div class="tab-bullet-dot"></div><p>Prompt engineering, evaluation frameworks, and output grounding</p></div>
+                        </div>
+                    </div>
+
+                    <!-- Data Engineering -->
+                    <div class="tab-panel" id="tab-data">
+                        <div class="tab-panel-text">
+                            <span class="tag">Data &amp; Performance</span>
+                            <h3>Data &amp; Performance Engineering</h3>
+                            <p>Optimised database architecture, precision query tuning, and high-throughput pipelines for data-intensive regulated domains. We build systems that stay fast under load and accurate under pressure.</p>
+                            <a href="{% url 'contact_page' %}" class="tab-link">Start a project →</a>
+                        </div>
+                        <div class="tab-panel-visual">
+                            <div class="tab-bullet"><div class="tab-bullet-dot"></div><p>PostgreSQL and MySQL — indexing, query plans, and performance tuning</p></div>
+                            <div class="tab-bullet"><div class="tab-bullet-dot"></div><p>Transaction management and data modelling for regulated environments</p></div>
+                            <div class="tab-bullet"><div class="tab-bullet-dot"></div><p>Structured validation pipelines for high-volume ingestion</p></div>
+                            <div class="tab-bullet"><div class="tab-bullet-dot"></div><p>Redis caching and Celery task queue architecture</p></div>
+                            <div class="tab-bullet"><div class="tab-bullet-dot"></div><p>Data pipeline reliability and fault-tolerant processing</p></div>
+                        </div>
+                    </div>
+
+                    <!-- AWS Cloud -->
+                    <div class="tab-panel" id="tab-cloud">
+                        <div class="tab-panel-text">
+                            <span class="tag">Cloud Platform</span>
+                            <h3>AWS Cloud Platform Engineering</h3>
+                            <p>Full-spectrum AWS delivery — from serverless compute and container orchestration to managed databases and AI/ML services. We architect and implement cloud infrastructure that scales reliably and stays cost-efficient.</p>
+                            <a href="{% url 'contact_page' %}" class="tab-link">Start a project →</a>
+                        </div>
+                        <div class="tab-panel-visual">
+                            <div class="tab-bullet"><div class="tab-bullet-dot"></div><p>Lambda (serverless), EC2 (infrastructure), ECS (containers)</p></div>
+                            <div class="tab-bullet"><div class="tab-bullet-dot"></div><p>RDS, S3, API Gateway, SQS, SNS, and Cognito</p></div>
+                            <div class="tab-bullet"><div class="tab-bullet-dot"></div><p>AWS Bedrock for managed AI and foundation model APIs</p></div>
+                            <div class="tab-bullet"><div class="tab-bullet-dot"></div><p>CloudWatch observability, IAM, VPC, CDK, and CloudFormation</p></div>
+                            <div class="tab-bullet"><div class="tab-bullet-dot"></div><p>Cost optimisation, security hardening, and multi-environment delivery</p></div>
+                        </div>
+                    </div>
+
+                    <!-- DevOps -->
+                    <div class="tab-panel" id="tab-devops">
+                        <div class="tab-panel-text">
+                            <span class="tag">DevOps &amp; Delivery</span>
+                            <h3>DevOps &amp; Delivery Engineering</h3>
+                            <p>Containerised workloads, automated delivery pipelines, and environment parity from development through production. We remove friction from the deployment path so engineering teams can ship with confidence.</p>
+                            <a href="{% url 'contact_page' %}" class="tab-link">Start a project →</a>
+                        </div>
+                        <div class="tab-panel-visual">
+                            <div class="tab-bullet"><div class="tab-bullet-dot"></div><p>Docker, Docker Compose, and container orchestration</p></div>
+                            <div class="tab-bullet"><div class="tab-bullet-dot"></div><p>CI/CD pipelines with GitHub Actions and automated testing</p></div>
+                            <div class="tab-bullet"><div class="tab-bullet-dot"></div><p>Nginx reverse proxy configuration and Gunicorn deployment</p></div>
+                            <div class="tab-bullet"><div class="tab-bullet-dot"></div><p>Git workflows, Agile/Scrum, and code review practices</p></div>
+                            <div class="tab-bullet"><div class="tab-bullet-dot"></div><p>Environment parity, secrets management, and rollback strategies</p></div>
+                        </div>
+                    </div>
+
+                    <!-- API Security -->
+                    <div class="tab-panel" id="tab-security">
+                        <div class="tab-panel-text">
+                            <span class="tag">Security &amp; Observability</span>
+                            <h3>Observability &amp; API Security</h3>
+                            <p>Security-first engineering practices and structured observability — protecting systems and making production failures fast to diagnose. We build systems that are both resilient and transparent.</p>
+                            <a href="{% url 'contact_page' %}" class="tab-link">Start a project →</a>
+                        </div>
+                        <div class="tab-panel-visual">
+                            <div class="tab-bullet"><div class="tab-bullet-dot"></div><p>Webhook signature validation and replay attack prevention</p></div>
+                            <div class="tab-bullet"><div class="tab-bullet-dot"></div><p>API security best practices and access control design</p></div>
+                            <div class="tab-bullet"><div class="tab-bullet-dot"></div><p>Structured logging, monitoring, and debugging workflows</p></div>
+                            <div class="tab-bullet"><div class="tab-bullet-dot"></div><p>WireGuard VPN, Linux hardening, and secure remote access</p></div>
+                            <div class="tab-bullet"><div class="tab-bullet-dot"></div><p>Threat modelling and security review for production systems</p></div>
+                        </div>
+                    </div>
+
+                    <!-- Distributed Systems -->
+                    <div class="tab-panel" id="tab-distributed">
+                        <div class="tab-panel-text">
+                            <span class="tag">Distributed Systems</span>
+                            <h3>Distributed Systems &amp; Workflow Automation</h3>
+                            <p>Rule engines, event-driven pipelines, and multi-stage automation platforms that scale across regulated and enterprise environments. We build the orchestration layer that ties complex systems together reliably.</p>
+                            <a href="{% url 'contact_page' %}" class="tab-link">Start a project →</a>
+                        </div>
+                        <div class="tab-panel-visual">
+                            <div class="tab-bullet"><div class="tab-bullet-dot"></div><p>Rule-driven validation engines and deterministic exception handling</p></div>
+                            <div class="tab-bullet"><div class="tab-bullet-dot"></div><p>Event-driven integrations with real-time workflow updates</p></div>
+                            <div class="tab-bullet"><div class="tab-bullet-dot"></div><p>Celery task queues and asynchronous processing architectures</p></div>
+                            <div class="tab-bullet"><div class="tab-bullet-dot"></div><p>Distributed automation across finance, healthcare, and energy sectors</p></div>
+                            <div class="tab-bullet"><div class="tab-bullet-dot"></div><p>Multi-tenant system design and cross-service reliability patterns</p></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ── Service Cards Grid ── -->
+        <section class="section section-soft">
+            <div class="container">
+                <div class="section-head mil-animated">
+                    <span class="mini">Full Capability Overview</span>
+                    <h2>Everything We Deliver</h2>
+                    <p>A complete view of our engineering capabilities — each discipline backed by production-proven experience across regulated and high-growth environments.</p>
+                </div>
+
+                <div class="service-grid">
+                    <article class="service-card mil-animated">
+                        <div class="service-card-icon"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/django/django-plain.svg" width="30" height="30" alt="Django" style="filter:invert(60%) sepia(100%) saturate(500%) hue-rotate(80deg) brightness(0.9);"></div>
+                        <h3>Backend Architecture &amp; API Design</h3>
+                        <p>Modular, maintainable systems built for high-volume processing and long-term operational confidence.</p>
+                        <ul class="bullet-list">
+                            <li>Django, Flask, FastAPI — RESTful APIs</li>
+                            <li>Pydantic schema validation</li>
+                            <li>Webhook-driven event systems</li>
+                            <li>Service-oriented architecture</li>
+                        </ul>
+                        <a href="{% url 'contact_page' %}" class="card-link">Discuss your project →</a>
+                    </article>
+
+                    <article class="service-card mil-animated mil-animated-delay-1">
+                        <div class="service-card-icon"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/python/python-original.svg" width="30" height="30" alt="Python"></div>
+                        <h3>AI &amp; Intelligent Automation</h3>
+                        <p>Pipelines that eliminate manual effort through machine learning, active feedback loops, and intelligent extraction.</p>
+                        <ul class="bullet-list">
+                            <li>NLP document extraction</li>
+                            <li>Active learning pipelines</li>
+                            <li>Scikit-learn and clustering</li>
+                            <li>Up to 95% manual effort reduction</li>
+                        </ul>
+                        <a href="{% url 'contact_page' %}" class="card-link">Discuss your project →</a>
+                    </article>
+
+                    <article class="service-card mil-animated mil-animated-delay-2">
+                        <div class="service-card-icon"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/numpy/numpy-original.svg" width="30" height="30" alt="NumPy"></div>
+                        <h3>LLM &amp; GenAI Engineering</h3>
+                        <p>Practical LLM integration and GenAI platform engineering from local inference to cloud-scale AI pipelines.</p>
+                        <ul class="bullet-list">
+                            <li>Claude, OpenAI, AWS Bedrock</li>
+                            <li>RAG pipelines and LangChain</li>
+                            <li>Local LLM via Ollama</li>
+                            <li>GenAI product development</li>
+                        </ul>
+                        <a href="{% url 'contact_page' %}" class="card-link">Discuss your project →</a>
+                    </article>
+
+                    <article class="service-card mil-animated">
+                        <div class="service-card-icon"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/postgresql/postgresql-original.svg" width="30" height="30" alt="PostgreSQL"></div>
+                        <h3>Data &amp; Performance Engineering</h3>
+                        <p>Optimised databases, precision query tuning, and high-throughput pipelines for data-intensive domains.</p>
+                        <ul class="bullet-list">
+                            <li>PostgreSQL and MySQL tuning</li>
+                            <li>Transaction management</li>
+                            <li>Redis caching and Celery</li>
+                            <li>High-volume ingestion pipelines</li>
+                        </ul>
+                        <a href="{% url 'contact_page' %}" class="card-link">Discuss your project →</a>
+                    </article>
+
+                    <article class="service-card mil-animated mil-animated-delay-1">
+                        <div class="service-card-icon" style="font-size:0.68rem;font-weight:900;color:#ff9900;letter-spacing:0.5px;">AWS</div>
+                        <h3>AWS Cloud Platform Engineering</h3>
+                        <p>Full-spectrum AWS delivery — serverless, containers, managed databases, and AI/ML services.</p>
+                        <ul class="bullet-list">
+                            <li>Lambda, EC2, ECS</li>
+                            <li>RDS, S3, API Gateway, SQS</li>
+                            <li>CloudWatch, IAM, VPC</li>
+                            <li>CDK and CloudFormation</li>
+                        </ul>
+                        <a href="{% url 'contact_page' %}" class="card-link">Discuss your project →</a>
+                    </article>
+
+                    <article class="service-card mil-animated mil-animated-delay-2">
+                        <div class="service-card-icon"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/docker/docker-original.svg" width="30" height="30" alt="Docker"></div>
+                        <h3>DevOps &amp; Delivery Engineering</h3>
+                        <p>Containerised workloads, automated pipelines, and environment parity from dev through production.</p>
+                        <ul class="bullet-list">
+                            <li>Docker and container orchestration</li>
+                            <li>GitHub Actions CI/CD</li>
+                            <li>Nginx and Gunicorn deployment</li>
+                            <li>Git workflow and Agile delivery</li>
+                        </ul>
+                        <a href="{% url 'contact_page' %}" class="card-link">Discuss your project →</a>
+                    </article>
+
+                    <article class="service-card mil-animated">
+                        <div class="service-card-icon"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/nginx/nginx-original.svg" width="30" height="30" alt="Nginx"></div>
+                        <h3>Observability &amp; API Security</h3>
+                        <p>Security-first engineering and structured observability — resilient systems that are fast to diagnose in production.</p>
+                        <ul class="bullet-list">
+                            <li>Webhook signature validation</li>
+                            <li>API access control design</li>
+                            <li>Structured logging and monitoring</li>
+                            <li>WireGuard VPN and hardening</li>
+                        </ul>
+                        <a href="{% url 'contact_page' %}" class="card-link">Discuss your project →</a>
+                    </article>
+
+                    <article class="service-card mil-animated mil-animated-delay-1">
+                        <div class="service-card-icon"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/redis/redis-original.svg" width="30" height="30" alt="Redis"></div>
+                        <h3>Distributed Systems &amp; Workflow Automation</h3>
+                        <p>Rule engines, event-driven pipelines, and multi-stage automation platforms built for enterprise scale.</p>
+                        <ul class="bullet-list">
+                            <li>Rule-driven validation engines</li>
+                            <li>Event-driven integrations</li>
+                            <li>Celery and async processing</li>
+                            <li>Finance, healthcare, energy sectors</li>
+                        </ul>
+                        <a href="{% url 'contact_page' %}" class="card-link">Discuss your project →</a>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- ── Cloud Platforms ── -->
+        <section class="section section-accent">
+            <div class="container">
+                <div class="section-head mil-animated">
+                    <span class="mini">Infrastructure</span>
+                    <h2>Cloud Platforms We Operate In</h2>
+                    <p>We design and deploy cloud-native systems across the platforms that matter most to enterprise engineering teams.</p>
+                </div>
+
+                <div class="cloud-grid">
+                    <div class="cloud-card mil-animated">
+                        <span class="cloud-card-logo" style="font-size:1.4rem;font-weight:900;color:#ff9900;letter-spacing:1px;">AWS</span>
+                        <h3>Amazon Web Services</h3>
+                        <p>Our primary cloud platform. Deep hands-on experience with Lambda, EC2, ECS, RDS, S3, Bedrock, SQS, Cognito, and the full IAM and VPC security model.</p>
+                    </div>
+
+                    <div class="cloud-card mil-animated mil-animated-delay-1">
+                        <span class="cloud-card-logo"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/azure/azure-original.svg" width="52" height="52" alt="Azure" style="display:inline-block;"></span>
+                        <h3>Microsoft Azure</h3>
+                        <p>Azure compute, storage, and managed service integration for enterprise environments with existing Microsoft infrastructure dependencies.</p>
+                    </div>
+
+                    <div class="cloud-card mil-animated mil-animated-delay-2">
+                        <span class="cloud-card-logo"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/docker/docker-original.svg" width="52" height="52" alt="Docker" style="display:inline-block;"></span>
+                        <h3>Private &amp; Hybrid Cloud</h3>
+                        <p>Self-hosted infrastructure engineering using Docker, Nginx, WireGuard, and Raspberry Pi clusters — for teams requiring data sovereignty or air-gapped deployments.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ── Delivery Methodology ── -->
+        <section class="section section-dark">
+            <div class="container">
+                <div class="section-head mil-animated">
+                    <span class="mini">How We Work</span>
+                    <h2>How We Design and Deliver</h2>
+                    <p>A structured, outcome-driven approach to engineering — from architecture decisions through to production deployment and ongoing delivery.</p>
+                </div>
+
+                <div class="mil-animated">
+                    <div class="method-tabs-nav" id="methodTabNav">
+                        <button class="method-tab-btn active" data-mtab="architecture">Architecture</button>
+                        <button class="method-tab-btn" data-mtab="execution">Execution</button>
+                        <button class="method-tab-btn" data-mtab="delivery">Delivery</button>
+                    </div>
+
+                    <!-- Architecture -->
+                    <div class="method-panel active" id="mtab-architecture">
+                        <div class="method-panel-text">
+                            <h3>We design systems that last</h3>
+                            <p>Architecture decisions are made deliberately — with future load, operational complexity, and team maintainability in mind. We favour clean boundaries, explicit contracts, and minimal coupling over clever abstractions.</p>
+                            <p>Every engagement starts with understanding the problem domain before proposing a solution. That means asking hard questions, challenging assumptions, and validating design choices against real-world constraints.</p>
+                        </div>
+                        <div class="method-panel-steps">
+                            <div class="method-step">
+                                <div class="method-step-num">01</div>
+                                <div class="method-step-body">
+                                    <strong>Domain Discovery</strong>
+                                    <span>Understand the business problem, data flows, and failure modes before writing a line of code.</span>
+                                </div>
+                            </div>
+                            <div class="method-step">
+                                <div class="method-step-num">02</div>
+                                <div class="method-step-body">
+                                    <strong>System Design</strong>
+                                    <span>Define service boundaries, API contracts, data models, and integration patterns.</span>
+                                </div>
+                            </div>
+                            <div class="method-step">
+                                <div class="method-step-num">03</div>
+                                <div class="method-step-body">
+                                    <strong>Design Review</strong>
+                                    <span>Validate decisions against scalability, security, and operational requirements before build starts.</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Execution -->
+                    <div class="method-panel" id="mtab-execution">
+                        <div class="method-panel-text">
+                            <h3>We build with precision and pace</h3>
+                            <p>Execution is iterative and transparent. We work in focused cycles, ship working software early, and adjust based on real feedback. Code quality, test coverage, and documentation are not afterthoughts.</p>
+                            <p>We bring the same rigour to a proof-of-concept as to a production system — because shortcuts in early stages create debt that compounds under scale.</p>
+                        </div>
+                        <div class="method-panel-steps">
+                            <div class="method-step">
+                                <div class="method-step-num">01</div>
+                                <div class="method-step-body">
+                                    <strong>Iterative Build Cycles</strong>
+                                    <span>Short, focused sprints with working, reviewable software at the end of each cycle.</span>
+                                </div>
+                            </div>
+                            <div class="method-step">
+                                <div class="method-step-num">02</div>
+                                <div class="method-step-body">
+                                    <strong>Code Quality Standards</strong>
+                                    <span>Automated testing, structured logging, and peer-reviewed code as baseline — not bonus.</span>
+                                </div>
+                            </div>
+                            <div class="method-step">
+                                <div class="method-step-num">03</div>
+                                <div class="method-step-body">
+                                    <strong>Continuous Feedback</strong>
+                                    <span>Regular check-ins, demo sessions, and live staging environments keep stakeholders informed throughout.</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Delivery -->
+                    <div class="method-panel" id="mtab-delivery">
+                        <div class="method-panel-text">
+                            <h3>We ship and support production</h3>
+                            <p>Delivery means production — not just done. We handle deployment, observability setup, runbook documentation, and knowledge transfer so that teams can operate and extend what we build.</p>
+                            <p>Post-launch support and performance monitoring are built into our delivery model, not sold as extras.</p>
+                        </div>
+                        <div class="method-panel-steps">
+                            <div class="method-step">
+                                <div class="method-step-num">01</div>
+                                <div class="method-step-body">
+                                    <strong>Production Deployment</strong>
+                                    <span>CI/CD pipelines, rollback strategies, and zero-downtime deployment where required.</span>
+                                </div>
+                            </div>
+                            <div class="method-step">
+                                <div class="method-step-num">02</div>
+                                <div class="method-step-body">
+                                    <strong>Observability Setup</strong>
+                                    <span>Structured logging, alerting, and monitoring dashboards configured for the production environment.</span>
+                                </div>
+                            </div>
+                            <div class="method-step">
+                                <div class="method-step-num">03</div>
+                                <div class="method-step-body">
+                                    <strong>Handover &amp; Support</strong>
+                                    <span>Documentation, runbooks, and knowledge transfer so your team can own and evolve the system confidently.</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ── CTA Band ── -->
+        <section class="cta-band">
+            <div class="container">
+                <div class="cta-band-inner mil-animated">
+                    <div>
+                        <h2>Ready to Take the Next Step?</h2>
+                        <p>Bring us the hard engineering problems — distributed systems, AI automation, cloud infrastructure, or all three. Let's figure out the right solution together.</p>
+                    </div>
+                    <a href="{% url 'contact_page' %}" class="btn btn-primary">Get In Touch</a>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ── Footer ── -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <a href="{% url 'homepage_main' %}" class="brand">
+                        <span class="brand-badge">N</span>
+                        <span>Nazukware</span>
+                    </a>
+                    <p>
+                        A software engineering studio specialising in backend systems, AI-driven automation, and cloud-native delivery — built for scale, security, and operational confidence.<br><br>
+                        Pune, India
+                    </p>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Social</h4>
+                    <div class="footer-links">
+                        <a href="{% url 'homepage_main' %}">LinkedIn</a>
+                        <a href="{% url 'homepage_main' %}">Facebook</a>
+                        <a href="{% url 'homepage_main' %}">X (Twitter)</a>
+                    </div>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Company</h4>
+                    <div class="footer-links">
+                        <a href="{% url 'services_page' %}">Services</a>
+                        <a href="{% url 'contact_page' %}">Contact</a>
+                        <a href="{% url 'careers_page' %}">Careers</a>
+                    </div>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Connect</h4>
+                    <div class="footer-links">
+                        <a href="{% url 'homepage_main' %}">Team</a>
+                        <a href="{% url 'homepage_main' %}">Culture</a>
+                        <a href="{% url 'homepage_main' %}">Blogs</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <span>&copy; 2026 Nazukware. All rights reserved.</span>
+                <span>Built by Nazukware.</span>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+    // ── Preloader ──
+    window.addEventListener('load', function () {
+        setTimeout(() => document.getElementById('preloader').classList.add('hidden'), 400);
+    });
+
+    // ── Mobile nav ──
+    (function () {
+        const toggle = document.getElementById('navToggle');
+        const nav = document.getElementById('navLinks');
+        toggle.addEventListener('click', () => {
+            const open = nav.classList.toggle('open');
+            toggle.classList.toggle('open', open);
+            toggle.setAttribute('aria-expanded', open);
+        });
+        nav.querySelectorAll('a').forEach(a => {
+            a.addEventListener('click', () => {
+                nav.classList.remove('open');
+                toggle.classList.remove('open');
+                toggle.setAttribute('aria-expanded', 'false');
+            });
+        });
+    })();
+
+    // ── Service Tabs ──
+    (function () {
+        const btns = document.querySelectorAll('#serviceTabNav .tab-btn');
+        const panels = document.querySelectorAll('.tab-panel');
+        btns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                btns.forEach(b => b.classList.remove('active'));
+                panels.forEach(p => p.classList.remove('active'));
+                btn.classList.add('active');
+                document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+            });
+        });
+    })();
+
+    // ── Methodology Tabs ──
+    (function () {
+        const btns = document.querySelectorAll('#methodTabNav .method-tab-btn');
+        const panels = document.querySelectorAll('.method-panel');
+        btns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                btns.forEach(b => b.classList.remove('active'));
+                panels.forEach(p => p.classList.remove('active'));
+                btn.classList.add('active');
+                document.getElementById('mtab-' + btn.dataset.mtab).classList.add('active');
+            });
+        });
+    })();
+
+    // ── Scroll animations ──
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('in-view');
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.mil-animated').forEach(el => observer.observe(el));
+    </script>
+</body>
+</html>
