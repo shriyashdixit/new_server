@@ -149,11 +149,14 @@ def contact_page(request):
 
             def _enrich_and_notify(sub_id, raw_ip, chat_id, is_bot):
                 try:
-                    from upload.utils import get_ip_location, update_ip_record
+                    from upload.utils import get_ip_location, get_reverse_dns, get_abuse_score, update_ip_record
                     from upload.models import ContactSubmission as CS
                     from datetime import datetime, timezone, timedelta
 
                     geo = get_ip_location(raw_ip)
+                    hostname = get_reverse_dns(raw_ip)
+                    abuse_score, abuse_reports = get_abuse_score(raw_ip)
+
                     CS.objects.filter(pk=sub_id).update(
                         city=geo.get('city', ''),
                         region=geo.get('regionName', ''),
@@ -164,6 +167,9 @@ def contact_page(request):
                         raw_ip, geo=geo,
                         form_submitted=not is_bot,
                         is_bot=is_bot,
+                        hostname=hostname,
+                        abuse_score=abuse_score,
+                        abuse_total_reports=abuse_reports,
                     )
 
                     if chat_id:
@@ -178,6 +184,11 @@ def contact_page(request):
                             if is_bot else
                             '✅ <b>New Contact Form Submission</b>'
                         )
+                        abuse_line = (
+                            f'⚠️ <b>Abuse Score:</b> {abuse_score}% ({abuse_reports} reports)\n'
+                            if abuse_score is not None else ''
+                        )
+                        hostname_line = f'🖥 <b>Hostname:</b> {hostname}\n' if hostname else ''
                         msg = (
                             f'{status_line}\n\n'
                             f'🕒 <b>Time:</b> {ts}\n'
@@ -188,8 +199,10 @@ def contact_page(request):
                             f'🔧 <b>Service:</b> {service or "—"}\n'
                             f'💬 <b>Message:</b>\n{message}\n\n'
                             f'🌍 <b>IP:</b> {raw_ip}\n'
+                            f'{hostname_line}'
                             f'📍 <b>Location:</b> {city}, {region}, {country}\n'
-                            f'📡 <b>ISP:</b> {isp}'
+                            f'📡 <b>ISP:</b> {isp}\n'
+                            f'{abuse_line}'
                         )
                         send_telegram_message(chat_id, msg)
                 except Exception:

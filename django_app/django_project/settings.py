@@ -176,3 +176,8 @@ SITE_URL = os.environ.get('SITE_URL', '')
 # Set to your Plausible domain (e.g. 'nazukware.com') to enable analytics.
 # Leave blank to disable.
 PLAUSIBLE_DOMAIN = os.environ.get('PLAUSIBLE_DOMAIN', '')
+
+# ── AbuseIPDB ──
+# Get a free API key at https://www.abuseipdb.com (free tier: 1000 checks/day).
+# Leave blank to disable — the app works normally without it.
+ABUSEIPDB_API_KEY = os.environ.get('ABUSEIPDB_API_KEY', '')

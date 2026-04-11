@@ -4,6 +4,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.sitemaps.views import sitemap
 from django.views.generic import TemplateView
+from django.http import HttpResponse
 from upload import views
 from upload.sitemap import StaticViewSitemap
 
@@ -27,6 +28,7 @@ urlpatterns = [
     path('careers/', views.careers_page, name='careers_page'),
     path('blogs/', views.blogs_page, name='blogs_page'),
 
+    path('health', lambda r: HttpResponse('ok'), name='health'),
     path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
     path('robots.txt', TemplateView.as_view(template_name='robots.txt', content_type='text/plain')),
 ]

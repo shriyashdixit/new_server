@@ -54,6 +54,9 @@ class IPRecord(models.Model):
     isp = models.CharField(max_length=255, blank=True)
     first_seen = models.DateTimeField(auto_now_add=True)
     last_seen = models.DateTimeField(auto_now_add=True)
+    hostname = models.CharField(max_length=500, blank=True)       # reverse DNS
+    abuse_score = models.SmallIntegerField(null=True, blank=True)  # 0–100, None = not checked
+    abuse_total_reports = models.PositiveIntegerField(null=True, blank=True)
     visit_count = models.PositiveIntegerField(default=0)
     form_submission_count = models.PositiveIntegerField(default=0)
     bot_submission_count = models.PositiveIntegerField(default=0)
