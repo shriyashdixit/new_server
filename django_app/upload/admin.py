@@ -256,9 +256,14 @@ class CountrySummaryAdmin(admin.ModelAdmin):
             )
             .order_by('-total_visits')
         )
+        rows = list(rows)
         extra_context = extra_context or {}
         extra_context['summary_rows'] = rows
         extra_context['title'] = 'Country Summary'
+        extra_context['total_visits'] = sum(r['total_visits'] or 0 for r in rows)
+        extra_context['total_unique_ips'] = sum(r['unique_ips'] or 0 for r in rows)
+        extra_context['total_form_submissions'] = sum(r['total_form_submissions'] or 0 for r in rows)
+        extra_context['total_bot_submissions'] = sum(r['total_bot_submissions'] or 0 for r in rows)
         return super().changelist_view(request, extra_context=extra_context)
 
     def has_add_permission(self, request):
