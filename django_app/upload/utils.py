@@ -77,7 +77,44 @@ def get_ip_location(ip: str) -> dict:
     return {'city': '?', 'country': '?', 'regionName': '?', 'isp': '?'}
 
 
-def update_ip_record(ip, path=None, geo=None, form_submitted=False, is_bot=False):
+def get_reverse_dns(ip):
+    """Return the PTR (reverse DNS) hostname for an IP, or '' if none exists."""
+    import socket
+    try:
+        hostname = socket.getfqdn(ip)
+        return hostname if hostname != ip else ''
+    except Exception:
+        return ''
+
+
+def get_abuse_score(ip):
+    """
+    Query AbuseIPDB for a confidence score (0–100) and total report count.
+    Returns (None, None) if the API key is missing, invalid, or the call fails —
+    the rest of the app continues working normally.
+    """
+    from django.conf import settings
+    api_key = getattr(settings, 'ABUSEIPDB_API_KEY', '')
+    if not api_key:
+        return None, None
+    try:
+        resp = requests.get(
+            'https://api.abuseipdb.com/api/v2/check',
+            headers={'Key': api_key, 'Accept': 'application/json'},
+            params={'ipAddress': ip, 'maxAgeInDays': 90},
+            timeout=5,
+        )
+        if resp.status_code == 200:
+            data = resp.json().get('data', {})
+            return data.get('abuseConfidenceScore'), data.get('totalReports')
+        # 401 = invalid key, 429 = rate limit, etc. — all handled silently
+        return None, None
+    except Exception:
+        return None, None
+
+
+def update_ip_record(ip, path=None, geo=None, form_submitted=False, is_bot=False,
+                     hostname=None, abuse_score=None, abuse_total_reports=None):
     """
     Upsert IPRecord for the given IP address.
     - path: page path hit (increments visit_count and pages_hit[path])
@@ -104,12 +141,23 @@ def update_ip_record(ip, path=None, geo=None, form_submitted=False, is_bot=False
             defaults=geo_defaults,
         )
 
+        if created:
+            # New IP — run enrichment (use pre-fetched values if caller already has them)
+            _hostname = hostname if hostname is not None else get_reverse_dns(ip)
+            if abuse_score is None:
+                _abuse_score, _abuse_reports = get_abuse_score(ip)
+            else:
+                _abuse_score, _abuse_reports = abuse_score, abuse_total_reports
+            IPRecord.objects.filter(pk=record.pk).update(
+                hostname=_hostname,
+                abuse_score=_abuse_score,
+                abuse_total_reports=_abuse_reports,
+            )
+
         update = {'last_seen': timezone.now()}
 
-        # Fill in geo if we have it and the record is missing data
         if geo and (not record.country or created):
             update.update(geo_defaults)
-
         if path:
             update['visit_count'] = F('visit_count') + 1
         if form_submitted:

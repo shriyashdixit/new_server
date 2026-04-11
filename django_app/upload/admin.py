@@ -116,18 +116,23 @@ class PageVisitAdmin(admin.ModelAdmin):
 
 @admin.register(IPRecord)
 class IPRecordAdmin(admin.ModelAdmin):
-    list_display = ['ip_address', 'country', 'city', 'isp', 'visit_count',
-                    'form_submission_count', 'bot_submission_count', 'first_seen_display', 'last_seen_display']
-    list_filter = ['country', 'first_seen', 'last_seen']
-    search_fields = ['ip_address', 'country', 'city', 'isp']
-    readonly_fields = ['ip_address', 'city', 'region', 'country', 'isp', 'first_seen',
-                       'last_seen', 'visit_count', 'form_submission_count', 'bot_submission_count', 'pages_hit_display']
+    list_display = ['ip_address', 'hostname_display', 'country', 'city', 'isp',
+                    'abuse_badge', 'visit_count', 'form_submission_count',
+                    'bot_submission_count', 'last_seen_display']
+    list_filter = ['country', 'last_seen']
+    search_fields = ['ip_address', 'hostname', 'country', 'city', 'isp']
+    readonly_fields = ['ip_address', 'hostname', 'city', 'region', 'country', 'isp',
+                       'abuse_score', 'abuse_total_reports', 'first_seen', 'last_seen',
+                       'visit_count', 'form_submission_count', 'bot_submission_count', 'pages_hit_display']
     ordering = ['-last_seen']
     list_per_page = 100
 
     fieldsets = (
         ('IP Info', {
-            'fields': ('ip_address', 'city', 'region', 'country', 'isp')
+            'fields': ('ip_address', 'hostname', 'city', 'region', 'country', 'isp')
+        }),
+        ('Reputation', {
+            'fields': ('abuse_score', 'abuse_total_reports'),
         }),
         ('Activity', {
             'fields': ('visit_count', 'form_submission_count', 'bot_submission_count', 'pages_hit_display')
@@ -136,6 +141,27 @@ class IPRecordAdmin(admin.ModelAdmin):
             'fields': ('first_seen', 'last_seen'),
         }),
     )
+
+    def hostname_display(self, obj):
+        if not obj.hostname:
+            return '—'
+        return obj.hostname[:60] + '…' if len(obj.hostname) > 60 else obj.hostname
+    hostname_display.short_description = 'Hostname (PTR)'
+    hostname_display.admin_order_field = 'hostname'
+
+    def abuse_badge(self, obj):
+        score = obj.abuse_score
+        if score is None:
+            return format_html('<span style="color:#999;">— no key</span>')
+        if score >= 75:
+            colour, label = '#c0392b', f'🔴 {score}%'
+        elif score >= 25:
+            colour, label = '#e67e22', f'🟡 {score}%'
+        else:
+            colour, label = '#27ae60', f'🟢 {score}%'
+        return format_html('<span style="color:{};font-weight:700;">{}</span>', colour, label)
+    abuse_badge.short_description = 'Abuse Score'
+    abuse_badge.admin_order_field = 'abuse_score'
 
     def first_seen_display(self, obj):
         return obj.first_seen.strftime('%d %b %Y, %H:%M:%S')
