@@ -31,6 +31,7 @@ ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS").split(" ")
 OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
 
 TELEGRAM_BOT_KEY = os.environ.get('TELEGRAM_BOT_KEY')
+TELEGRAM_CHAT_ID = os.environ.get('TELEGRAM_CHAT_ID')
 
 # Application definition
 

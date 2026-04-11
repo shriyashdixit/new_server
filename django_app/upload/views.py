@@ -13,7 +13,7 @@ from django.views.decorators.csrf import csrf_exempt
 import json
 from .models import TelegramMessage, TelegramUser
 from datetime import datetime
-from .utils import send_telegram_message_to_chat, send_telegram_message
+from .utils import send_telegram_message_to_chat, send_telegram_message, notify_landing_page_visit
 from .forms import SendMessageForm
 from django.contrib.auth.decorators import login_required
 # Create your views here.
@@ -53,6 +53,8 @@ def test(request):
     return render(request, 'homepage_main.html')
 
 def homepage_main(request):
+    notify_landing_page_visit(request)
+
     folder1_path = os.path.join(settings.STATIC_ROOT, 'folder1')
     folder2_path = os.path.join(settings.STATIC_ROOT, 'folder2')
 
@@ -71,6 +73,39 @@ def homepage_main(request):
         'images_folder1': images_folder1,
         'images_folder2': images_folder2,
     })
+
+
+def contact_page(request):
+    if request.method == 'POST':
+        name = request.POST.get('name', '').strip()
+        email = request.POST.get('email', '').strip()
+        phone = request.POST.get('phone', '').strip()
+        company = request.POST.get('company', '').strip()
+        service = request.POST.get('service', '').strip()
+        message = request.POST.get('message', '').strip()
+
+        chat_id = settings.TELEGRAM_CHAT_ID
+        if chat_id and name and email:
+            from datetime import datetime, timezone, timedelta
+            IST = timezone(timedelta(hours=5, minutes=30))
+            ts = datetime.now(IST).strftime('%Y-%m-%d %H:%M:%S IST')
+            msg = (
+                '📬 <b>New Contact Form Submission</b>\n\n'
+                f'🕒 <b>Time:</b> {ts}\n'
+                f'👤 <b>Name:</b> {name}\n'
+                f'📧 <b>Email:</b> {email}\n'
+                f'📞 <b>Phone:</b> {phone or "—"}\n'
+                f'🏢 <b>Company:</b> {company or "—"}\n'
+                f'🔧 <b>Service:</b> {service or "—"}\n'
+                f'💬 <b>Message:</b>\n{message}'
+            )
+            send_telegram_message(chat_id, msg)
+
+        from django.shortcuts import redirect
+        return redirect('/contact/?sent=1')
+
+    sent = request.GET.get('sent') == '1'
+    return render(request, 'contact.html', {'sent': sent})
 
 
 @csrf_exempt

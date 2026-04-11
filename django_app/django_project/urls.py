@@ -7,8 +7,8 @@ from upload import views
 urlpatterns = [
     path('admin/', admin.site.urls),
 
-    # Homepage only
     path('', views.homepage_main, name='homepage_main'),
+    path('contact/', views.contact_page, name='contact_page'),
 ]
 
 # Serve static/media (only if needed)
