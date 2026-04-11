@@ -75,6 +75,34 @@ def homepage_main(request):
     })
 
 
+def services_page(request):
+    return render(request, 'services.html')
+
+
+def skills_page(request):
+    return render(request, 'skills.html')
+
+
+def work_page(request):
+    return render(request, 'work.html')
+
+
+def team_page(request):
+    return render(request, 'team.html')
+
+
+def culture_page(request):
+    return render(request, 'culture.html')
+
+
+def careers_page(request):
+    return render(request, 'careers.html')
+
+
+def blogs_page(request):
+    return render(request, 'blogs.html')
+
+
 def contact_page(request):
     if request.method == 'POST':
         name = request.POST.get('name', '').strip()
