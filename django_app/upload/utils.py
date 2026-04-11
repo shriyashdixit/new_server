@@ -167,9 +167,9 @@ def update_ip_record(ip, path=None, geo=None, form_submitted=False, is_bot=False
             defaults=geo_defaults,
         )
 
-        if created:
-            # New IP — run enrichment (use pre-fetched values if caller already has them)
-            _hostname = hostname if hostname is not None else get_reverse_dns(ip)
+        if created or record.abuse_score is None:
+            # New IP or existing IP whose score hasn't been fetched yet — run enrichment
+            _hostname = hostname if hostname is not None else (get_reverse_dns(ip) if created else record.hostname)
             if abuse_score is None:
                 _abuse_score, _abuse_reports = get_abuse_score(ip)
             else:
@@ -221,6 +221,9 @@ def notify_landing_page_visit(request):
         return
 
     def _send():
+        _BOT_KEYWORDS = ('bot', 'crawl', 'spider', 'slurp', 'mediapartners',
+                         'facebookexternalhit', 'curl', 'wget')
+
         ip = get_client_ip(request)
         geo = get_ip_location(ip)
         ts = datetime.now(IST).strftime('%Y-%m-%d %H:%M:%S IST')
@@ -231,8 +234,27 @@ def notify_landing_page_visit(request):
         country = geo.get('country', '?')
         isp = geo.get('isp', '?')
 
+        is_bot = any(kw in ua.lower() for kw in _BOT_KEYWORDS)
+        source_line = (
+            '🤖 <b>Source:</b> Bot\n'
+            if is_bot else
+            '✅ <b>Source:</b> Human\n'
+        )
+
+        abuse_score = get_cached_abuse_score(ip)
+        if abuse_score is None:
+            abuse_line = ''
+        elif abuse_score >= 75:
+            abuse_line = f'🔴 <b>Abuse Score:</b> {abuse_score}%\n'
+        elif abuse_score >= 25:
+            abuse_line = f'🟡 <b>Abuse Score:</b> {abuse_score}%\n'
+        else:
+            abuse_line = f'🟢 <b>Abuse Score:</b> {abuse_score}%\n'
+
         msg = (
             '🌐 <b>Landing Page Visit</b>\n\n'
+            f'{source_line}'
+            f'{abuse_line}'
             f'🕒 <b>Time:</b> {ts}\n'
             f'🌍 <b>IP:</b> {ip}\n'
             f'📍 <b>Location:</b> {city}, {region}, {country}\n'
