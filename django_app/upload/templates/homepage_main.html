@@ -9,6 +9,7 @@
     <meta property="og:type" content="website">
     <meta property="og:title" content="Nazukware — Backend Engineering & AI Automation Studio">
     <meta property="og:description" content="Nazukware is a software engineering studio specialising in backend systems, AI-driven automation, and cloud-native delivery — built for scale, security, and operational confidence.">
+    {% if SITE_URL %}<meta property="og:image" content="{{ SITE_URL }}{% static 'logo.png' %}">{% endif %}
     <link rel="icon" type="image/svg+xml" href="{% static 'favicon.svg' %}">
     <link rel="apple-touch-icon" href="{% static 'logo.png' %}">
     <meta name="theme-color" content="#07111f">

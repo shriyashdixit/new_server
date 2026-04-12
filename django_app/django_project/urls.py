@@ -6,10 +6,12 @@ from django.contrib.sitemaps.views import sitemap
 from django.views.generic import TemplateView
 from django.http import HttpResponse
 from upload import views
-from upload.sitemap import StaticViewSitemap
+from upload.sitemap import StaticViewSitemap, BlogPostSitemap, CaseStudySitemap
 
 sitemaps = {
     'static': StaticViewSitemap,
+    'blog': BlogPostSitemap,
+    'work': CaseStudySitemap,
 }
 
 handler404 = 'upload.views.error_404'
@@ -27,6 +29,9 @@ urlpatterns = [
     path('culture/', views.culture_page, name='culture_page'),
     path('careers/', views.careers_page, name='careers_page'),
     path('blogs/', views.blogs_page, name='blogs_page'),
+    path('blogs/<slug:slug>/', views.blog_detail_page, name='blog_detail_page'),
+
+    path('work/<slug:slug>/', views.work_detail_page, name='work_detail_page'),
 
     path('health', lambda r: HttpResponse('ok'), name='health'),
     path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),

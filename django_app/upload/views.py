@@ -11,7 +11,7 @@ from django.http import JsonResponse, StreamingHttpResponse, HttpResponseBadRequ
 from django.views.decorators.csrf import csrf_exempt
 # from .models import TelegramMessage  # Your model to save messages
 import json
-from .models import TelegramMessage, TelegramUser, ContactSubmission
+from .models import TelegramMessage, TelegramUser, ContactSubmission, BlogPost, CaseStudy, JobListing, TeamMember
 from datetime import datetime
 from .utils import send_telegram_message_to_chat, send_telegram_message, notify_landing_page_visit
 from .forms import SendMessageForm
@@ -63,23 +63,19 @@ def test(request):
 def homepage_main(request):
     notify_landing_page_visit(request)
 
-    folder1_path = os.path.join(settings.STATIC_ROOT, 'folder1')
-    folder2_path = os.path.join(settings.STATIC_ROOT, 'folder2')
-
-    images_folder1 = [
-        f'folder1/{img}'
-        for img in os.listdir(folder1_path)
-        if img.endswith(('.png', '.jpg', '.jpeg', '.webp'))
-    ]
-    images_folder2 = [
-        f'folder2/{img}'
-        for img in os.listdir(folder2_path)
-        if img.endswith(('.png', '.jpg', '.jpeg', '.webp'))
-    ]
+    def _list_images(folder_name):
+        path = os.path.join(settings.STATIC_ROOT, folder_name)
+        if not os.path.isdir(path):
+            return []
+        return [
+            f'{folder_name}/{img}'
+            for img in os.listdir(path)
+            if img.endswith(('.png', '.jpg', '.jpeg', '.webp'))
+        ]
 
     return render(request, 'homepage_main.html', {
-        'images_folder1': images_folder1,
-        'images_folder2': images_folder2,
+        'images_folder1': _list_images('folder1'),
+        'images_folder2': _list_images('folder2'),
     })
 
 
@@ -92,11 +88,19 @@ def skills_page(request):
 
 
 def work_page(request):
-    return render(request, 'work.html')
+    case_studies = CaseStudy.objects.filter(is_published=True)
+    return render(request, 'work.html', {'case_studies': case_studies})
+
+
+def work_detail_page(request, slug):
+    from django.shortcuts import get_object_or_404
+    study = get_object_or_404(CaseStudy, slug=slug, is_published=True)
+    return render(request, 'work_detail.html', {'study': study})
 
 
 def team_page(request):
-    return render(request, 'team.html')
+    team_members = TeamMember.objects.filter(is_visible=True)
+    return render(request, 'team.html', {'team_members': team_members})
 
 
 def culture_page(request):
@@ -104,11 +108,26 @@ def culture_page(request):
 
 
 def careers_page(request):
-    return render(request, 'careers.html')
+    job_listings = JobListing.objects.filter(is_open=True)
+    return render(request, 'careers.html', {'job_listings': job_listings})
 
 
 def blogs_page(request):
-    return render(request, 'blogs.html')
+    posts = BlogPost.objects.filter(is_published=True)
+    categories_with_counts = {}
+    for post in posts:
+        label = dict(BlogPost.CATEGORY_CHOICES).get(post.category, post.category)
+        categories_with_counts[label] = categories_with_counts.get(label, 0) + 1
+    return render(request, 'blogs.html', {
+        'posts': posts,
+        'categories_with_counts': categories_with_counts,
+    })
+
+
+def blog_detail_page(request, slug):
+    from django.shortcuts import get_object_or_404
+    post = get_object_or_404(BlogPost, slug=slug, is_published=True)
+    return render(request, 'blog_detail.html', {'post': post})
 
 
 def contact_page(request):
@@ -274,7 +293,6 @@ def trigger_view(request):
     return render(request, 'your_template.html', {'instance': CHAT_ID})
 
 @login_required
-@csrf_exempt
 def send_message_view(request):
     if request.method == 'POST':
         form = SendMessageForm(request.POST)

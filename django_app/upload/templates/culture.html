@@ -9,6 +9,7 @@
     <meta property="og:type" content="website">
     <meta property="og:title" content="Culture — Nazukware">
     <meta property="og:description" content="How Nazukware operates — our values, engineering culture, and approach to building reliable, scalable software for regulated and enterprise environments.">
+    {% if SITE_URL %}<meta property="og:image" content="{{ SITE_URL }}{% static 'logo.png' %}">{% endif %}
     <link rel="icon" type="image/svg+xml" href="{% static 'favicon.svg' %}">
     <link rel="apple-touch-icon" href="{% static 'logo.png' %}">
     <meta name="theme-color" content="#07111f">

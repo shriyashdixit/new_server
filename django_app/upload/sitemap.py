@@ -1,5 +1,6 @@
 from django.contrib.sitemaps import Sitemap
 from django.urls import reverse
+from .models import BlogPost, CaseStudy
 
 
 class StaticViewSitemap(Sitemap):
@@ -26,3 +27,30 @@ class StaticViewSitemap(Sitemap):
 
     def priority(self, item):
         return item[1]
+
+
+class BlogPostSitemap(Sitemap):
+    protocol = 'https'
+    changefreq = 'weekly'
+    priority = 0.8
+
+    def items(self):
+        return BlogPost.objects.filter(is_published=True)
+
+    def location(self, post):
+        return reverse('blog_detail_page', kwargs={'slug': post.slug})
+
+    def lastmod(self, post):
+        return post.updated_at
+
+
+class CaseStudySitemap(Sitemap):
+    protocol = 'https'
+    changefreq = 'monthly'
+    priority = 0.85
+
+    def items(self):
+        return CaseStudy.objects.filter(is_published=True, body__gt='')
+
+    def location(self, study):
+        return reverse('work_detail_page', kwargs={'slug': study.slug})

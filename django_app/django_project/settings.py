@@ -182,3 +182,8 @@ PLAUSIBLE_DOMAIN = os.environ.get('PLAUSIBLE_DOMAIN', '')
 # Get a free API key at https://www.abuseipdb.com (free tier: 1000 checks/day).
 # Leave blank to disable — the app works normally without it.
 ABUSEIPDB_API_KEY = os.environ.get('ABUSEIPDB_API_KEY', '')
+
+# ── Database Backups ──
+# Set BACKUP_DIR to an absolute path on the host (e.g. /mnt/backup_drive/db_backups).
+# Used by scripts/backup_db.sh — not required for the app to run.
+BACKUP_DIR = os.environ.get('BACKUP_DIR', '')
