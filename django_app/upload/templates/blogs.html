@@ -9,6 +9,7 @@
     <meta property="og:type" content="website">
     <meta property="og:title" content="Engineering Blog — Nazukware">
     <meta property="og:description" content="Technical writing from Nazukware on backend engineering, AI integration, cloud architecture, and software delivery at scale.">
+    {% if SITE_URL %}<meta property="og:image" content="{{ SITE_URL }}{% static 'logo.png' %}">{% endif %}
     <link rel="icon" type="image/svg+xml" href="{% static 'favicon.svg' %}">
     <link rel="apple-touch-icon" href="{% static 'logo.png' %}">
     <meta name="theme-color" content="#07111f">
@@ -57,11 +58,7 @@
         .breadcrumb a{color:var(--primary);}.breadcrumb span{opacity:0.4;}
         .section{padding:80px 0;}
         .section-dark{background:linear-gradient(180deg,#07111f 0%,#091625 100%);}
-
-        /* Blog Layout */
         .blog-layout{display:grid;grid-template-columns:1fr 300px;gap:48px;align-items:start;}
-
-        /* Blog Cards */
         .blog-list{display:grid;gap:32px;}
         .blog-card{background:linear-gradient(160deg,rgba(15,34,56,0.97),rgba(10,22,36,0.97));border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);transition:transform 0.3s ease,border-color 0.3s ease;}
         .blog-card:hover{transform:translateY(-4px);border-color:rgba(40,199,251,0.28);}
@@ -74,29 +71,22 @@
         .blog-excerpt{color:var(--muted);font-size:0.93rem;line-height:1.75;margin-bottom:18px;}
         .blog-link{display:inline-flex;align-items:center;gap:6px;color:var(--primary);font-weight:700;font-size:0.9rem;transition:gap 0.2s ease;}
         .blog-link:hover{gap:10px;}
-
-        /* Sidebar */
         .blog-sidebar{position:sticky;top:110px;display:grid;gap:24px;}
         .sidebar-widget{background:linear-gradient(160deg,rgba(15,34,56,0.97),rgba(10,22,36,0.97));border:1px solid var(--border);border-radius:20px;padding:24px;}
         .sidebar-widget h4{font-family:'Syne',sans-serif;font-size:0.82rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.5);margin-bottom:18px;}
         .sidebar-cats{display:grid;gap:10px;}
-        .sidebar-cat{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid rgba(255,255,255,0.05);color:var(--muted);font-size:0.9rem;cursor:pointer;transition:color 0.2s ease;}
+        .sidebar-cat{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid rgba(255,255,255,0.05);color:var(--muted);font-size:0.9rem;}
         .sidebar-cat:last-child{border-bottom:none;}
-        .sidebar-cat:hover{color:var(--primary);}
-        .sidebar-cat span{font-size:0.8rem;color:rgba(255,255,255,0.25);}
+        .sidebar-cat span:last-child{font-size:0.8rem;color:rgba(255,255,255,0.25);}
         .sidebar-recent{display:grid;gap:14px;}
         .sidebar-post{display:flex;gap:12px;align-items:flex-start;}
         .sidebar-post-icon{width:42px;height:42px;border-radius:10px;background:rgba(40,199,251,0.08);border:1px solid rgba(40,199,251,0.12);display:grid;place-items:center;font-size:1rem;flex-shrink:0;}
-        .sidebar-post-title{font-size:0.87rem;line-height:1.4;color:var(--muted);transition:color 0.2s ease;cursor:pointer;}
+        .sidebar-post-title{font-size:0.87rem;line-height:1.4;color:var(--muted);transition:color 0.2s ease;}
         .sidebar-post-title:hover{color:var(--text);}
-
-        /* Coming Soon Notice */
-        .coming-soon{padding:52px 44px;border-radius:var(--radius);background:linear-gradient(160deg,rgba(15,34,56,0.97),rgba(10,22,36,0.97));border:1px solid var(--border);text-align:center;margin-bottom:32px;}
+        .coming-soon{padding:52px 44px;border-radius:var(--radius);background:linear-gradient(160deg,rgba(15,34,56,0.97),rgba(10,22,36,0.97));border:1px solid var(--border);text-align:center;}
         .coming-soon-icon{font-size:3rem;margin-bottom:20px;}
         .coming-soon h3{font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:700;margin-bottom:10px;}
         .coming-soon p{color:var(--muted);font-size:0.95rem;line-height:1.8;max-width:480px;margin:0 auto;}
-
-        /* CTA */
         .cta-band{padding:64px 0;background:linear-gradient(135deg,rgba(40,199,251,0.08) 0%,rgba(4,48,185,0.1) 100%),#07111f;border-top:1px solid rgba(40,199,251,0.1);border-bottom:1px solid rgba(40,199,251,0.1);}
         .cta-band-inner{display:flex;align-items:center;justify-content:space-between;gap:32px;flex-wrap:wrap;}
         .cta-band h2{font-family:'Syne',sans-serif;font-size:clamp(1.8rem,3vw,2.4rem);font-weight:700;line-height:1.2;margin-bottom:12px;}
@@ -117,13 +107,6 @@
         .mil-animated{opacity:0;transform:translateY(28px);transition:opacity 0.65s ease,transform 0.65s ease;}
         .mil-animated.in-view{opacity:1;transform:translateY(0);}
         .mil-animated-delay-1{transition-delay:0.12s;}.mil-animated-delay-2{transition-delay:0.24s;}.mil-animated-delay-3{transition-delay:0.36s;}
-        .thumb-icons{display:flex;align-items:center;justify-content:center;gap:18px;flex-wrap:wrap;}
-        .thumb-icon{width:52px;height:52px;object-fit:contain;filter:drop-shadow(0 2px 8px rgba(0,0,0,0.4));}
-        .thumb-icon.icon-django{filter:invert(60%) sepia(100%) saturate(500%) hue-rotate(80deg) brightness(0.9);}
-        .thumb-icon.icon-nginx{filter:drop-shadow(0 2px 6px rgba(0,0,0,0.3));}
-        .thumb-badge{display:flex;align-items:center;justify-content:center;width:52px;height:52px;border-radius:10px;font-size:0.65rem;font-weight:800;letter-spacing:0.5px;color:#fff;text-align:center;line-height:1.2;}
-        .thumb-badge.badge-aws{background:linear-gradient(135deg,#ff9900,#e07000);}
-
         @media(max-width:1024px){
             .nav-toggle{display:flex;}
             .nav-links{display:none;position:absolute;top:100%;left:0;right:0;flex-direction:column;background:rgba(7,17,31,0.98);backdrop-filter:blur(16px);padding:16px 20px 20px;gap:4px;border-top:1px solid rgba(255,255,255,0.07);box-shadow:0 12px 30px rgba(0,0,0,0.4);}
@@ -181,108 +164,65 @@
                 <div class="blog-layout">
                     <!-- Main content -->
                     <div>
+                        {% if not posts %}
                         <div class="coming-soon mil-animated">
                             <div class="coming-soon-icon">✍️</div>
                             <h3>Posts Coming Soon</h3>
                             <p>We're writing up our first articles — covering real lessons from building distributed systems, AI automation pipelines, and AWS cloud deployments. Check back shortly.</p>
                         </div>
-
+                        {% else %}
                         <div class="blog-list">
+                            {% for post in posts %}
                             <article class="blog-card mil-animated">
-                                <div class="blog-thumb"><div class="thumb-icons"><img class="thumb-icon icon-django" src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/django/django-plain.svg" alt="Django"><img class="thumb-icon" src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/python/python-original.svg" alt="Python"></div></div>
+                                <div class="blog-thumb">✍️</div>
                                 <div class="blog-body">
                                     <div class="blog-meta">
-                                        <span class="blog-cat">Backend Engineering</span>
-                                        <span class="blog-date">Coming Soon</span>
+                                        <span class="blog-cat">{{ post.get_category_display }}</span>
+                                        {% if post.published_at %}
+                                        <span class="blog-date">{{ post.published_at|date:"d M Y" }}</span>
+                                        {% endif %}
                                     </div>
-                                    <h2 class="blog-title">Designing Webhook Systems That Don't Break Under Load</h2>
-                                    <p class="blog-excerpt">Webhook-driven integrations are everywhere — but most implementations ignore signature validation, retry storms, and idempotency. Here's how we build them to survive production.</p>
-                                    <span class="blog-link">Read More →</span>
+                                    <h2 class="blog-title">{{ post.title }}</h2>
+                                    <p class="blog-excerpt">{{ post.excerpt }}</p>
+                                    <a href="{% url 'blog_detail_page' post.slug %}" class="blog-link">Read More →</a>
                                 </div>
                             </article>
-
-                            <article class="blog-card mil-animated mil-animated-delay-1">
-                                <div class="blog-thumb"><div class="thumb-icons"><img class="thumb-icon" src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/python/python-original.svg" alt="Python"><img class="thumb-icon" src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/pandas/pandas-original.svg" alt="Pandas"></div></div>
-                                <div class="blog-body">
-                                    <div class="blog-meta">
-                                        <span class="blog-cat">AI Automation</span>
-                                        <span class="blog-date">Coming Soon</span>
-                                    </div>
-                                    <h2 class="blog-title">Active Learning Pipelines: How We Cut Manual Effort by 95%</h2>
-                                    <p class="blog-excerpt">A behind-the-scenes look at the AI financial spreading engine we built — NLP extraction, clustering, active learning feedback loops, and how the system improved its own accuracy over time.</p>
-                                    <span class="blog-link">Read More →</span>
-                                </div>
-                            </article>
-
-                            <article class="blog-card mil-animated mil-animated-delay-2">
-                                <div class="blog-thumb"><div class="thumb-icons"><div class="thumb-badge badge-aws">AWS</div><img class="thumb-icon" src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/docker/docker-original.svg" alt="Docker"></div></div>
-                                <div class="blog-body">
-                                    <div class="blog-meta">
-                                        <span class="blog-cat">AWS Cloud</span>
-                                        <span class="blog-date">Coming Soon</span>
-                                    </div>
-                                    <h2 class="blog-title">Effective Cost Management in AWS Without Sacrificing Reliability</h2>
-                                    <p class="blog-excerpt">Lambda vs EC2 vs ECS — making the right call for each workload type, and the operational patterns that keep AWS bills predictable without over-engineering your infrastructure.</p>
-                                    <span class="blog-link">Read More →</span>
-                                </div>
-                            </article>
-
-                            <article class="blog-card mil-animated">
-                                <div class="blog-thumb"><div class="thumb-icons"><img class="thumb-icon icon-nginx" src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/nginx/nginx-original.svg" alt="Nginx"><img class="thumb-icon" src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/python/python-original.svg" alt="Python"></div></div>
-                                <div class="blog-body">
-                                    <div class="blog-meta">
-                                        <span class="blog-cat">Security</span>
-                                        <span class="blog-date">Coming Soon</span>
-                                    </div>
-                                    <h2 class="blog-title">API Security Patterns Every Backend Engineer Should Know</h2>
-                                    <p class="blog-excerpt">From JWT validation to rate limiting, replay attack prevention, and least-privilege access design — the security patterns we apply from day one on every project we build.</p>
-                                    <span class="blog-link">Read More →</span>
-                                </div>
-                            </article>
+                            {% endfor %}
                         </div>
+                        {% endif %}
                     </div>
 
                     <!-- Sidebar -->
                     <aside class="blog-sidebar mil-animated">
+                        {% if categories_with_counts %}
                         <div class="sidebar-widget">
                             <h4>Categories</h4>
                             <div class="sidebar-cats">
-                                <div class="sidebar-cat"><span>Backend Engineering</span><span>1</span></div>
-                                <div class="sidebar-cat"><span>AI Automation</span><span>1</span></div>
-                                <div class="sidebar-cat"><span>AWS Cloud</span><span>1</span></div>
-                                <div class="sidebar-cat"><span>Security</span><span>1</span></div>
-                                <div class="sidebar-cat"><span>DevOps</span><span>—</span></div>
-                                <div class="sidebar-cat"><span>LLM &amp; GenAI</span><span>—</span></div>
+                                {% for label, count in categories_with_counts.items %}
+                                <div class="sidebar-cat"><span>{{ label }}</span><span>{{ count }}</span></div>
+                                {% endfor %}
                             </div>
                         </div>
+                        {% endif %}
 
+                        {% if posts %}
                         <div class="sidebar-widget">
-                            <h4>Coming Up</h4>
+                            <h4>Recent Posts</h4>
                             <div class="sidebar-recent">
+                                {% for post in posts|slice:":5" %}
                                 <div class="sidebar-post">
-                                    <div class="sidebar-post-icon">🛡️</div>
-                                    <div class="sidebar-post-title">Designing Webhook Systems That Don't Break Under Load</div>
+                                    <div class="sidebar-post-icon">✍️</div>
+                                    <a href="{% url 'blog_detail_page' post.slug %}" class="sidebar-post-title">{{ post.title }}</a>
                                 </div>
-                                <div class="sidebar-post">
-                                    <div class="sidebar-post-icon">🤖</div>
-                                    <div class="sidebar-post-title">Active Learning Pipelines: How We Cut Manual Effort by 95%</div>
-                                </div>
-                                <div class="sidebar-post">
-                                    <div class="sidebar-post-icon">☁</div>
-                                    <div class="sidebar-post-title">Effective Cost Management in AWS Without Sacrificing Reliability</div>
-                                </div>
-                                <div class="sidebar-post">
-                                    <div class="sidebar-post-icon">🔒</div>
-                                    <div class="sidebar-post-title">API Security Patterns Every Backend Engineer Should Know</div>
-                                </div>
+                                {% endfor %}
                             </div>
                         </div>
+                        {% endif %}
                     </aside>
                 </div>
             </div>
         </section>
 
-        <!-- CTA -->
         <section class="cta-band">
             <div class="container">
                 <div class="cta-band-inner mil-animated">

@@ -9,6 +9,7 @@
     <meta property="og:type" content="website">
     <meta property="og:title" content="Team — Nazukware">
     <meta property="og:description" content="Meet the engineering team at Nazukware — specialists in backend systems, AI-driven automation, and cloud-native delivery.">
+    {% if SITE_URL %}<meta property="og:image" content="{{ SITE_URL }}{% static 'logo.png' %}">{% endif %}
     <link rel="icon" type="image/svg+xml" href="{% static 'favicon.svg' %}">
     <link rel="apple-touch-icon" href="{% static 'logo.png' %}">
     <meta name="theme-color" content="#07111f">
@@ -178,33 +179,27 @@
                     <p style="margin:0 auto;">Two-person studio. Full-spectrum capability. Every client gets direct access to the people actually doing the work — no account managers, no handoffs.</p>
                 </div>
 
+                {% if team_members %}
                 <div class="team-grid mil-animated">
+                    {% for member in team_members %}
                     <div class="team-card">
-                        <div class="team-avatar">S</div>
-                        <h3 class="team-name">Founder &amp; CEO</h3>
-                        <div class="team-role">Founder &amp; Chief Executive</div>
-                        <p class="team-bio">The engineering brain behind Nazukware. Leads all client engagements, system architecture decisions, and delivery — with deep hands-on experience across backend systems, AI automation, and AWS cloud infrastructure.</p>
+                        <div class="team-avatar{% if member.is_ai_partner %} ai-avatar{% endif %}">{{ member.avatar_initial }}</div>
+                        <h3 class="team-name">{{ member.name }}</h3>
+                        <div class="team-role">{{ member.role }}</div>
+                        <p class="team-bio">{{ member.bio }}</p>
+                        {% if member.tags %}
                         <div class="team-tags">
-                            <span class="team-tag">Backend Architecture</span>
-                            <span class="team-tag">AI Automation</span>
-                            <span class="team-tag">AWS Cloud</span>
-                            <span class="team-tag">System Design</span>
+                            {% for tag in member.tags %}
+                            <span class="team-tag">{{ tag }}</span>
+                            {% endfor %}
                         </div>
+                        {% endif %}
                     </div>
-
-                    <div class="team-card">
-                        <div class="team-avatar ai-avatar">✦</div>
-                        <h3 class="team-name">AI Assistant</h3>
-                        <div class="team-role">AI Engineering Partner</div>
-                        <p class="team-bio">An advanced AI system integrated into the engineering workflow — accelerating code generation, documentation, review, and problem-solving. Not a replacement for engineering judgment, but a force multiplier for delivery speed and quality.</p>
-                        <div class="team-tags">
-                            <span class="team-tag">Code Generation</span>
-                            <span class="team-tag">Technical Writing</span>
-                            <span class="team-tag">Code Review</span>
-                            <span class="team-tag">Research</span>
-                        </div>
-                    </div>
+                    {% endfor %}
                 </div>
+                {% else %}
+                <p style="color:var(--muted);text-align:center;font-size:0.97rem;">Team profiles coming soon.</p>
+                {% endif %}
             </div>
         </section>
 

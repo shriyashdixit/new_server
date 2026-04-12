@@ -9,6 +9,7 @@
     <meta property="og:type" content="website">
     <meta property="og:title" content="Careers — Nazukware">
     <meta property="og:description" content="Join the Nazukware engineering team. We're looking for engineers who care about distributed systems, AI automation, and building software that scales under real-world conditions.">
+    {% if SITE_URL %}<meta property="og:image" content="{{ SITE_URL }}{% static 'logo.png' %}">{% endif %}
     <link rel="icon" type="image/svg+xml" href="{% static 'favicon.svg' %}">
     <link rel="apple-touch-icon" href="{% static 'logo.png' %}">
     <meta name="theme-color" content="#07111f">
@@ -69,6 +70,18 @@
         .no-roles-icon{font-size:3rem;margin-bottom:20px;}
         .no-roles h3{font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:700;margin-bottom:12px;}
         .no-roles p{color:var(--muted);font-size:0.97rem;line-height:1.8;max-width:520px;margin:0 auto 28px;}
+        /* Job listings */
+        .job-list{display:grid;gap:22px;}
+        .job-card{background:linear-gradient(160deg,rgba(15,34,56,0.97),rgba(10,22,36,0.97));border:1px solid var(--border);border-radius:var(--radius);padding:32px;transition:transform 0.3s ease,border-color 0.3s ease;}
+        .job-card:hover{transform:translateY(-4px);border-color:rgba(40,199,251,0.28);}
+        .job-header{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:16px;}
+        .job-title{font-family:'Syne',sans-serif;font-size:1.2rem;font-weight:700;}
+        .job-badges{display:flex;flex-wrap:wrap;gap:8px;}
+        .job-badge{padding:5px 13px;border-radius:999px;font-size:0.76rem;font-weight:600;border:1px solid rgba(40,199,251,0.15);background:rgba(40,199,251,0.08);color:#a8e8ff;}
+        .job-badge.badge-location{background:rgba(255,255,255,0.04);color:var(--muted);border-color:rgba(255,255,255,0.1);}
+        .job-desc{color:var(--muted);font-size:0.93rem;line-height:1.75;margin-bottom:20px;}
+        .job-apply{display:inline-flex;align-items:center;gap:6px;color:var(--primary);font-weight:700;font-size:0.9rem;transition:gap 0.2s ease;}
+        .job-apply:hover{gap:10px;}
         .btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:14px 28px;border-radius:999px;border:none;font-family:'Sora',sans-serif;font-weight:700;font-size:0.95rem;white-space:nowrap;cursor:pointer;transition:transform 0.2s ease,box-shadow 0.2s ease;}
         .btn-primary{background:linear-gradient(135deg,var(--primary),var(--primary-2));color:#fff;box-shadow:0 6px 20px rgba(40,199,251,0.3);}
         .btn-primary:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(40,199,251,0.45);}
@@ -173,12 +186,33 @@
                     <p>We hire for attitude, depth, and a bias toward getting things done. Roles open when the project and team fit is right — not to meet a headcount target.</p>
                 </div>
 
+                {% if job_listings %}
+                <div class="job-list">
+                    {% for job in job_listings %}
+                    <div class="job-card mil-animated">
+                        <div class="job-header">
+                            <h3 class="job-title">{{ job.title }}</h3>
+                            <div class="job-badges">
+                                <span class="job-badge">{{ job.get_job_type_display }}</span>
+                                <span class="job-badge badge-location">{{ job.location }}</span>
+                            </div>
+                        </div>
+                        <div class="job-desc">{{ job.description|safe }}</div>
+                        {% if job.requirements %}
+                        <div class="job-desc" style="margin-bottom:20px;">{{ job.requirements|safe }}</div>
+                        {% endif %}
+                        <a href="{% url 'contact_page' %}" class="job-apply">Apply via Contact →</a>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
                 <div class="no-roles mil-animated">
                     <div class="no-roles-icon">🔭</div>
                     <h3>No Open Roles Right Now</h3>
                     <p>We're not actively hiring at this moment, but we're always open to conversations with exceptional engineers — especially those with deep Python, AI/ML, or AWS cloud experience.</p>
                     <a href="{% url 'contact_page' %}" class="btn btn-primary">Send a Spontaneous Application</a>
                 </div>
+                {% endif %}
             </div>
         </section>
 

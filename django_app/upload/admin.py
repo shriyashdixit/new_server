@@ -1,7 +1,10 @@
 from django.contrib import admin
 from django.db.models import Sum, Count
 from django.utils.html import format_html
-from .models import TelegramMessage, TelegramUser, ContactSubmission, PageVisit, IPRecord, CountrySummary
+from .models import (
+    TelegramMessage, TelegramUser, ContactSubmission, PageVisit, IPRecord, CountrySummary,
+    BlogPost, CaseStudy, JobListing, TeamMember,
+)
 
 
 # ── Inlines ────────────────────────────────────────────────────────────────────
@@ -274,6 +277,111 @@ class CountrySummaryAdmin(admin.ModelAdmin):
 
     def has_delete_permission(self, request, obj=None):
         return False
+
+
+# ── Blog Posts ─────────────────────────────────────────────────────────────────
+
+@admin.register(BlogPost)
+class BlogPostAdmin(admin.ModelAdmin):
+    list_display = ['title', 'category', 'is_published', 'published_at', 'updated_at']
+    list_filter = ['is_published', 'category']
+    search_fields = ['title', 'excerpt', 'content']
+    prepopulated_fields = {'slug': ('title',)}
+    date_hierarchy = 'published_at'
+    list_per_page = 50
+    ordering = ['-published_at', '-created_at']
+
+    fieldsets = (
+        ('Content', {
+            'fields': ('title', 'slug', 'excerpt', 'content'),
+        }),
+        ('Classification', {
+            'fields': ('category',),
+        }),
+        ('Publishing', {
+            'fields': ('is_published', 'published_at'),
+            'description': 'Set "Published at" before checking "Is published".',
+        }),
+    )
+
+
+# ── Case Studies ───────────────────────────────────────────────────────────────
+
+@admin.register(CaseStudy)
+class CaseStudyAdmin(admin.ModelAdmin):
+    list_display = ['title', 'categories', 'is_published', 'order']
+    list_filter = ['is_published']
+    search_fields = ['title', 'description', 'body']
+    prepopulated_fields = {'slug': ('title',)}
+    list_editable = ['order', 'is_published']
+    list_per_page = 50
+    ordering = ['order', 'title']
+
+    fieldsets = (
+        ('Content', {
+            'fields': ('title', 'slug', 'description', 'body'),
+        }),
+        ('Display', {
+            'fields': ('thumb_html', 'tags', 'categories'),
+            'description': (
+                'categories: space-separated filter tokens matching the work page filter buttons '
+                '(e.g. "backend ai"). '
+                'tags: JSON list of display labels (e.g. ["Django", "Python"]).'
+            ),
+        }),
+        ('Publishing', {
+            'fields': ('is_published', 'order'),
+        }),
+    )
+
+
+# ── Job Listings ───────────────────────────────────────────────────────────────
+
+@admin.register(JobListing)
+class JobListingAdmin(admin.ModelAdmin):
+    list_display = ['title', 'job_type', 'location', 'is_open', 'posted_at']
+    list_filter = ['is_open', 'job_type']
+    search_fields = ['title', 'description', 'requirements']
+    list_editable = ['is_open']
+    list_per_page = 50
+    ordering = ['-posted_at']
+
+    fieldsets = (
+        ('Role', {
+            'fields': ('title', 'job_type', 'location'),
+        }),
+        ('Details', {
+            'fields': ('description', 'requirements'),
+        }),
+        ('Status', {
+            'fields': ('is_open',),
+        }),
+    )
+
+
+# ── Team Members ───────────────────────────────────────────────────────────────
+
+@admin.register(TeamMember)
+class TeamMemberAdmin(admin.ModelAdmin):
+    list_display = ['name', 'role', 'is_ai_partner', 'order', 'is_visible']
+    list_filter = ['is_visible', 'is_ai_partner']
+    search_fields = ['name', 'role', 'bio']
+    list_editable = ['order', 'is_visible']
+    list_per_page = 50
+    ordering = ['order', 'name']
+
+    fieldsets = (
+        ('Identity', {
+            'fields': ('name', 'role', 'avatar_initial', 'is_ai_partner'),
+        }),
+        ('Content', {
+            'fields': ('bio', 'tags'),
+            'description': 'tags: JSON list, e.g. ["Backend Architecture", "AI Automation"]',
+        }),
+        ('Display', {
+            'fields': ('order', 'is_visible'),
+        }),
+    )
 
 
 # ── Telegram models ────────────────────────────────────────────────────────────
