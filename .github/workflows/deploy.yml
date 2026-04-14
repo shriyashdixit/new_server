@@ -9,29 +9,10 @@ name: Deploy to Production
 #   4. Install as a service so it survives reboots:
 #        sudo ./svc.sh install
 #        sudo ./svc.sh start
+#
+# DISABLED: Runner not yet registered. Uncomment the 'on:' block below to enable.
 
-on:
-  push:
-    branches:
-      - main
-
-jobs:
-  deploy:
-    name: Build and deploy
-    runs-on: self-hosted
-
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v4
-
-      - name: Pull latest and rebuild
-        working-directory: ${{ github.workspace }}
-        run: |
-          docker compose -f docker-compose.prod.yml down
-          docker compose -f docker-compose.prod.yml up -d --build
-
-      - name: Verify health
-        run: |
-          sleep 10
-          curl --fail --silent http://localhost:8000/health || \
-            (echo "Health check failed" && docker logs new_server-web-1 --tail 50 && exit 1)
+# on:
+#   push:
+#     branches:
+#       - main
