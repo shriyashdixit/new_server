@@ -186,4 +186,5 @@ ABUSEIPDB_API_KEY = os.environ.get('ABUSEIPDB_API_KEY', '')
 # ── Database Backups ──
 # Set BACKUP_DIR to an absolute path on the host (e.g. /mnt/backup_drive/db_backups).
 # Used by scripts/backup_db.sh — not required for the app to run.
-BACKUP_DIR = os.environ.get('BACKUP_DIR', '')
+# DISABLED: Uncomment when backup disk is mounted.
+# BACKUP_DIR = os.environ.get('BACKUP_DIR', '')
