@@ -30,8 +30,7 @@ services:
       dockerfile: Dockerfile.prod
     user: root
     restart: always
-    command: sh -c "python manage.py makemigrations &&
-        python manage.py migrate &&
+    command: sh -c "python manage.py migrate &&
         python manage.py collectstatic --noinput &&
         exec gunicorn django_app.wsgi:application
         --bind 0.0.0.0:8000
@@ -53,8 +52,6 @@ services:
         condition: service_healthy
 #      llm:
 #        condition: service_healthy
-    environment:
-          - LLM_SERVER_URL=http://llm:${LLM_PORT}
     healthcheck:
       test: ["CMD", "curl", "-f", "http://web:8000/health"]
       interval: 15s
@@ -80,7 +77,7 @@ services:
     container_name: npm
     restart: always
     ports:
-      - "200:80"
+      - "80:80"
       - "81:81"   # NPM UI access
       - "443:443"
     volumes:
