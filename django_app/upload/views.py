@@ -61,7 +61,7 @@ def test(request):
     return render(request, 'homepage_main.html')
 
 def homepage_main(request):
-    notify_landing_page_visit(request)
+    # notify_landing_page_visit(request)
 
     def _list_images(folder_name):
         path = os.path.join(settings.STATIC_ROOT, folder_name)
